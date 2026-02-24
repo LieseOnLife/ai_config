@@ -1,0 +1,34 @@
+{
+  "datadog-claude-plugins": {
+    "source": {
+      "source": "github",
+      "repo": "DataDog/claude-marketplace"
+    },
+    "installLocation": "/Users/saje.liese/.claude/plugins/marketplaces/datadog-claude-plugins",
+    "lastUpdated": "2025-12-16T21:34:46.752Z"
+  },
+  "claude-plugins-official": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    },
+    "installLocation": "/Users/saje.liese/.claude/plugins/marketplaces/claude-plugins-official",
+    "lastUpdated": "2026-02-02T20:19:56.378Z"
+  },
+  "datadog-dd-source-claude-plugins": {
+    "source": {
+      "source": "directory",
+      "path": ".claude-plugins"
+    },
+    "installLocation": ".claude-plugins",
+    "lastUpdated": "2026-02-11T21:40:49.932Z"
+  },
+  "obsidian-skills": {
+    "source": {
+      "source": "github",
+      "repo": "kepano/obsidian-skills"
+    },
+    "installLocation": "/Users/saje.liese/.claude/plugins/marketplaces/obsidian-skills",
+    "lastUpdated": "2026-02-24T16:22:54.365Z"
+  }
+}
