@@ -1,0 +1,56 @@
+{
+  "version": 2,
+  "plugins": {
+    "dd@datadog-claude-plugins": [
+      {
+        "scope": "project",
+        "projectPath": "/Users/saje.liese/go/src/github.com/DataDog/dd-source",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/dd/5fabc4513982",
+        "version": "5fabc4513982",
+        "installedAt": "2025-12-08T14:34:31.284Z",
+        "lastUpdated": "2026-01-07T20:20:13.142Z",
+        "gitCommitSha": "5fabc45139822b2c2a8273cb392a72215e497599"
+      }
+    ],
+    "marketplace-auto-update@datadog-claude-plugins": [
+      {
+        "scope": "project",
+        "projectPath": "/Users/saje.liese/go/src/github.com/DataDog/dd-source",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/marketplace-auto-update/5fabc4513982",
+        "version": "5fabc4513982",
+        "installedAt": "2025-12-08T14:34:31.284Z",
+        "lastUpdated": "2026-01-07T20:20:13.142Z",
+        "gitCommitSha": "5fabc45139822b2c2a8273cb392a72215e497599"
+      }
+    ],
+    "atlas-to-rapid-migrator@datadog-claude-plugins": [
+      {
+        "scope": "project",
+        "projectPath": "/Users/saje.liese/go/src/github.com/DataDog/dd-source",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/atlas-to-rapid-migrator/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-07T20:20:14.663Z",
+        "lastUpdated": "2026-01-07T20:20:14.663Z"
+      }
+    ],
+    "gopls-lsp@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/claude-plugins-official/gopls-lsp/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-01-12T21:48:19.587Z",
+        "lastUpdated": "2026-01-12T21:48:19.587Z"
+      }
+    ],
+    "obsidian@obsidian-skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/obsidian-skills/obsidian/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-02-24T16:57:02.010Z",
+        "lastUpdated": "2026-02-24T16:57:02.010Z",
+        "gitCommitSha": "be978124b80dc6b60586773e1d125d1cdf36d26a"
+      }
+    ]
+  }
+}
