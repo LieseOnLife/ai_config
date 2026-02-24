@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(test:*)",
+      "Bash(log show:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(git -C ~/repos/dotfiles log --all --oneline --follow -- .gitconfig)",
+      "Bash(git -C ~/repos/dotfiles add .gitconfig)",
+      "Bash(git -C ~/repos/dotfiles commit -m \"Sanitize .gitconfig - remove signing key and personal info\")",
+      "mcp__atlassian__getAccessibleAtlassianResources",
+      "mcp__atlassian__fetch",
+      "WebFetch(domain:datadoghq.atlassian.net)",
+      "mcp__atlassian__searchConfluenceUsingCql",
+      "mcp__atlassian__getConfluencePage",
+      "Bash(git -C ~/go/src/github.com/DataDog/cloud-inventory worktree list)",
+      "Bash(readlink:*)",
+      "mcp__atlassian__search",
+      "mcp__playwright__browser_navigate",
+      "mcp__atlassian__getJiraIssue",
+      "Bash(jq:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
