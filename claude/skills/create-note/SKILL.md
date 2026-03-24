@@ -97,20 +97,20 @@ tags:
 
 ## Callouts
 
-Use `> [!type]` syntax for callouts liberally:
+Use `>[!type]` syntax for callouts (no space between `>` and `[`):
 
 ```markdown
-> [!note] Note
-> General information.
+>[!note] Note
+>General information.
 
-> [!warning] Warning
-> Something to be careful about.
+>[!warning] Warning
+>Something to be careful about.
 
-> [!tip] Tip
-> Pro tip or best practice.
+>[!tip] Tip
+>Pro tip or best practice.
 
-> [!example] Example
-> An example or demonstration.
+>[!example] Example
+>An example or demonstration.
 ```
 
 ## Linking Conventions

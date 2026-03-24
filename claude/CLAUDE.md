@@ -5,23 +5,27 @@
 
 ```bash
 # Instead of: git checkout -b saje/feature-name
-# Use:
-git worktree add ../saje/feature-name -b saje/feature-name
+# Use (from repo root):
+REPO=$(basename $(pwd))
+git worktree add ../${REPO}-worktrees/feature-name -b saje/feature-name
 
 # Instead of: git switch existing-branch
 # Use:
-git worktree add ../saje/existing-branch saje/existing-branch
+REPO=$(basename $(pwd))
+git worktree add ../${REPO}-worktrees/existing-branch saje/existing-branch
 ```
 
 All branches must be prefixed with `saje/`.
+Worktree folders use the feature name directly (no `saje/` prefix to avoid nested directories).
 
 ### Worktree Conflicts
 If a worktree or branch already exists, **do not delete it**. Instead, create a new version:
 ```bash
 # If saje/feature exists, create:
-git worktree add ../saje/feature-v2 -b saje/feature-v2
+REPO=$(basename $(pwd))
+git worktree add ../${REPO}-worktrees/feature-v2 -b saje/feature-v2
 # Or increment further:
-git worktree add ../saje/feature-v3 -b saje/feature-v3
+git worktree add ../${REPO}-worktrees/feature-v3 -b saje/feature-v3
 ```
 
 ### Deletion Policy
@@ -48,7 +52,7 @@ This returns JSON with `worktree_path`, `main_repo`, `branch`, and `is_worktree`
 
 1. **Always pass the full worktree path explicitly** in the prompt:
    ```
-   Task prompt: "Working directory: /Users/saje.liese/go/src/github.com/DataDog/saje/feature-name
+   Task prompt: "Working directory: /Users/saje.liese/go/src/github.com/DataDog/cloud-inventory-worktrees/feature-name
 
    Your task is to..."
    ```
@@ -69,11 +73,11 @@ This returns JSON with `worktree_path`, `main_repo`, `branch`, and `is_worktree`
 5. **Grant permissions if needed** - Ask user to approve permissions for worktree paths if subagents are blocked.
 
 ### Worktree Location Convention
-Create worktrees as siblings to the main repo, not inside it:
+Create worktrees in a `{repo-name}-worktrees` sibling directory:
 ```bash
 # Main repo at: /Users/saje.liese/go/src/github.com/DataDog/cloud-inventory
-# Worktree at:  /Users/saje.liese/go/src/github.com/DataDog/saje/feature-name
-#               (sibling directory, not inside cloud-inventory)
+# Worktree at:  /Users/saje.liese/go/src/github.com/DataDog/cloud-inventory-worktrees/feature-name
+# Branch:       saje/feature-name
 ```
 
 ### Subagent Permissions for Worktrees
@@ -94,7 +98,7 @@ If a subagent cannot access a worktree, **ask the user** to grant permissions:
    ```
 
 For DataDog repos, worktrees are typically under:
-`/Users/saje.liese/go/src/github.com/DataDog/`
+`/Users/saje.liese/go/src/github.com/DataDog/{repo-name}-worktrees/`
 
 ## Github
 When interacting with Github (github.com), ALWAYS use `gh` on the command line.
@@ -104,3 +108,7 @@ When in a repo, also include {repo}.md in the `~/.claude` folder
 
 ### Pull Requests
 - When making a PR description, only note changes between the whole current PR and main/master branch, not between the current commit and previous commits
+
+# Execution Style
+- Always maximize parallelism — use subagents, background agents, and parallel tool calls whenever possible
+- Prefer launching multiple independent agents in a single message over sequential execution

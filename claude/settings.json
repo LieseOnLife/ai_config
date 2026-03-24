@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(gh pr view *)",
+      "Bash(gh:*)",
       "Bash(wc:*)",
       "Bash(find:*)",
       "Bash(ls:*)",
@@ -9,10 +9,25 @@
       "Go build",
       "Ls",
       "Git",
-      "mcp__atlassian__confluence_get_page"
+      "mcp__atlassian__*get*",
+      "mcp__atlassian__*list*",
+      "mcp__atlassian__*search*",
+      "mcp__plugin_slack_slack__slack_read_*",
+      "mcp__plugin_slack_slack__slack_search_*",
+      "Read(/Users/saje.liese/dd/**)",
+      "Read(/Users/saje.liese/repos/ai_projects*/**)",
+      "Edit(/Users/saje.liese/repos/ai_projects-worktrees/**)",
+      "Write(/Users/saje.liese/repos/ai_projects-worktrees/**)",
+      "Bash(cd /Users/saje.liese/go/src/github.com/DataDog/*:*)",
+      "Bash(cd /Users/saje.liese/repos/ai_projects:*)",
+      "Bash(cd /Users/saje.liese/repos/ai_projects-worktrees/*:*)"
+    ],
+    "deny": [
+      "Edit(/Users/saje.liese/dd/**)",
+      "Write(/Users/saje.liese/dd/**)"
     ]
   },
-  "model": "opus",
+  "model": "opus[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -21,37 +36,45 @@
           {
             "type": "command",
             "command": "bash \"/Users/saje.liese/.claude/hooks/git-worktree-guard.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"/Users/saje.liese/.claude/hooks/terraform-otel-fix.sh\""
           }
         ]
-      }
-    ],
-    "SessionStart": [
+      },
       {
+        "matcher": "Bash|Edit|Write|WebFetch|WebSearch",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/saje.liese/.claude/hooks/gsd-check-update.js\""
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"/Users/saje.liese/.claude/hooks/gsd-context-monitor.js\""
+            "command": "bun \"/Users/saje.liese/.npm/_npx/7445b7fee21aff40/node_modules/nyolo/bin/nyolo.js\""
           }
         ]
       }
     ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "node \"/Users/saje.liese/.claude/hooks/gsd-statusline.js\""
-  },
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
-    "obsidian@obsidian-skills": true
-  }
+    "obsidian@obsidian-skills": true,
+    "atlassian@claude-plugins-official": true,
+    "slack@claude-plugins-official": false,
+    "dd@datadog-claude-plugins": true,
+    "playground@claude-plugins-official": false,
+    "go-code-reviewer@datadog-claude-plugins": true,
+    "atlas@datadog-claude-plugins": true,
+    "feature@datadog-claude-plugins": true,
+    "superpowers@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "appgate@datadog-claude-plugins": true
+  },
+  "extraKnownMarketplaces": {
+    "datadog-claude-plugins": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/DataDog/claude-marketplace.git"
+      }
+    }
+  },
+  "effortLevel": "high"
 }
