@@ -1,5 +1,5 @@
 #!/bin/bash
-# Sync all AI configurations to backup repo
+# Sync all AI configurations to backup repo + DataDog experimental
 # Usage: ./sync-all.sh [--dry-run]
 
 set -euo pipefail
@@ -28,3 +28,9 @@ fi
 echo "========================================"
 echo "  All syncs complete!"
 echo "========================================"
+echo ""
+
+# Push to DataDog experimental repo
+if [[ -z "${1:-}" || "${1:-}" != "--dry-run" ]]; then
+    "$SCRIPT_DIR/push-experimental.sh"
+fi

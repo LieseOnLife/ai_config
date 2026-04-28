@@ -9,15 +9,32 @@ Generate standup and channel digests, then append to today's Obsidian daily note
 
 ## Process
 
-### Step 1: Generate Standup
-Run `/slack:standup` to generate the standup from yesterday's Slack activity.
+### Step 0: Determine Date Range
+Check what day today is and when the last Slack Summary was written:
+- **Normal weekday (Tue-Fri):** Cover yesterday only.
+- **Monday or after a gap:** Check `Calendar/Daily Notes/` for the most recent `*- Slack Summary.md` file. Cover from the day after that summary through yesterday. For example, on Monday cover Friday through Sunday.
 
-### Step 2: Generate Tiered Channel Digests
+Use the full date range for both the standup and all channel reads.
+
+### Step 1: Generate Standup
+Run `/slack:standup` to generate the standup from the date range above.
+
+### Step 2: Read DMs
+Search for DMs received during the date range using `slack_search_public_and_private` with `to:me` and date filters (e.g., `to:me after:YYYY-MM-DD before:YYYY-MM-DD`).
+
+- Group messages by sender
+- For DM threads with multiple back-and-forth messages, summarize the conversation rather than listing every message
+- Skip automated/bot DMs unless they contain something actionable
+- If a DM conversation is long, use `slack_read_channel` with the sender's user ID to get the full context
+- Include Slack permalinks for each conversation so you can jump straight to it
+- Apply the same status markers as channel digests (use sparingly)
+
+### Step 3: Generate Tiered Channel Digests
 Run channel digests in 3 tiers:
 
 **Core** (full digest — summarize threads, decisions, action items):
 ```
-/slack:channel-digest cloud-accounts-team, cloud-accounts-resources, cavm-dev, transcendent, basement, compute-cloud-team, infra-all, infra-lifecycle-automation
+/slack:channel-digest cloud-accounts-team, cloud-accounts-resources, cavm-dev, transcendent, basement, compute-cloud-team, infra-all, infra-lifecycle-automation, cloud-account-sales-systems-collab, account-microchipping, dd-group-mentors
 ```
 
 **Ops** (flag anything needing attention):
@@ -27,12 +44,12 @@ Run channel digests in 3 tiers:
 
 **Secondary** (headlines only — brief 1-liner per notable message):
 ```
-/slack:channel-digest cloud-accounts-finops-connect, trex-stacks, compute-cloud-security-collab, homelab, rainbowdogs, rainbowdogs-committees, snippets, unifi, aws-org-modernization, computers, eng-backroom, obsidian-md, eng-announcements, claude
+/slack:channel-digest cloud-accounts-finops-connect, trex-stacks, compute-cloud-security-collab, homelab, rainbowdogs, rainbowdogs-committees, snippets, unifi, aws-org-modernization, computers, eng-backroom, obsidian-md, eng-announcements, claude, uk1-dc-deployment
 ```
 
 For secondary channels, only include channels that had notable activity. Use separate bullet points when relevant.
 
-### Step 3: Format as Obsidian Callouts
+### Step 4: Format as Obsidian Callouts
 Combine all output into this format.
 
 **Formatting rules:**
@@ -74,6 +91,15 @@ The file starts with `# Slack Summary` (from the template), then a tasks block (
 >- [items — add Slack link if there's a relevant thread]
 >**Blockers:** None
 
+## DMs
+>[!quote]+ Direct Messages
+>### [[👤Person Name]]
+>- [!] Asked about [topic/request](url) — [thread](slack-permalink)
+>- Shared [info/update](url) — [thread](slack-permalink)
+>### [[👤Person Name 2]]
+>- Quick question about [topic] — [thread](slack-permalink)
+>(only include people who sent DMs — skip if no DMs in the date range)
+
 ## Core Channels
 >[!info]+ Core Channels
 >### [channel-name](https://dd.slack.com/archives/CHANNEL_ID)
@@ -107,10 +133,8 @@ The file starts with `# Slack Summary` (from the template), then a tasks block (
 >(only channels with notable activity)
 ```
 
-### Step 4: Show Preview
-Present the formatted output to the user for review before writing.
-
 ### Step 5: Write to Slack Summary File
+**Always write the file directly — do not show a preview or ask for confirmation.**
 The digest goes in a **separate file** that is embedded in the daily note via the Daily Note template.
 
 **File location:** `Calendar/Daily Notes/YYYY-MM-DD - Slack Summary.md`
@@ -129,8 +153,8 @@ The Daily Note template automatically embeds `![[YYYY-MM-DD - Slack Summary]]` o
 
 If the Slack Summary file already exists for today, warn and ask whether to overwrite or skip.
 
-### Step 6: Offer to Post Standup
-Ask: "Post the standup to Slack?" If yes, use Slack tools to post to the appropriate standup channel.
+### Step 6: Done
+Do **not** offer to post the standup to Slack.
 
 ## Channel Configuration
 To update channels, edit this file directly. The three tiers are:

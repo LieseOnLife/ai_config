@@ -1,6 +1,8 @@
 # Git
 
 ## Branching with Worktrees
+**All development work must be done inside a worktree. Never commit code directly on `main`/`master`. Always create a worktree + branch before starting any implementation work.**
+
 **Always use `git worktree` instead of `git switch`, `git checkout`, or `git branch` when creating or switching branches.**
 
 ```bash
@@ -108,6 +110,7 @@ When in a repo, also include {repo}.md in the `~/.claude` folder
 
 ### Pull Requests
 - When making a PR description, only note changes between the whole current PR and main/master branch, not between the current commit and previous commits
+- **NEVER merge a PR.** Never run `gh pr merge`, never comment `/merge` on a PR, never add a PR to the merge queue. Saje merges when ready — do not trigger merges under any circumstances.
 
 # Execution Style
 - Always maximize parallelism — use subagents, background agents, and parallel tool calls whenever possible

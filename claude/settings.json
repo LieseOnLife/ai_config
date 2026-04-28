@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "permissions": {
     "allow": [
       "Bash(gh:*)",
@@ -9,9 +12,10 @@
       "Go build",
       "Ls",
       "Git",
-      "mcp__atlassian__*get*",
-      "mcp__atlassian__*list*",
-      "mcp__atlassian__*search*",
+      "mcp__plugin_atlassian_atlassian__get*",
+      "mcp__plugin_atlassian_atlassian__search*",
+      "mcp__plugin_atlassian_atlassian__atlassianUserInfo",
+      "mcp__plugin_atlassian_atlassian__lookupJiraAccountId",
       "mcp__plugin_slack_slack__slack_read_*",
       "mcp__plugin_slack_slack__slack_search_*",
       "Read(/Users/saje.liese/dd/**)",
@@ -20,12 +24,19 @@
       "Write(/Users/saje.liese/repos/ai_projects-worktrees/**)",
       "Bash(cd /Users/saje.liese/go/src/github.com/DataDog/*:*)",
       "Bash(cd /Users/saje.liese/repos/ai_projects:*)",
-      "Bash(cd /Users/saje.liese/repos/ai_projects-worktrees/*:*)"
+      "Bash(cd /Users/saje.liese/repos/ai_projects-worktrees/*:*)",
+      "WebFetch",
+      "mcp__datadog-google-workspace__get*",
+      "mcp__datadog-google-workspace__read*",
+      "mcp__datadog-google-workspace__list*",
+      "mcp__datadog-google-workspace__search*",
+      "mcp__datadog-google-workspace__ping"
     ],
     "deny": [
       "Edit(/Users/saje.liese/dd/**)",
       "Write(/Users/saje.liese/dd/**)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
   "model": "opus[1m]",
   "hooks": {
@@ -40,6 +51,11 @@
           {
             "type": "command",
             "command": "bash \"/Users/saje.liese/.claude/hooks/terraform-otel-fix.sh\""
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/saje.liese/.claude/hooks/bash-permission-check.py",
+            "timeout": 5
           }
         ]
       },
@@ -58,7 +74,7 @@
     "gopls-lsp@claude-plugins-official": true,
     "obsidian@obsidian-skills": true,
     "atlassian@claude-plugins-official": true,
-    "slack@claude-plugins-official": false,
+    "slack@claude-plugins-official": true,
     "dd@datadog-claude-plugins": true,
     "playground@claude-plugins-official": false,
     "go-code-reviewer@datadog-claude-plugins": true,
@@ -66,7 +82,8 @@
     "feature@datadog-claude-plugins": true,
     "superpowers@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
-    "appgate@datadog-claude-plugins": true
+    "appgate@datadog-claude-plugins": true,
+    "perf-feedback@datadog-claude-plugins": true
   },
   "extraKnownMarketplaces": {
     "datadog-claude-plugins": {
@@ -74,7 +91,21 @@
         "source": "git",
         "url": "https://github.com/DataDog/claude-marketplace.git"
       }
+    },
+    "sttts-skills": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/sttts/skills.git"
+      }
     }
   },
-  "effortLevel": "high"
+  "effortLevel": "medium",
+  "skipAutoPermissionPrompt": true,
+  "datadog-google-workspace": {
+    "command": "npx",
+    "args": [
+      "mcp-remote",
+      "https://google-workspace-mcp-server-834963730936.us-central1.run.app/mcp"
+    ]
+  }
 }
