@@ -22,18 +22,12 @@ echo ""
 
 cd "$EXPERIMENTAL_DIR"
 
-# Create or switch to saje/ai-config branch (orphan if new, regular if exists)
-if git ls-remote --exit-code origin "$BRANCH" &>/dev/null; then
-    git fetch origin "$BRANCH":"$BRANCH" 2>/dev/null || true
-    git checkout "$BRANCH"
-else
-    echo "Creating new branch: $BRANCH"
-    git checkout --orphan "$BRANCH"
-    git rm -rf . &>/dev/null || true
-fi
+# Switch to saje/ai-config branch
+git fetch origin "$BRANCH":"$BRANCH" 2>/dev/null || true
+git checkout "$BRANCH"
 
-# Copy claude config into experimental/claude-ai-config/
-DEST="$EXPERIMENTAL_DIR/claude-ai-config"
+# Copy claude config into users/saje.liese/ai_config/
+DEST="$EXPERIMENTAL_DIR/users/saje.liese/ai_config"
 mkdir -p "$DEST"
 rsync -av --delete \
     --exclude='settings.local.json' \
