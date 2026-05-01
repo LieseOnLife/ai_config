@@ -27,6 +27,24 @@ Backup and restore configurations for AI coding assistants.
 - 🛡️ **git-worktree-guard.sh** — prevent committing on `main`/`master` directly
 - 🔧 **terraform-otel-fix.sh** — Terraform OTEL workaround
 
+### 📜 Claude helper scripts (`claude/scripts/`)
+- 🌅 **morning-routine.sh** — wraps `claude --print /morning` for the daily Slack/standup digest
+- 🧪 **check-pr-ci.sh** — poll a PR's CI status and dump failed-job logs for triage
+- 🌳 **worktree-cleanup.sh** — list local worktrees with status flags (stale/uncommitted/merged)
+- 🧭 **worktree-context.sh** — emit `{worktree_path, main_repo, branch, is_worktree}` JSON for subagents
+
+### 🔄 Sync/install scripts (`scripts/`)
+- 🔁 **sync-all.sh** — run every backup script (currently just Claude)
+- ⬆️ **sync-claude.sh** — copy live `~/.claude/` config into this repo (`--dry-run` supported)
+- ⬇️ **install-claude.sh** — restore the repo's Claude config back into `~/.claude/` (`--dry-run` supported)
+- 🚀 **create-pr.sh** — open a PR with a templated body
+
+### ⚙️ Claude settings (`claude/settings.json`)
+- **Model**: `opus[1m]` (1M context window)
+- **Permissions allowlist**: `gh`/`git` CLI, read-only Atlassian + Slack MCPs, `cd` into `~/go/src/github.com/DataDog/*` worktrees, edit/write under `~/repos/ai_projects-worktrees/**`
+- **Permissions denylist**: no edits/writes under `~/dd/**` (work checkout — read-only)
+- **Hooks**: PreToolUse `git-worktree-guard.sh` (block commits on `main`/`master`), `terraform-otel-fix.sh` (Terraform OTEL workaround)
+
 ## 🗂️ Structure
 
 ```
