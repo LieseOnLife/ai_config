@@ -45,6 +45,18 @@ Backup and restore configurations for AI coding assistants.
 - **Permissions denylist**: no edits/writes under `~/dd/**` (work checkout — read-only)
 - **Hooks**: PreToolUse `git-worktree-guard.sh` (block commits on `main`/`master`), `terraform-otel-fix.sh` (Terraform OTEL workaround)
 
+### 🧩 Plugins (`claude/plugins/installed_plugins.json` + `known_marketplaces.json`)
+**Marketplaces tracked:**
+- 🐶 `datadog-claude-plugins` (DataDog/claude-marketplace)
+- 🤖 `claude-plugins-official` (anthropics/claude-plugins-official)
+- 🗂️ `datadog-dd-source-claude-plugins` (local directory)
+- 🪨 `obsidian-skills`
+
+**Installed plugins:**
+- DataDog: `dd`, `atlas`, `atlas-to-rapid-migrator`, `feature`, `appgate`, `go-code-reviewer`, `marketplace-auto-update`
+- Anthropic official: `superpowers`, `skill-creator`, `atlassian`, `slack`, `gopls-lsp`, `playground`
+- Obsidian: `obsidian`
+
 ## 🗂️ Structure
 
 ```
