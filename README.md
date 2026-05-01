@@ -1,8 +1,33 @@
-# AI Config Backup
+# 🐶 AI Config Backup
 
 Backup and restore configurations for AI coding assistants.
 
-## Structure
+## 📦 What's in `claude/`
+
+### ⚡ Slash commands (`claude/commands/`)
+- 🌅 **morning** — generate standup + tiered Slack channel digest, write to today's Obsidian daily note
+- 📚 **archive-plans** — move GSD plans from `.planning/` to `~/repos/ai_projects/` for long-term reference
+- 🧹 **clean-obsidian-doc** — strip HTML/clutter from Obsidian web clippings
+- 💬 **review-pr-comments** — pull and walk through unresolved PR comments
+- 🌳 **worktree-cleanup** — list worktrees, flag stale ones, prompt for removal
+- ☁️ **gcpprojects** — GCP project listing/scratch utility
+
+### 🛠️ Skills (`claude/skills/`)
+- 🏗️ **cloud-inventory** — Cloud Accounts team context for working on the cloud-inventory repo (GCP projects, AWS accounts, Azure subs, cloud-provider org mgmt)
+- 🚀 **create-pr** — open PRs in Saje's signature style (fun emojis, succinct, varied formatting)
+- 📝 **create-note** — Obsidian vault notes with the right template + location
+- 📖 **create-documentation** — rich-formatted Confluence pages
+- 🧭 **create-decision-log** — Cloud Accounts decision logs in Confluence
+- 🗺️ **create-migration-plan** — comprehensive migration plans for DB/schema changes
+
+### 🤖 Agents (`claude/agents/`)
+- 🌲 **worktree-subagent** — subagent helper that respects worktree path conventions
+
+### 🪝 Hooks (`claude/hooks/`)
+- 🛡️ **git-worktree-guard.sh** — prevent committing on `main`/`master` directly
+- 🔧 **terraform-otel-fix.sh** — Terraform OTEL workaround
+
+## 🗂️ Structure
 
 ```
 ai_config/
