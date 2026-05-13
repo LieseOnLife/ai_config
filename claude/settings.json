@@ -22,6 +22,7 @@
       "Read(/Users/saje.liese/repos/ai_projects*/**)",
       "Edit(/Users/saje.liese/repos/ai_projects-worktrees/**)",
       "Write(/Users/saje.liese/repos/ai_projects-worktrees/**)",
+      "Write(/Users/saje.liese/dd/experimental-worktrees/**)",
       "Bash(cd /Users/saje.liese/go/src/github.com/DataDog/*:*)",
       "Bash(cd /Users/saje.liese/repos/ai_projects:*)",
       "Bash(cd /Users/saje.liese/repos/ai_projects-worktrees/*:*)",
@@ -31,10 +32,6 @@
       "mcp__datadog-google-workspace__list*",
       "mcp__datadog-google-workspace__search*",
       "mcp__datadog-google-workspace__ping"
-    ],
-    "deny": [
-      "Edit(/Users/saje.liese/dd/**)",
-      "Write(/Users/saje.liese/dd/**)"
     ],
     "defaultMode": "auto"
   },
@@ -83,7 +80,8 @@
     "superpowers@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
     "appgate@datadog-claude-plugins": true,
-    "perf-feedback@datadog-claude-plugins": true
+    "perf-feedback@datadog-claude-plugins": true,
+    "cloud-accounts@datadog-claude-plugins": true
   },
   "extraKnownMarketplaces": {
     "datadog-claude-plugins": {
