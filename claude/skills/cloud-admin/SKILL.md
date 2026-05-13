@@ -105,15 +105,33 @@ Identify items where someone (not Saje) is asking a question, requesting follow-
 
 **Read the full thread before including anything.** Include all items that touched Saje's domain — both open and resolved. Classify each as open or completed:
 
-**Completed** (`[x]`) — add these but mark done:
+**Task status markers** — use the appropriate marker for each item. Importance variants (`[!]`, `[*]`, `[X]`) replace their normal counterparts when the item is high-priority/urgent:
+
+| Status | Normal | Important |
+|--------|--------|-----------|
+| Open / not started | `[ ]` | `[!]` |
+| In progress (Saje active, or awaiting teammate review) | `[/]` | `[*]` |
+| Waiting on someone outside the team | `[?]` | `[?]` |
+| Done | `[x]` | `[X]` |
+
+**Done** (`[x]` / `[X]`) — add these but mark done:
 - Thread is resolved: ✅/:done:/:white_check_mark: reaction, "thanks, that worked!", or otherwise clearly closed
 - Saje answered and the person acknowledged (e.g., `:ty:`, `:+1:`, or no follow-up needed)
 - Redirected to another channel or team (e.g., #cloudops, #fabric) — note where it went
 - Saje reviewed/approved a PR
 
-**Open** (`[ ]`) — add these as needing action:
-- Question unanswered or awaiting follow-up
-- PR submitted and needs review
+**In progress** (`[/]` / `[*]`) — Saje is actively working on it, or has submitted something and is waiting on a teammate (cloud-accounts team):
+- Saje opened a PR and is awaiting review from a teammate
+- Saje is mid-investigation on the request
+
+**Waiting on someone outside the team** (`[?]`) — Saje has asked a question or requested a review/response from someone outside cloud-accounts and is blocked on their reply:
+- Left a PR review comment on someone else's PR, awaiting their response
+- Asked the requester for clarification, awaiting reply
+- Pinged another team for input, awaiting reply
+
+**Open** (`[ ]` / `[!]`) — needs action from Saje but not yet started:
+- Question unanswered or awaiting follow-up from Saje
+- PR submitted by someone else and needs Saje's review
 - Request acknowledged but not yet acted on
 
 **Skip entirely** — do not add at all:
