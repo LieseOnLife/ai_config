@@ -114,6 +114,16 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"/Users/saje.liese/.claude/hooks/auto-format-on-edit.sh\"",
+            "timeout": 10
+          }
+        ]
       }
     ]
   },

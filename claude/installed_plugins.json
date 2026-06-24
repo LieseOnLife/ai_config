@@ -4,22 +4,22 @@
     "dd@datadog-claude-plugins": [
       {
         "scope": "user",
-        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/dd/e170736c42f2",
-        "version": "e170736c42f2",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/dd/1b40a911e11d",
+        "version": "1b40a911e11d",
         "installedAt": "2025-12-08T14:34:31.284Z",
-        "lastUpdated": "2026-05-27T16:42:14.800Z",
-        "gitCommitSha": "e170736c42f2e555a2dc68fb3ba9aae885de747a"
+        "lastUpdated": "2026-06-24T20:06:40.255Z",
+        "gitCommitSha": "1b40a911e11d226cf264c062e614be28167c42d4"
       }
     ],
     "marketplace-auto-update@datadog-claude-plugins": [
       {
         "scope": "project",
         "projectPath": "/Users/saje.liese/go/src/github.com/DataDog/dd-source",
-        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/marketplace-auto-update/e170736c42f2",
-        "version": "e170736c42f2",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/marketplace-auto-update/1b40a911e11d",
+        "version": "1b40a911e11d",
         "installedAt": "2025-12-08T14:34:31.284Z",
-        "lastUpdated": "2026-05-27T16:44:55.350Z",
-        "gitCommitSha": "e170736c42f2e555a2dc68fb3ba9aae885de747a"
+        "lastUpdated": "2026-06-24T20:06:42.229Z",
+        "gitCommitSha": "1b40a911e11d226cf264c062e614be28167c42d4"
       }
     ],
     "atlas-to-rapid-migrator@datadog-claude-plugins": [
@@ -77,38 +77,38 @@
         "installPath": "/Users/saje.liese/.claude/plugins/cache/claude-plugins-official/playground/unknown",
         "version": "unknown",
         "installedAt": "2026-03-11T15:01:01.813Z",
-        "lastUpdated": "2026-06-24T19:47:37.634Z",
+        "lastUpdated": "2026-06-24T20:06:43.740Z",
         "gitCommitSha": "6cc16f4b16e80893695da60b8b82a236be9f9546"
       }
     ],
     "go-code-reviewer@datadog-claude-plugins": [
       {
         "scope": "user",
-        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/go-code-reviewer/e170736c42f2",
-        "version": "e170736c42f2",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/go-code-reviewer/1b40a911e11d",
+        "version": "1b40a911e11d",
         "installedAt": "2026-03-13T16:53:48.275Z",
-        "lastUpdated": "2026-05-27T16:42:19.222Z",
-        "gitCommitSha": "e170736c42f2e555a2dc68fb3ba9aae885de747a"
+        "lastUpdated": "2026-06-24T20:06:41.233Z",
+        "gitCommitSha": "1b40a911e11d226cf264c062e614be28167c42d4"
       }
     ],
     "atlas@datadog-claude-plugins": [
       {
         "scope": "user",
-        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/atlas/e170736c42f2",
-        "version": "e170736c42f2",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/atlas/1b40a911e11d",
+        "version": "1b40a911e11d",
         "installedAt": "2026-03-17T21:19:17.248Z",
-        "lastUpdated": "2026-05-27T16:42:06.151Z",
-        "gitCommitSha": "e170736c42f2e555a2dc68fb3ba9aae885de747a"
+        "lastUpdated": "2026-06-24T20:06:37.272Z",
+        "gitCommitSha": "1b40a911e11d226cf264c062e614be28167c42d4"
       }
     ],
     "feature@datadog-claude-plugins": [
       {
         "scope": "user",
-        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/feature/e170736c42f2",
-        "version": "e170736c42f2",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/feature/1b40a911e11d",
+        "version": "1b40a911e11d",
         "installedAt": "2026-03-23T18:28:45.267Z",
-        "lastUpdated": "2026-05-27T16:42:16.998Z",
-        "gitCommitSha": "e170736c42f2e555a2dc68fb3ba9aae885de747a"
+        "lastUpdated": "2026-06-24T20:06:40.739Z",
+        "gitCommitSha": "1b40a911e11d226cf264c062e614be28167c42d4"
       }
     ],
     "superpowers@claude-plugins-official": [
@@ -127,49 +127,49 @@
         "installPath": "/Users/saje.liese/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown",
         "version": "unknown",
         "installedAt": "2026-03-25T14:07:53.511Z",
-        "lastUpdated": "2026-06-24T19:47:37.688Z",
+        "lastUpdated": "2026-06-24T20:06:44.298Z",
         "gitCommitSha": "6cc16f4b16e80893695da60b8b82a236be9f9546"
       }
     ],
     "appgate@datadog-claude-plugins": [
       {
         "scope": "user",
-        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/appgate/e170736c42f2",
-        "version": "e170736c42f2",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/appgate/1b40a911e11d",
+        "version": "1b40a911e11d",
         "installedAt": "2026-03-24T19:07:02.791Z",
-        "lastUpdated": "2026-05-27T16:42:03.418Z",
-        "gitCommitSha": "e170736c42f2e555a2dc68fb3ba9aae885de747a"
+        "lastUpdated": "2026-06-24T20:06:36.321Z",
+        "gitCommitSha": "1b40a911e11d226cf264c062e614be28167c42d4"
       }
     ],
     "perf-feedback@datadog-claude-plugins": [
       {
         "scope": "user",
-        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/perf-feedback/e170736c42f2",
-        "version": "e170736c42f2",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/perf-feedback/1b40a911e11d",
+        "version": "1b40a911e11d",
         "installedAt": "2026-04-02T21:01:57.525Z",
-        "lastUpdated": "2026-05-27T16:42:26.722Z",
-        "gitCommitSha": "e170736c42f2e555a2dc68fb3ba9aae885de747a"
+        "lastUpdated": "2026-06-24T20:06:43.236Z",
+        "gitCommitSha": "1b40a911e11d226cf264c062e614be28167c42d4"
       }
     ],
     "squire@datadog-claude-plugins": [
       {
         "scope": "project",
         "projectPath": "/Users/saje.liese/go/src/github.com/DataDog/claude-marketplace",
-        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/squire/e170736c42f2",
-        "version": "e170736c42f2",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/squire/1b40a911e11d",
+        "version": "1b40a911e11d",
         "installedAt": "2026-04-28T17:43:24.678Z",
-        "lastUpdated": "2026-05-27T16:45:01.466Z",
-        "gitCommitSha": "e170736c42f2e555a2dc68fb3ba9aae885de747a"
+        "lastUpdated": "2026-06-24T20:06:45.931Z",
+        "gitCommitSha": "1b40a911e11d226cf264c062e614be28167c42d4"
       }
     ],
     "cloud-accounts@datadog-claude-plugins": [
       {
         "scope": "user",
-        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/cloud-accounts/e170736c42f2",
-        "version": "e170736c42f2",
+        "installPath": "/Users/saje.liese/.claude/plugins/cache/datadog-claude-plugins/cloud-accounts/1b40a911e11d",
+        "version": "1b40a911e11d",
         "installedAt": "2026-04-29T17:48:06.168Z",
-        "lastUpdated": "2026-05-27T16:42:11.328Z",
-        "gitCommitSha": "e170736c42f2e555a2dc68fb3ba9aae885de747a"
+        "lastUpdated": "2026-06-24T20:06:39.767Z",
+        "gitCommitSha": "1b40a911e11d226cf264c062e614be28167c42d4"
       }
     ]
   }
