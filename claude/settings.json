@@ -12,12 +12,36 @@
       "Go build",
       "Ls",
       "Git",
-      "mcp__plugin_atlassian_atlassian__get*",
-      "mcp__plugin_atlassian_atlassian__search*",
+      "mcp__plugin_atlassian_atlassian__getAccessibleAtlassianResources",
+      "mcp__plugin_atlassian_atlassian__getConfluenceCommentChildren",
+      "mcp__plugin_atlassian_atlassian__getConfluencePage",
+      "mcp__plugin_atlassian_atlassian__getConfluencePageDescendants",
+      "mcp__plugin_atlassian_atlassian__getConfluencePageFooterComments",
+      "mcp__plugin_atlassian_atlassian__getConfluencePageInlineComments",
+      "mcp__plugin_atlassian_atlassian__getConfluenceSpaces",
+      "mcp__plugin_atlassian_atlassian__getIssueLinkTypes",
+      "mcp__plugin_atlassian_atlassian__getJiraIssue",
+      "mcp__plugin_atlassian_atlassian__getJiraIssueRemoteIssueLinks",
+      "mcp__plugin_atlassian_atlassian__getJiraIssueTypeMetaWithFields",
+      "mcp__plugin_atlassian_atlassian__getJiraProjectIssueTypesMetadata",
+      "mcp__plugin_atlassian_atlassian__getPagesInConfluenceSpace",
+      "mcp__plugin_atlassian_atlassian__getTransitionsForJiraIssue",
+      "mcp__plugin_atlassian_atlassian__getVisibleJiraProjects",
+      "mcp__plugin_atlassian_atlassian__search",
+      "mcp__plugin_atlassian_atlassian__searchConfluenceUsingCql",
+      "mcp__plugin_atlassian_atlassian__searchJiraIssuesUsingJql",
       "mcp__plugin_atlassian_atlassian__atlassianUserInfo",
       "mcp__plugin_atlassian_atlassian__lookupJiraAccountId",
-      "mcp__plugin_slack_slack__slack_read_*",
-      "mcp__plugin_slack_slack__slack_search_*",
+      "mcp__plugin_slack_slack__slack_read_canvas",
+      "mcp__plugin_slack_slack__slack_read_channel",
+      "mcp__plugin_slack_slack__slack_read_file",
+      "mcp__plugin_slack_slack__slack_read_thread",
+      "mcp__plugin_slack_slack__slack_read_user_profile",
+      "mcp__plugin_slack_slack__slack_search_channels",
+      "mcp__plugin_slack_slack__slack_search_emojis",
+      "mcp__plugin_slack_slack__slack_search_public",
+      "mcp__plugin_slack_slack__slack_search_public_and_private",
+      "mcp__plugin_slack_slack__slack_search_users",
       "Read(/Users/saje.liese/dd/**)",
       "Read(/Users/saje.liese/repos/ai_projects*/**)",
       "Edit(/Users/saje.liese/repos/ai_projects-worktrees/**)",
@@ -27,10 +51,19 @@
       "Bash(cd /Users/saje.liese/repos/ai_projects:*)",
       "Bash(cd /Users/saje.liese/repos/ai_projects-worktrees/*:*)",
       "WebFetch",
-      "mcp__datadog-google-workspace__get*",
-      "mcp__datadog-google-workspace__read*",
-      "mcp__datadog-google-workspace__list*",
-      "mcp__datadog-google-workspace__search*",
+      "mcp__datadog-google-workspace__get_comment",
+      "mcp__datadog-google-workspace__get_doc_as_markdown",
+      "mcp__datadog-google-workspace__get_file_content",
+      "mcp__datadog-google-workspace__get_file_metadata",
+      "mcp__datadog-google-workspace__get_presentation",
+      "mcp__datadog-google-workspace__get_slide",
+      "mcp__datadog-google-workspace__get_slide_thumbnail",
+      "mcp__datadog-google-workspace__get_spreadsheet_metadata",
+      "mcp__datadog-google-workspace__read_document",
+      "mcp__datadog-google-workspace__read_sheet",
+      "mcp__datadog-google-workspace__list_file_comments",
+      "mcp__datadog-google-workspace__list_folder_contents",
+      "mcp__datadog-google-workspace__search_files",
       "mcp__datadog-google-workspace__ping"
     ],
     "defaultMode": "auto"
@@ -53,6 +86,11 @@
             "type": "command",
             "command": "python3 /Users/saje.liese/.claude/hooks/bash-permission-check.py",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash \"/Users/saje.liese/.claude/hooks/pr-size-guard.sh\"",
+            "timeout": 5
           }
         ]
       },
@@ -62,6 +100,28 @@
           {
             "type": "command",
             "command": "bun \"/Users/saje.liese/.npm/_npx/7445b7fee21aff40/node_modules/nyolo/bin/nyolo.js\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"/Users/saje.liese/.claude/hooks/post-push-protocol.sh\"",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"/Users/saje.liese/.claude/hooks/auto-format-on-edit.sh\"",
+            "timeout": 10
           }
         ]
       }
@@ -97,7 +157,9 @@
       }
     }
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
+  "advisorModel": "claude-fable-5",
+  "theme": "dark",
   "skipAutoPermissionPrompt": true,
   "datadog-google-workspace": {
     "command": "npx",

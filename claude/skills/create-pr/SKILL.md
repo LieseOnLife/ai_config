@@ -32,6 +32,14 @@ Mix these formats in every PR:
 - Sections: Short, scannable
 - No fluff, no filler
 
+### 💬 Code Comments in the Diff
+Make comments succinct, simple, and clear. **Default to none.**
+- Write a comment only when WHY is non-obvious (hidden constraint, surprising behavior, empirical finding that contradicts docs).
+- One or two short lines. Never a multi-paragraph block.
+- Don't restate WHAT the code does — names and types already show that.
+- Don't include investigation logs, error transcripts, dates, PR numbers, or "previously" narratives. That belongs in the commit message or PR description.
+- If you find yourself writing a heading or numbered list inside a comment, it's too long — cut.
+
 ## Template Structure
 
 ```markdown

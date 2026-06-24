@@ -16,10 +16,67 @@ Check what day today is and when the last Slack Summary was written:
 
 Use the full date range for both the standup and all channel reads.
 
-### Step 1: Generate Standup
+### Step 1: Today's Meetings
+
+Fetch today's calendar events and create / link meeting notes before generating the standup.
+
+**1. Fetch events** by running the Swift helper:
+
+```bash
+~/.claude/scripts/today-meetings.swift
+```
+
+It returns one line per event in the form `<title>|<start date>|<calendar>|<organizer email>|<attendee emails comma-separated, excluding self>`. The script filters to **only events you've accepted and that are marked Busy** (skipping declined/tentative/no-response, free/tentative-availability, and cancelled events). To change which calendars are queried, edit the `targetNames` list inside that script.
+
+De-dupe events by `title + start time` (Google syncs can produce double entries across calendars).
+
+**2. Classify each event.** Normalize the title (strip leading emojis, trailing ` (from #channel)`, extra whitespace).
+
+**Always use the attendee list to disambiguate generic titles** (e.g. "Catchup!", "Sync", "Chat", "Quick chat", "1:1"). For generic titles, identify the non-self attendee(s) and search `Calendar/Meetings/` for a parent that mentions them by name. Never assume a generic title maps to a specific recurring parent without confirming via attendees.
+
+For specific titles, search `Calendar/Meetings/` for a recurring parent file `📢 *<normalized-title>*.md` (case-insensitive substring match).
+
+- **Parent found AND attendees match** → recurring. Use that parent's title.
+- **No parent, or attendees don't match** → treat as one-off, name it `📣 YYYY-MM-DD - <Title> with <Person>.md` so it's promotable. Surface it in the summary at the end so the user can promote it later if it actually recurs.
+
+**3. Create the occurrence file** at `Calendar/Meetings/📣 YYYY-MM-DD - <title>.md`, where `<title>` is:
+- Recurring: `📢 <Parent Title>` (e.g. `📣 2026-05-13 - 📢 Samra 1-1.md`)
+- One-off: the normalized event title
+
+Skip if the file already exists. Use the template at `Extras/Templates/📣 Meeting.md` as the source of truth for the body — read it fresh each run, then substitute:
+
+- `<% meetingDate %>` → today's date (`YYYY-MM-DD`)
+- The Templater header (the `<%* ... -%>` block that prompts for title and renames the file) is **not** copied — you're creating the file directly at the final path.
+- Populate frontmatter fields:
+  - `date:` → `YYYY-MM-DD`
+  - `meeting:` → `"[[📢 <Parent Title>]]"` for recurring, blank for one-off
+  - `people:` → attendees as `[[👤First Last]]` if the AppleScript can surface them (optional)
+
+Do **not** inline the template body in this skill — always read `Extras/Templates/📣 Meeting.md` from the vault so template edits flow through automatically.
+
+**4. Append to the recurring parent** (recurring events only). Insert directly after the `![[Meetings.base#📢Meetings within a Recurring]]` embed line:
+
+```markdown
+# [[YYYY-MM-DD]] 
+![[📣 YYYY-MM-DD - 📢 <Parent>#Overview]]
+```
+
+Skip if a section with today's date already exists in the parent.
+
+**5. Update today's daily note** `>[!meetings]` callout. For each meeting:
+- Recurring → `> [[📢 <Parent Title>]]`
+- One-off → `> [[📣 YYYY-MM-DD - <Title>]]`
+
+De-dupe against any wikilinks already in the callout. Preserve any lines the user has already added.
+
+**6. Summarize** at the end of this step: list each meeting handled, whether it was recurring or one-off, and flag any one-offs that look like they might warrant a recurring parent.
+
+**Calendar configuration:** edit the `targetNames` list in the Swift script to control which calendars are queried. Default: `saje.liese@datadoghq.com`, `Calendar`, `Infra Teams`.
+
+### Step 2: Generate Standup
 Run `/slack:standup` to generate the standup from the date range above.
 
-### Step 2: Read DMs
+### Step 3: Read DMs
 Search for DMs received during the date range using `slack_search_public_and_private` with `to:me` and date filters (e.g., `to:me after:YYYY-MM-DD before:YYYY-MM-DD`).
 
 - Group messages by sender
@@ -29,7 +86,7 @@ Search for DMs received during the date range using `slack_search_public_and_pri
 - Include Slack permalinks for each conversation so you can jump straight to it
 - Apply the same status markers as channel digests (use sparingly)
 
-### Step 3: Generate Tiered Channel Digests
+### Step 4: Generate Tiered Channel Digests
 Run channel digests in 3 tiers:
 
 **Core** (full digest — summarize threads, decisions, action items):
@@ -49,7 +106,7 @@ Run channel digests in 3 tiers:
 
 For secondary channels, only include channels that had notable activity. Use separate bullet points when relevant.
 
-### Step 4: Format as Obsidian Callouts
+### Step 5: Format as Obsidian Callouts
 Combine all output into this format.
 
 **Formatting rules:**
@@ -140,7 +197,7 @@ The file starts with `# Slack Summary` (from the template), then a tasks block (
 >(only channels with notable activity)
 ```
 
-### Step 5: Write to Slack Summary File
+### Step 6: Write to Slack Summary File
 **Always write the file directly — do not show a preview or ask for confirmation.**
 The digest goes in a **separate file** that is embedded in the daily note via the Daily Note template.
 
@@ -160,7 +217,7 @@ The Daily Note template automatically embeds `![[YYYY-MM-DD - Slack Summary]]` o
 
 If the Slack Summary file already exists for today, warn and ask whether to overwrite or skip.
 
-### Step 6: Done
+### Step 7: Done
 Do **not** offer to post the standup to Slack.
 
 ## Channel Configuration
