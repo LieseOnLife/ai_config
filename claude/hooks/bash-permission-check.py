@@ -40,18 +40,23 @@ def is_description(line):
 
 
 def get_effective_lines(cmd):
-    # Emit every non-empty, non-comment line independently — including the
-    # terminator of a backslash-continuation chain. Anything dropped here
-    # bypasses the permission gate.
     effective = []
+    current = None
     for raw in cmd.split("\n"):
         stripped = raw.strip()
         if not stripped or stripped.startswith("#"):
             continue
         if stripped.endswith("\\"):
-            stripped = stripped[:-1].rstrip()
-        if stripped:
-            effective.append(stripped)
+            if current is None:
+                current = stripped[:-1].strip()
+        else:
+            if current is not None:
+                effective.append(current)
+                current = None
+            else:
+                effective.append(stripped)
+    if current is not None:
+        effective.append(current)
     return effective
 
 

@@ -46,7 +46,8 @@
       "mcp__plugin_atlassian_atlassian__getAccessibleAtlassianResources",
       "mcp__plugin_atlassian_atlassian__searchConfluenceUsingCql",
       "WebFetch(domain:cmux.com)",
-      "Bash(obsidian help:*)"
+      "Bash(obsidian help:*)",
+      "WebFetch(domain:docs.google.com)"
     ],
     "deny": [],
     "ask": []
