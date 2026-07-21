@@ -1,0 +1,36 @@
+# Personal Codex defaults, adapted from claude/settings.json.
+# Machine-specific trust entries may be added by Codex and captured by sync-codex.sh.
+
+model = "gpt-5.6"
+model_reasoning_effort = "high"
+personality = "friendly"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "live"
+
+[sandbox_workspace_write]
+writable_roots = [
+  "/Users/saje.liese/repos/ai_projects-worktrees",
+  "/Users/saje.liese/dd/experimental-worktrees",
+]
+
+[features]
+hooks = true
+
+[agents]
+max_threads = 6
+max_depth = 1
+
+[shell_environment_policy.set]
+# Terraform accepts grpc or http/protobuf, while the ambient OTEL setting may use http/json.
+OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf"
+
+[mcp_servers.datadog-google-workspace]
+command = "npx"
+args = [
+  "mcp-remote",
+  "https://google-workspace-mcp-server-834963730936.us-central1.run.app/mcp",
+]
+
+[projects."/Users/saje.liese"]
+trust_level = "trusted"

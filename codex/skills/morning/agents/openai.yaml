@@ -1,0 +1,4 @@
+interface:
+  display_name: "Morning Routine"
+  short_description: "Generate the daily standup and digest"
+  default_prompt: "Use $morning to run my morning routine."

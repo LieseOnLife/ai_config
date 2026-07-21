@@ -1,146 +1,86 @@
 # 🐶 AI Config Backup
 
-Backup and restore configurations for AI coding assistants.
+Backup and restore personal configuration for Claude Code and Codex.
 
-## 📦 What's in `claude/`
-
-### ⚡ Slash commands (`claude/commands/`)
-- 🌅 **morning** — generate standup + tiered Slack channel digest, write to today's Obsidian daily note
-- 📚 **archive-plans** — move GSD plans from `.planning/` to `~/repos/ai_projects/` for long-term reference
-- 🧹 **clean-obsidian-doc** — strip HTML/clutter from Obsidian web clippings
-- 💬 **review-pr-comments** — pull and walk through unresolved PR comments
-- 🌳 **worktree-cleanup** — list worktrees, flag stale ones, prompt for removal
-- ☁️ **gcpprojects** — GCP project listing/scratch utility
-
-### 🛠️ Skills (`claude/skills/`)
-- 🏗️ **cloud-inventory** — Cloud Accounts team context for working on the cloud-inventory repo (GCP projects, AWS accounts, Azure subs, cloud-provider org mgmt)
-- 🚀 **create-pr** — open PRs in Saje's signature style (fun emojis, succinct, varied formatting)
-- 📝 **create-note** — Obsidian vault notes with the right template + location
-- 📖 **create-documentation** — rich-formatted Confluence pages
-- 🧭 **create-decision-log** — Cloud Accounts decision logs in Confluence
-- 🗺️ **create-migration-plan** — comprehensive migration plans for DB/schema changes
-
-### 🤖 Agents (`claude/agents/`)
-- 🌲 **worktree-subagent** — subagent helper that respects worktree path conventions
-
-### 🪝 Hooks (`claude/hooks/`)
-- 🛡️ **git-worktree-guard.sh** — prevent committing on `main`/`master` directly
-- 🔧 **terraform-otel-fix.sh** — Terraform OTEL workaround
-
-### 📜 Claude helper scripts (`claude/scripts/`)
-- 🌅 **morning-routine.sh** — wraps `claude --print /morning` for the daily Slack/standup digest
-- 🧪 **check-pr-ci.sh** — poll a PR's CI status and dump failed-job logs for triage
-- 🌳 **worktree-cleanup.sh** — list local worktrees with status flags (stale/uncommitted/merged)
-- 🧭 **worktree-context.sh** — emit `{worktree_path, main_repo, branch, is_worktree}` JSON for subagents
-
-### 🔄 Sync/install scripts (`scripts/`)
-- 🔁 **sync-all.sh** — run every backup script (currently just Claude)
-- ⬆️ **sync-claude.sh** — copy live `~/.claude/` config into this repo (`--dry-run` supported)
-- ⬇️ **install-claude.sh** — restore the repo's Claude config back into `~/.claude/` (`--dry-run` supported)
-- 🚀 **create-pr.sh** — open a PR with a templated body
-
-### ⚙️ Claude settings (`claude/settings.json`)
-- **Model**: `opus[1m]` (1M context window)
-- **Permissions allowlist**: `gh`/`git` CLI, read-only Atlassian + Slack MCPs, `cd` into `~/go/src/github.com/DataDog/*` worktrees, edit/write under `~/repos/ai_projects-worktrees/**`
-- **Permissions denylist**: no edits/writes under `~/dd/**` (work checkout — read-only)
-- **Hooks**: PreToolUse `git-worktree-guard.sh` (block commits on `main`/`master`), `terraform-otel-fix.sh` (Terraform OTEL workaround)
-
-## 🗂️ Structure
-
-```
-ai_config/
-├── claude/           # Claude Code configuration
-│   ├── agents/       # Custom agent definitions
-│   ├── commands/     # Slash commands
-│   ├── hooks/        # Event hooks
-│   ├── scripts/      # Helper scripts
-│   ├── skills/       # Custom skills
-│   ├── prompts/      # Custom prompts
-│   ├── plugins/      # Plugin metadata
-│   ├── CLAUDE.md     # Global instructions
-│   ├── settings.json # Permissions, model, hooks config
-│   └── settings.local.json
-├── scripts/          # Sync and install scripts
-└── README.md
-```
-
-## Usage
-
-### Backup (Sync to Repo)
-
-```bash
-# Sync all AI configs
-./scripts/sync-all.sh
-
-# Sync only Claude
-./scripts/sync-claude.sh
-
-# Dry run (preview changes)
-./scripts/sync-claude.sh --dry-run
-```
-
-### Restore (Install from Repo)
-
-```bash
-# Install Claude config
-./scripts/install-claude.sh
-
-# Dry run (preview changes)
-./scripts/install-claude.sh --dry-run
-```
-
-### Commit Changes
-
-After syncing, review and commit:
-
-```bash
-git add -A
-git commit -m "Backup AI configs"
-git push
-```
-
-## What's Backed Up
+## What is backed up
 
 ### Claude Code
 
-| Item | Description |
-|------|-------------|
-| `agents/` | Custom agent definitions (Task tool subagents) |
-| `commands/` | Slash commands (user-invocable skills) |
-| `hooks/` | Pre/Post tool hooks, session hooks |
-| `scripts/` | Helper shell scripts |
-| `skills/` | Custom skills with instructions |
-| `prompts/` | Reusable prompt templates |
-| `CLAUDE.md` | Global instructions for all projects |
-| `settings.json` | Permissions, model selection, hook config |
-| `settings.local.json` | Local/machine-specific settings |
-| `plugins/*.json` | Plugin and marketplace metadata |
+- Global instructions, settings, hooks, commands, skills, agents, prompts, and helper scripts under `claude/`
+- Plugin and marketplace metadata, but not plugin contents or credentials
 
-### Not Backed Up (Ephemeral/Sensitive)
+### Codex
 
-- `.credentials.json` - Authentication tokens
-- `history.jsonl` - Session history
-- `projects/` - Per-project session data
-- `cache/`, `debug/`, `todos/` - Temporary data
-- `get-shit-done/` - Installed separately (has VERSION file)
+- Global guidance in `codex/AGENTS.md`
+- Model, sandbox, approval, MCP, and agent defaults in `codex/config.toml`
+- Codex-native user skills converted from both Claude commands and Claude skills
+- Custom agents, lifecycle hooks, command rules, and helper scripts
 
-## Adding New AI Tools
+The detailed Claude-to-Codex mapping and deliberate omissions are documented in `codex/README.md`.
 
-1. Create a new directory: `mkdir cursor/`
-2. Create sync script: `scripts/sync-cursor.sh`
-3. Create install script: `scripts/install-cursor.sh`
-4. Add to `scripts/sync-all.sh`
+## Structure
 
-## First-Time Setup
+```text
+ai_config/
+├── claude/
+│   ├── agents/
+│   ├── commands/
+│   ├── hooks/
+│   ├── prompts/
+│   ├── scripts/
+│   ├── skills/
+│   ├── CLAUDE.md
+│   └── settings.json
+├── codex/
+│   ├── agents/
+│   ├── hooks/
+│   ├── rules/
+│   ├── scripts/
+│   ├── skills/
+│   ├── AGENTS.md
+│   ├── config.toml
+│   └── hooks.json
+└── scripts/
+    ├── install-claude.sh
+    ├── install-codex.sh
+    ├── sync-claude.sh
+    ├── sync-codex.sh
+    └── sync-all.sh
+```
+
+## Install
 
 ```bash
-# Clone repo on new machine
-git clone <repo-url> ~/repos/ai_config
-cd ~/repos/ai_config
-
-# Make scripts executable
-chmod +x scripts/*.sh
-
-# Install configs
 ./scripts/install-claude.sh
+./scripts/install-codex.sh
+```
+
+Both installers support `--dry-run`. The Codex installer writes configuration to `~/.codex/` and global user skills to `~/.agents/skills/`. Restart Codex afterward and use `/hooks` to review and trust the installed hooks.
+
+## Sync
+
+```bash
+# Everything
+./scripts/sync-all.sh
+
+# One tool
+./scripts/sync-claude.sh
+./scripts/sync-codex.sh
+```
+
+All sync scripts support `--dry-run`. `sync-codex.sh` requires a prior install from this repo, which prevents an uninitialized machine from replacing the curated backup with empty or unrelated local directories.
+
+## Not backed up
+
+- Authentication tokens and credential files
+- Conversation/session history
+- Logs, caches, temporary files, and SQLite runtime state
+- Codex memories and cloud task state
+- Installed plugin contents, OAuth state, and machine-generated plugin caches
+
+Review changes before committing:
+
+```bash
+git status --short
+git diff
 ```

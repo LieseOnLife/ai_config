@@ -1,0 +1,4 @@
+interface:
+  display_name: "Archive Plans"
+  short_description: "Archive project planning artifacts"
+  default_prompt: "Use $archive-plans to archive this project’s planning artifacts."

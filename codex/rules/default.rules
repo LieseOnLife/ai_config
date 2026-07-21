@@ -1,0 +1,26 @@
+# Commands intentionally allowed outside the sandbox. Destructive worktree and
+# branch operations remain guarded by hooks and the global instructions.
+
+prefix_rule(
+    pattern = ["gh"],
+    decision = "allow",
+    justification = "GitHub CLI is the preferred interface for github.com workflows.",
+)
+
+prefix_rule(
+    pattern = ["git", ["status", "diff", "log", "show", "rev-parse", "add", "commit", "fetch", "push", "branch", "worktree"]],
+    decision = "allow",
+    justification = "Allow the routine git workflow while excluding reset, clean, and checkout.",
+)
+
+prefix_rule(
+    pattern = ["go", ["build", "test"]],
+    decision = "allow",
+    justification = "Allow Go build and test commands to use shared module and build caches.",
+)
+
+prefix_rule(
+    pattern = ["go", "mod", "tidy"],
+    decision = "allow",
+    justification = "Allow Go module maintenance in the active workspace.",
+)

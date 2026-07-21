@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clean Obsidian Document"
+  short_description: "Clean messy Obsidian web clippings"
+  default_prompt: "Use $clean-obsidian-doc to clean this Obsidian document."
