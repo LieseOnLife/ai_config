@@ -25,6 +25,13 @@ if [[ -f "$HOME/.codex/.ai-config-managed" ]]; then
     echo ""
 fi
 
+# Sync pi
+if [[ -f "$HOME/.pi/agent/.ai-config-managed" ]]; then
+    echo ">>> Syncing pi..."
+    "$SCRIPT_DIR/sync-pi.sh" "$@"
+    echo ""
+fi
+
 # Future: Add other AI tools here
 # if [[ -d "$HOME/.cursor" ]]; then
 #     echo ">>> Syncing Cursor..."
