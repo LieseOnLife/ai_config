@@ -18,6 +18,13 @@ if [[ -d "$HOME/.claude" ]]; then
     echo ""
 fi
 
+# Sync Codex
+if [[ -f "$HOME/.codex/.ai-config-managed" ]]; then
+    echo ">>> Syncing Codex..."
+    "$SCRIPT_DIR/sync-codex.sh" "$@"
+    echo ""
+fi
+
 # Future: Add other AI tools here
 # if [[ -d "$HOME/.cursor" ]]; then
 #     echo ">>> Syncing Cursor..."

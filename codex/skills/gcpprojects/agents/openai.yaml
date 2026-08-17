@@ -1,0 +1,4 @@
+interface:
+  display_name: "GCP Projects"
+  short_description: "Process GCP project creation requests"
+  default_prompt: "Use $gcpprojects to process this GCP project request."

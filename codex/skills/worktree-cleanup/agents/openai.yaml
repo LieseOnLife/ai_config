@@ -1,0 +1,4 @@
+interface:
+  display_name: "Worktree Cleanup"
+  short_description: "Review and safely clean git worktrees"
+  default_prompt: "Use $worktree-cleanup to review stale worktrees."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review PR Comments"
+  short_description: "Address unresolved pull request feedback"
+  default_prompt: "Use $review-pr-comments on the current pull request."
