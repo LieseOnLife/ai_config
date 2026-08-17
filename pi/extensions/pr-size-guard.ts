@@ -30,6 +30,13 @@ export default function (pi: ExtensionAPI) {
     // Measure in the repo the command targets, not the session cwd.
     const cwd = extractCwd(command) ?? ctx.cwd;
 
+    // Exception: the ai_config backup repo is exempt (config ports are
+    // inherently large single-unit adds that don't split into vertical slices).
+    try {
+      const remote = await pi.exec("git", ["remote", "get-url", "origin"], { cwd, signal: ctx.signal, timeout: 5000 });
+      if (remote.code === 0 && /ai_config/.test(remote.stdout)) return undefined;
+    } catch { /* ignore */ }
+
     // Find the base branch to diff against.
     let base = "";
     for (const b of ["origin/main", "origin/master", "main", "master"]) {
