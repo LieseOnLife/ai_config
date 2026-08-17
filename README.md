@@ -1,6 +1,6 @@
 # 🐶 AI Config Backup
 
-Backup and restore personal configuration for Claude Code and Codex.
+Backup and restore personal configuration for Claude Code, Codex, and pi.
 
 ## What is backed up
 
@@ -17,6 +17,18 @@ Backup and restore personal configuration for Claude Code and Codex.
 - Custom agents, lifecycle hooks, command rules, and helper scripts
 
 The detailed Claude-to-Codex mapping and deliberate omissions are documented in `codex/README.md`.
+
+### pi
+
+- Global instructions in `pi/AGENTS.md` (ported from `claude/CLAUDE.md`)
+- Provider, model, thinking, and package defaults in `pi/settings.json`
+- MCP server config (Atlassian, Datadog, Slack, Google Workspace) in `pi/mcp.json`
+- Five lifecycle extensions ported from Claude hooks (worktree guard, PR size guard, terraform OTEL fix, auto-format-on-edit, post-push protocol) in `pi/extensions/`
+- Slash-command prompt templates in `pi/prompts/`
+- Helper scripts (worktree context, morning routine, CI checks, Obsidian tooling) in `pi/scripts/`
+- Thirteen skills ported from Claude in `pi/skills/`
+
+Not backed up: credentials (`auth.json`, `models-store.json`), the model registry (`models.json`), MCP cache, installed npm packages, sessions, and trust decisions.
 
 ## Structure
 
@@ -40,11 +52,21 @@ ai_config/
 │   ├── AGENTS.md
 │   ├── config.toml
 │   └── hooks.json
+├── pi/
+│   ├── extensions/
+│   ├── prompts/
+│   ├── scripts/
+│   ├── skills/
+│   ├── AGENTS.md
+│   ├── mcp.json
+│   └── settings.json
 └── scripts/
     ├── install-claude.sh
     ├── install-codex.sh
+    ├── install-pi.sh
     ├── sync-claude.sh
     ├── sync-codex.sh
+    ├── sync-pi.sh
     └── sync-all.sh
 ```
 
@@ -53,9 +75,10 @@ ai_config/
 ```bash
 ./scripts/install-claude.sh
 ./scripts/install-codex.sh
+./scripts/install-pi.sh
 ```
 
-Both installers support `--dry-run`. The Codex installer writes configuration to `~/.codex/` and global user skills to `~/.agents/skills/`. Restart Codex afterward and use `/hooks` to review and trust the installed hooks.
+Both installers support `--dry-run`. The Codex installer writes configuration to `~/.codex/` and global user skills to `~/.agents/skills/`. The pi installer writes to `~/.pi/agent/` (resource dirs only — credentials, cache, sessions, and the model registry are left untouched). Restart Codex afterward and use `/hooks` to review and trust the installed hooks. Restart pi (or run `/reload` in an interactive session) to load the new extensions, skills, and prompts.
 
 ## Sync
 
@@ -66,9 +89,10 @@ Both installers support `--dry-run`. The Codex installer writes configuration to
 # One tool
 ./scripts/sync-claude.sh
 ./scripts/sync-codex.sh
+./scripts/sync-pi.sh
 ```
 
-All sync scripts support `--dry-run`. `sync-codex.sh` requires a prior install from this repo, which prevents an uninitialized machine from replacing the curated backup with empty or unrelated local directories.
+All sync scripts support `--dry-run`. `sync-codex.sh` and `sync-pi.sh` require a prior install from this repo, which prevents an uninitialized machine from replacing the curated backup with empty or unrelated local directories.
 
 ## Not backed up
 
