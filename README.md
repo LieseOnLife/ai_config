@@ -26,7 +26,7 @@ The detailed Claude-to-Codex mapping and deliberate omissions are documented in 
 - Five lifecycle extensions ported from Claude hooks (worktree guard, PR size guard, terraform OTEL fix, auto-format-on-edit, post-push protocol) in `pi/extensions/`
 - Slash-command prompt templates in `pi/prompts/`
 - Helper scripts (worktree context, morning routine, CI checks, Obsidian tooling) in `pi/scripts/`
-- Thirteen skills ported from Claude in `pi/skills/`
+- Twelve skills ported from Claude in `pi/skills/`
 
 Not backed up: credentials (`auth.json`, `models-store.json`), the model registry (`models.json`), MCP cache, installed npm packages, sessions, and trust decisions.
 
