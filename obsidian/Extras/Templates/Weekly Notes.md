@@ -8,14 +8,9 @@ const dateStart = monday.format("YYYY-MM-DD"), dateEnd = sunday.format("YYYY-MM-
 const weekName = `${isoYear}-W${isoWeek}`, weekTag = `#week/${weekName}`;
 const title = `${isoYear}-w${isoWeek}-${monday.format("MM-DD")}`, folder = "Calendar/Weekly Notes";
 const current = tp.file.path(true);
-const existing = app.vault.getMarkdownFiles().find(file => {
-  const fm = app.metadataCache.getFileCache(file)?.frontmatter;
-  return file.path.startsWith(`${folder}/`) && fm?.date_start === dateStart && file.path !== current;
-});
-if (existing) {
-  new Notice(`Weekly note already exists: ${existing.path}`);
-  throw new Error(`Duplicate weekly note for ${dateStart}.`);
-}
+const existing = app.vault.getMarkdownFiles().find(file =>
+  file.path.startsWith(`${folder}/`) && app.metadataCache.getFileCache(file)?.frontmatter?.date_start === dateStart && file.path !== current);
+if (existing) throw new Error(`Weekly note already exists: ${existing.path}`);
 if (current !== `${folder}/${title}.md`) await tp.file.move(`/${folder}/${title}`);
 -%>
 ---
@@ -35,30 +30,17 @@ created: <% tp.file.creation_date("YYYY-MM-DD HH:mm:ss") %>
 ---
 # Weekly Dashboard
 >[!summary] <% dateStart %> to <% dateEnd %>
->**Capacity:** · **Goals confirmed:** No · **Last refreshed:**
->**Unavailable sources:**
-
+>**Capacity:** · **Goals confirmed:** No · **Last refreshed:** · **Unavailable sources:**
 >[!check]- Source Status
->**Jira:** · **Projects/TODOs:** · **Daily Slack Summaries:**
->**DM/Slack gap scan:** · **Calendar capacity:** · **Friday close:**
-
+>**Jira:** · **Projects/TODOs:** · **Daily Slack Summaries:** · **DM/Slack gap:** · **Calendar:** · **Friday close:**
 ## 🎯 Outcomes
-<!-- /weekly shows exactly three proposals and waits for Saje's explicit approval before writing here. -->
 ### 1.
-- **Done when:**
-- **Supports:**
-- **Risk:**
+- **Done when:** · **Supports:** · **Risk:**
 ### 2.
-- **Done when:**
-- **Supports:**
-- **Risk:**
+- **Done when:** · **Supports:** · **Risk:**
 ### 3.
-- **Done when:**
-- **Supports:**
-- **Risk:**
-
+- **Done when:** · **Supports:** · **Risk:**
 ## 📌 Committed This Week
-<!-- Linked checkboxes only. Move a checkbox between sections; never copy it. -->
 ### Jira and Projects
 ### Live Weekly Tasks from Other Notes
 ```tasks
@@ -88,8 +70,6 @@ sort by urgency
 ### DMs and Targeted Slack Gap Scan
 ## 🔄 Plan Changes
 ## 🚫 Not This Week
-<!-- Deferred tasks stay open and lose this week's tag. `[-]` means cancelled only. -->
-
 ## 📅 Notes from This Week
 ```base
 views:
@@ -101,9 +81,6 @@ views:
         - date(file.basename) >= this.file.properties.date_start
         - date(file.basename) <= this.file.properties.date_end
     order: [file.name, weekday]
-    sort:
-      - property: file.name
-        direction: ASC
   - type: table
     name: Weekly Operations
     filters:
@@ -117,11 +94,5 @@ views:
 ## Wins
 ## Unexpected Work
 ## Friday Close Snapshot
-<!-- Static non-checkbox linked bullets remain after live tasks move. -->
-- **Closed at:**
-- **Completed:**
-- **Carried forward:**
-- **Deferred:**
-- **Cancelled:**
+- **Closed at:** · **Completed:** · **Carried forward:** · **Deferred:** · **Cancelled:**
 ## Carry Forward
-<!-- Keep one active checkbox: move weekly-owned tasks or retag source-owned tasks; never recreate them. -->
