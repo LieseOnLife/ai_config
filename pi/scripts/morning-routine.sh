@@ -22,9 +22,8 @@ if ! pgrep -q "Obsidian"; then
   open -a "Obsidian" && sleep 5
 fi
 
-# Run the /morning prompt template which handles everything
-# (pi expands /morning to ~/.pi/agent/prompts/morning.md)
-"$PI" -p "/morning" --mode text 2>&1
+# Explicit sentinel prevents a scheduled run from waiting for weekly-plan approval.
+"$PI" -p "/morning scheduled-headless" --mode text 2>&1
 
 EXIT_CODE=$?
 echo "${LOG_PREFIX} Finished with exit code ${EXIT_CODE}"

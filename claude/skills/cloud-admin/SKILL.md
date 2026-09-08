@@ -46,7 +46,10 @@ Search the Ops folder for any file matching `🌧️*-Cloud Admin.md` whose date
 
 ### Update mode (file already exists)
 
-Read the file into memory. You'll add only *new* items in Steps 4–6 — never modify or remove existing entries.
+Read the file into memory. Preserve existing task content and prose; only managed weekly metadata/links may be reconciled in place.
+
+### Weekly Dashboard Link
+After create or open, read `~/.claude/skills/weekly/SKILL.md` and follow **Cloud Admin Integration**. Link to an existing current weekly page only; never create one. This managed `week` property and `# Links` entry are the sole exception to append-only updates.
 
 ---
 
@@ -84,6 +87,11 @@ Format each ticket as:
 ```
 
 When the requester is an individual person, link them as `[[👤First Last]]`. When the requester is a team or org unit (not a person), use the team name as plain text.
+
+**No JIRA ticket exists yet** (e.g. a Slack-only report/investigation under a provider heading): link the Slack thread in place of the ticket link instead of writing "No ticket":
+```
+- [ ] [Slack thread]({thread_url}) - {description}
+```
 
 **Skip** any ticket whose ID already appears in the existing doc.
 
@@ -163,7 +171,7 @@ Insert gathered items under the correct sections in `## Permissions`:
 - JIRA tickets and Slack items both go under the matching provider heading: `### AWS`, `### GCP`, `### Azure`, `### OCI`
 - For Slack items, add a `#### Support Questions` sub-heading under the provider if one doesn't already exist
 - For questions that span multiple providers or are unclear, add `### General` at the bottom of `## Permissions` with a `#### Support Questions` sub-heading
-- Only append — never touch existing lines
+- Only append task content; weekly integration may reconcile its managed property and link
 
 ---
 
