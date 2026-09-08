@@ -22,8 +22,8 @@ if ! pgrep -q "Obsidian"; then
   open -a "Obsidian" && sleep 5
 fi
 
-# Run the /morning skill which handles everything
-"$CLAUDE" -p "Run /morning" --output-format text 2>&1
+# Explicit sentinel prevents a scheduled run from waiting for weekly-plan approval.
+"$CLAUDE" -p "Run /morning scheduled-headless" --output-format text 2>&1
 
 EXIT_CODE=$?
 echo "${LOG_PREFIX} Finished with exit code ${EXIT_CODE}"

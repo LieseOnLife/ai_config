@@ -211,6 +211,9 @@ The Daily Note template automatically embeds `![[YYYY-MM-DD - Slack Summary]]` o
 
 If the Slack Summary file already exists for today, warn and ask whether to overwrite or skip.
 
+### Step 6.5: Weekly Dashboard
+After the Slack Summary is written, read `~/.pi/agent/skills/weekly/SKILL.md` and follow **Morning Integration**. Preserve the `scheduled-headless` argument when present. This pass links today's daily note, imports only new actionable Slack/DM work, or handles a missing weekly page exactly as that skill specifies. Failure here must not undo the Slack Summary.
+
 ### Step 7: Done
 Do **not** offer to post the standup to Slack.
 
