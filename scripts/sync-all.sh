@@ -32,6 +32,12 @@ if [[ -f "$HOME/.pi/agent/.ai-config-managed" ]]; then
     echo ""
 fi
 
+if [[ -f "$HOME/.config/grinch/.ai-config-managed" ]]; then
+    echo ">>> Syncing Grinch..."
+    "$SCRIPT_DIR/sync-grinch.sh" "$@"
+    echo ""
+fi
+
 # Future: Add other AI tools here
 # if [[ -d "$HOME/.cursor" ]]; then
 #     echo ">>> Syncing Cursor..."

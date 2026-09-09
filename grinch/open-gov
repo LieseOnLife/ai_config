@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+    echo "Usage: open-gov <http(s)://url>" >&2
+    exit 2
+fi
+case "$1" in
+    http://?*|https://?*) ;;
+    *) echo "Expected an HTTP(S) URL." >&2; exit 2 ;;
+esac
+authority="${1#*://}"
+authority="${authority%%[/?#]*}"
+if [[ -z "$authority" || "$1" == *[[:space:]]* ]]; then
+    echo "Expected a hostname and no unescaped whitespace in the URL." >&2
+    exit 2
+fi
+if [[ ! -d "$HOME/Library/Application Support/Google/Chrome/Profile 3" ]]; then
+    echo "GovCloud Chrome profile (Profile 3) is missing; refusing to create it." >&2
+    exit 1
+fi
+
+exec open -na "Google Chrome" --args --profile-directory="Profile 3" "$1"
