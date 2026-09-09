@@ -109,9 +109,12 @@ Install Grinch first, then run `./scripts/install-grinch.sh --dry-run` and
 must be migrated explicitly. Chrome profiles, credentials, and AppGate settings
 are never copied or changed.
 
-Launch Grinch, then select **Grinch** in **System Settings → Desktop & Dock →
-Default web browser**. The installer does not change that system preference or
-other URL-scheme handlers. Use Grinch's **Reload Config** after editing rules.
+Launch Grinch. **If it was already running, choose Reload Config (⌘R) from its
+menu after installation**—launching the app again does not reload its config.
+An instance started before a config existed can otherwise keep ignoring links.
+Then select **Grinch** in **System Settings → Desktop & Dock → Default web
+browser**. The installer does not change that system preference or other URL-scheme
+handlers. Use **Reload Config** after subsequent rule edits too.
 
 ```bash
 open-gov 'https://identity.example/login' # explicitly bypass the Commercial default
