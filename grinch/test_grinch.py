@@ -120,13 +120,19 @@ class GrinchTests(unittest.TestCase):
         self.install()
         self.command([GRINCH, "--validate"])
         gov = ["https://ddog-gov.com", "https://login.ddog-gov.com/a", "https://fed.dog",
-               "https://vault.fed.dog/a", "https://FED.DOG/login", "http://fed.dog:8080/a"]
+               "https://vault.fed.dog/a", "https://FED.DOG/login", "http://fed.dog:8080/a",
+               "https://console.amazonaws-us-gov.com",
+               "https://us-gov-west-1.console.amazonaws-us-gov.com/ecs",
+               "https://d-9067f50546.awsapps.com/start/#/?tab=accounts"]
         commercial = ["https://datadoghq.com", "https://prod.dog", "https://vault.prod.dog",
                       "https://staging.dog", "https://ddbuild.io", "https://ci.ddbuild.io",
                       "https://github.com/DataDog", "https://github.com/LieseOnLife",
                       "https://datadoghq.atlassian.net/wiki", "https://example.com",
                       "https://notfed.dog", "https://fed.dog.example.com",
-                      "https://ddog-gov.com.example.com", "https://example.com/?next=fed.dog"]
+                      "https://ddog-gov.com.example.com", "https://example.com/?next=fed.dog",
+                      "https://awsapps.com", "https://console.aws.amazon.com",
+                      "https://amazonaws-us-gov.com.example.com",
+                      "https://d-9067f50546.awsapps.com.example.com"]
         for url in gov + commercial:
             with self.subTest(url=url):
                 output = self.command([GRINCH, "--test", url])
