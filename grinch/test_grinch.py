@@ -110,6 +110,15 @@ class GrinchTests(unittest.TestCase):
         output = self.command([str(self.bin / "open-gov"), url])
         self.assertEqual(output.splitlines(), ["-na", "Google Chrome", "--args",
                          "--profile-directory=Profile 3", url])
+        # Complex but valid URLs pass through unchanged
+        for complex_url in [
+            "https://user@xn--example-8va.com:8443/../../",
+            "http://fed.dog:8080/a",
+        ]:
+            with self.subTest(url=complex_url):
+                output = self.command([str(self.bin / "open-gov"), complex_url])
+                self.assertEqual(output.splitlines(), ["-na", "Google Chrome", "--args",
+                                 "--profile-directory=Profile 3", complex_url])
         for args in [[], ["--help"], ["file:///tmp/test"], ["https://"], ["https:///path"],
                      ["https://example.com/a b"], [url, url]]:
             self.command([str(self.bin / "open-gov"), *args], expected=2)
