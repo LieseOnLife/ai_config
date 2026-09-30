@@ -33,7 +33,7 @@ Not backed up: credentials (`auth.json`, `models-store.json`), the model registr
 ### Grinch browser routing
 
 - `grinch/grinch.js`: external web links default to Commercial Chrome (`Default`).
-- `ddog-gov.com`, `fed.dog`, and their subdomains use GovCloud Chrome (`Profile 3`).
+- `ddog-gov.com`, `fed.dog`, `amazonaws-us-gov.com` (AWS GovCloud console + regional subdomains), and the GovCloud SSO start host `d-9067f50546.awsapps.com` use GovCloud Chrome (`Profile 3`).
 - `prod.dog`, `staging.dog`, `ddbuild.io`, all GitHub URLs, and unmatched URLs use Commercial.
 - `grinch/open-gov`: a terminal helper for explicitly opening any HTTP(S) URL in GovCloud.
 

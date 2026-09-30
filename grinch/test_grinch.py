@@ -110,6 +110,15 @@ class GrinchTests(unittest.TestCase):
         output = self.command([str(self.bin / "open-gov"), url])
         self.assertEqual(output.splitlines(), ["-na", "Google Chrome", "--args",
                          "--profile-directory=Profile 3", url])
+        # Complex but valid URLs pass through unchanged
+        for complex_url in [
+            "https://user@xn--example-8va.com:8443/../../",
+            "http://fed.dog:8080/a",
+        ]:
+            with self.subTest(url=complex_url):
+                output = self.command([str(self.bin / "open-gov"), complex_url])
+                self.assertEqual(output.splitlines(), ["-na", "Google Chrome", "--args",
+                                 "--profile-directory=Profile 3", complex_url])
         for args in [[], ["--help"], ["file:///tmp/test"], ["https://"], ["https:///path"],
                      ["https://example.com/a b"], [url, url]]:
             self.command([str(self.bin / "open-gov"), *args], expected=2)
@@ -120,13 +129,19 @@ class GrinchTests(unittest.TestCase):
         self.install()
         self.command([GRINCH, "--validate"])
         gov = ["https://ddog-gov.com", "https://login.ddog-gov.com/a", "https://fed.dog",
-               "https://vault.fed.dog/a", "https://FED.DOG/login", "http://fed.dog:8080/a"]
+               "https://vault.fed.dog/a", "https://FED.DOG/login", "http://fed.dog:8080/a",
+               "https://console.amazonaws-us-gov.com",
+               "https://us-gov-west-1.console.amazonaws-us-gov.com/ecs",
+               "https://d-9067f50546.awsapps.com/start/#/?tab=accounts"]
         commercial = ["https://datadoghq.com", "https://prod.dog", "https://vault.prod.dog",
                       "https://staging.dog", "https://ddbuild.io", "https://ci.ddbuild.io",
                       "https://github.com/DataDog", "https://github.com/LieseOnLife",
                       "https://datadoghq.atlassian.net/wiki", "https://example.com",
                       "https://notfed.dog", "https://fed.dog.example.com",
-                      "https://ddog-gov.com.example.com", "https://example.com/?next=fed.dog"]
+                      "https://ddog-gov.com.example.com", "https://example.com/?next=fed.dog",
+                      "https://awsapps.com", "https://console.aws.amazon.com",
+                      "https://amazonaws-us-gov.com.example.com",
+                      "https://d-9067f50546.awsapps.com.example.com"]
         for url in gov + commercial:
             with self.subTest(url=url):
                 output = self.command([GRINCH, "--test", url])
