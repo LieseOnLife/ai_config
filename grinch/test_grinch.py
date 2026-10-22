@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 import shutil
@@ -20,8 +21,17 @@ class GrinchTests(unittest.TestCase):
         self.env = dict(os.environ, HOME=str(self.home), PATH=f"{self.bin}:{os.environ['PATH']}")
         shutil.copytree(ROOT / "scripts", self.repo / "scripts")
         shutil.copytree(ROOT / "grinch", self.repo / "grinch")
-        for profile in ["Default", "Profile 3"]:
-            (self.home / "Library/Application Support/Google/Chrome" / profile).mkdir(parents=True)
+        # Mirrors a Mac where Default is a personal profile, so directory-based
+        # routing would pick the wrong one.
+        self.chrome = self.home / "Library/Application Support/Google/Chrome"
+        self.write_profiles({"Default": "Your Chrome", "Profile 1": "datadoghq.com",
+                             "Profile 2": "ddog-gov.com"})
+
+    def write_profiles(self, names):
+        for directory in names:
+            (self.chrome / directory).mkdir(parents=True, exist_ok=True)
+        cache = {directory: {"name": name} for directory, name in names.items()}
+        (self.chrome / "Local State").write_text(json.dumps({"profile": {"info_cache": cache}}))
 
     def command(self, args, expected=0, answer=None):
         result = subprocess.run(args, env=self.env, input=answer, text=True,
@@ -89,11 +99,13 @@ class GrinchTests(unittest.TestCase):
         self.script("sync-grinch.sh", expected=1)
 
     def test_missing_profile_and_nonregular_targets(self):
-        profile = self.home / "Library/Application Support/Google/Chrome/Profile 3"
-        profile.rmdir()
+        self.write_profiles({"Default": "Your Chrome", "Profile 1": "datadoghq.com"})
         self.script("install-grinch.sh", "--dry-run", expected=1)
         self.assertFalse(self.config.exists())
-        profile.mkdir()
+        self.write_profiles({"Profile 1": "datadoghq.com", "Profile 2": "ddog-gov.com",
+                             "Profile 3": "ddog-gov.com"})
+        self.script("install-grinch.sh", "--dry-run", expected=1)
+        self.write_profiles({"Profile 1": "datadoghq.com", "Profile 2": "ddog-gov.com"})
         self.config.mkdir(parents=True)
         (self.config / "grinch.js").mkdir()
         self.script("install-grinch.sh", "--dry-run", expected=1)
@@ -109,7 +121,7 @@ class GrinchTests(unittest.TestCase):
         url = "https://identity.example/login?a=1&b=two%20words"
         output = self.command([str(self.bin / "open-gov"), url])
         self.assertEqual(output.splitlines(), ["-na", "Google Chrome", "--args",
-                         "--profile-directory=Profile 3", url])
+                         "--profile-directory=Profile 2", url])
         # Complex but valid URLs pass through unchanged
         for complex_url in [
             "https://user@xn--example-8va.com:8443/../../",
@@ -118,11 +130,14 @@ class GrinchTests(unittest.TestCase):
             with self.subTest(url=complex_url):
                 output = self.command([str(self.bin / "open-gov"), complex_url])
                 self.assertEqual(output.splitlines(), ["-na", "Google Chrome", "--args",
-                                 "--profile-directory=Profile 3", complex_url])
+                                 "--profile-directory=Profile 2", complex_url])
         for args in [[], ["--help"], ["file:///tmp/test"], ["https://"], ["https:///path"],
                      ["https://example.com/a b"], [url, url]]:
             self.command([str(self.bin / "open-gov"), *args], expected=2)
-        (self.home / "Library/Application Support/Google/Chrome/Profile 3").rmdir()
+        self.write_profiles({"Profile 1": "datadoghq.com", "Profile 2": "renamed"})
+        self.command([str(self.bin / "open-gov"), url], expected=1)
+        self.write_profiles({"Profile 1": "datadoghq.com", "Profile 2": "ddog-gov.com"})
+        (self.chrome / "Profile 2").rmdir()
         self.command([str(self.bin / "open-gov"), url], expected=1)
 
     def test_native_routes(self):
@@ -147,7 +162,7 @@ class GrinchTests(unittest.TestCase):
                 output = self.command([GRINCH, "--test", url])
                 fields = dict(line.split(":", 1) for line in output.splitlines() if ":" in line)
                 self.assertEqual(fields["Browser"].strip(), "com.google.Chrome")
-                profile = "Profile 3" if url in gov else "Default"
+                profile = "Profile 2" if url in gov else "Profile 1"
                 self.assertEqual(fields["Args"].strip(), f"--profile-directory={profile}")
                 self.assertEqual(fields["Final"].strip(), url)
 
