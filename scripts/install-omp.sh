@@ -39,7 +39,9 @@ if [[ -z "$DRY_RUN" ]]; then
     fi
 fi
 
-mkdir -p "$AGENT_DIR"
+if [[ -z "$DRY_RUN" ]]; then
+    mkdir -p "$AGENT_DIR"
+fi
 
 # Directories to install (relative to ~/.omp/agent)
 SYNC_DIRS=(

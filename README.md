@@ -41,7 +41,7 @@ Not backed up: credentials (`auth.json`, `models-store.json`), the model registr
 
 Skills from `~/.pi/agent/skills` are loaded by omp through `config.yml` and are backed up under `pi/`.
 
-Not backed up: credentials and OAuth state, `*.db` files (agent, history, models, skill descriptions), blobs, cache, logs, sessions, and lock files.
+Not backed up: credentials and OAuth state, `*.db` files (agent, history, models, skill descriptions), blobs, cache, logs, sessions, and runtime `*.lock` files.
 
 ### Grinch browser routing
 
