@@ -1,6 +1,6 @@
 # 🐶 AI Config Backup
 
-Backup and restore personal configuration for Claude Code, Codex, pi, and Grinch.
+Backup and restore personal configuration for Claude Code, Codex, pi, omp, and Grinch.
 
 ## What is backed up
 
@@ -29,6 +29,19 @@ The detailed Claude-to-Codex mapping and deliberate omissions are documented in 
 - Twelve skills ported from Claude in `pi/skills/`
 
 Not backed up: credentials (`auth.json`, `models-store.json`), the model registry (`models.json`), MCP cache, installed npm packages, sessions, and trust decisions.
+
+### omp (oh-my-pi)
+
+- Global instructions in `omp/agent/AGENTS.md`
+- Model roles, subagent model overrides, skill directories, extension paths, and UI defaults in `omp/agent/config.yml`
+- MCP server config (Atlassian, Datadog, Gmail, Google Calendar/Workspace, Slack) in `omp/agent/mcp.json`
+- Lifecycle extensions (worktree guard, PR size guard, post-push protocol, auto-format, terraform OTEL fix, prompt snippets, pi model/Baseten shims) in `omp/agent/extensions/` and shared helpers in `omp/agent/lib/`
+- Prompt templates in `omp/agent/prompts/`, domain rules in `omp/agent/rules/`, and auto-learned skills in `omp/agent/managed-skills/`
+- Plugin and marketplace metadata (`omp/marketplaces.json`, `omp/plugins/*.json`), but not plugin contents
+
+Skills from `~/.pi/agent/skills` are loaded by omp through `config.yml` and are backed up under `pi/`.
+
+Not backed up: credentials and OAuth state, `*.db` files (agent, history, models, skill descriptions), blobs, cache, logs, sessions, and lock files.
 
 ### Grinch browser routing
 
@@ -73,6 +86,18 @@ ai_config/
 │   ├── AGENTS.md
 │   ├── mcp.json
 │   └── settings.json
+├── omp/
+│   ├── agent/
+│   │   ├── extensions/
+│   │   ├── lib/
+│   │   ├── managed-skills/
+│   │   ├── prompts/
+│   │   ├── rules/
+│   │   ├── AGENTS.md
+│   │   ├── config.yml
+│   │   └── mcp.json
+│   ├── plugins/
+│   └── marketplaces.json
 ├── grinch/
 │   ├── grinch.js
 │   ├── open-gov
@@ -84,9 +109,11 @@ ai_config/
     ├── install-claude.sh
     ├── install-codex.sh
     ├── install-pi.sh
+    ├── install-omp.sh
     ├── sync-claude.sh
     ├── sync-codex.sh
     ├── sync-pi.sh
+    ├── sync-omp.sh
     └── sync-all.sh
 ```
 
@@ -96,10 +123,11 @@ ai_config/
 ./scripts/install-claude.sh
 ./scripts/install-codex.sh
 ./scripts/install-pi.sh
+./scripts/install-omp.sh
 ./scripts/install-grinch.sh
 ```
 
-All installers support `--dry-run`. The Codex installer writes configuration to `~/.codex/` and global user skills to `~/.agents/skills/`. The pi installer writes to `~/.pi/agent/` (resource dirs only — credentials, cache, sessions, and the model registry are left untouched). Restart Codex afterward and use `/hooks` to review and trust the installed hooks. Restart pi (or run `/reload` in an interactive session) to load the new extensions, skills, and prompts.
+All installers support `--dry-run`. The Codex installer writes configuration to `~/.codex/` and global user skills to `~/.agents/skills/`. The pi installer writes to `~/.pi/agent/` (resource dirs only — credentials, cache, sessions, and the model registry are left untouched). The omp installer writes to `~/.omp/agent/` plus plugin/marketplace metadata under `~/.omp/` (databases, blobs, cache, logs, and sessions are left untouched). Restart Codex afterward and use `/hooks` to review and trust the installed hooks. Restart pi (or run `/reload` in an interactive session) to load the new extensions, skills, and prompts. Restart omp to pick up its config and extensions.
 
 ### Enable Grinch on macOS
 
@@ -134,6 +162,7 @@ Actual AppGate authentication and browser-window selection still need a manual c
 ./scripts/sync-claude.sh
 ./scripts/sync-codex.sh
 ./scripts/sync-pi.sh
+./scripts/sync-omp.sh
 ./scripts/sync-grinch.sh
 ```
 
@@ -146,7 +175,7 @@ managed marker, diagnostic logs, and runtime files are excluded. Maintain the
 push script for Claude configuration. Use `sync-grinch.sh` for a Grinch-only backup
 without commits or pushes.
 
-All sync scripts support `--dry-run`. `sync-codex.sh` and `sync-pi.sh` require a prior install from this repo, which prevents an uninitialized machine from replacing the curated backup with empty or unrelated local directories.
+All sync scripts support `--dry-run`. `sync-codex.sh`, `sync-pi.sh`, and `sync-omp.sh` require a prior install from this repo, which prevents an uninitialized machine from replacing the curated backup with empty or unrelated local directories.
 
 ## Not backed up
 
