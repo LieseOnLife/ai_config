@@ -1,6 +1,6 @@
 # 🐶 AI Config Backup
 
-Backup and restore personal configuration for Claude Code, Codex, pi, and Grinch.
+Backup and restore personal configuration for Claude Code, Codex, pi, Grinch, and Zed, plus a fresh-Mac setup script that installs the AI tooling itself.
 
 ## What is backed up
 
@@ -21,14 +21,22 @@ The detailed Claude-to-Codex mapping and deliberate omissions are documented in 
 ### pi
 
 - Global instructions in `pi/AGENTS.md` (ported from `claude/CLAUDE.md`)
+- Per-repo context notes (`pi/<repo>.md`, e.g. `cloud-inventory.md`, `dd-source.md`) that `AGENTS.md` tells the agent to load
 - Provider, model, thinking, and package defaults in `pi/settings.json`
 - MCP server config (Atlassian, Datadog, Slack, Google Workspace) in `pi/mcp.json`
-- Five lifecycle extensions ported from Claude hooks (worktree guard, PR size guard, terraform OTEL fix, auto-format-on-edit, post-push protocol) in `pi/extensions/`
+- Five lifecycle extensions ported from Claude hooks (worktree guard, PR size guard, terraform OTEL fix, auto-format-on-edit, post-push protocol), plus the `/snippets` prompt-snippets extension, in `pi/extensions/`
+- Subagent definitions (`advisor`, `bzl`, `coder`) in `pi/agents/`
 - Slash-command prompt templates in `pi/prompts/`
 - Helper scripts (worktree context, morning routine, CI checks, Obsidian tooling) in `pi/scripts/`
-- Twelve skills ported from Claude in `pi/skills/`
+- Skills in `pi/skills/`, mostly ported from Claude
 
-Not backed up: credentials (`auth.json`, `models-store.json`), the model registry (`models.json`), MCP cache, installed npm packages, sessions, and trust decisions.
+Not backed up: credentials (`auth.json`, `models-store.json`), the model registry (`models.json`), MCP cache, installed npm packages, sessions, and trust decisions. Two directories belong to other installers and are excluded from both sync and install (so `install-pi.sh --delete` leaves them alone): `skills/openspec-*`, which `setup.sh` regenerates from the OpenSpec CLI, and `extensions/trajectory`, which the Trajectory installer owns.
+
+### Zed
+
+- `zed/settings.json` (and `keymap.json` once one exists), including the Datadog AI Gateway model setup
+
+Not backed up: extensions, themes, the prompt library database, and Zed's local state.
 
 ### Grinch browser routing
 
@@ -66,29 +74,67 @@ ai_config/
 │   ├── config.toml
 │   └── hooks.json
 ├── pi/
+│   ├── agents/
 │   ├── extensions/
 │   ├── prompts/
 │   ├── scripts/
 │   ├── skills/
 │   ├── AGENTS.md
+│   ├── <repo>.md
 │   ├── mcp.json
 │   └── settings.json
 ├── grinch/
 │   ├── grinch.js
 │   ├── open-gov
 │   └── test_grinch.py
+├── zed/
+│   └── settings.json
 └── scripts/
+    ├── setup.sh
     ├── grinch-common.sh
     ├── install-grinch.sh
     ├── sync-grinch.sh
     ├── install-claude.sh
     ├── install-codex.sh
     ├── install-pi.sh
+    ├── install-zed.sh
     ├── sync-claude.sh
     ├── sync-codex.sh
     ├── sync-pi.sh
+    ├── sync-zed.sh
     └── sync-all.sh
 ```
+
+## Fresh Mac setup
+
+```bash
+./scripts/setup.sh --dry-run   # show what would be installed
+./scripts/setup.sh
+```
+
+Run it after the dotfiles repo's `install_apps.sh` (or Datadog's `laptop-setup.sh`), which provides Homebrew and general CLI tools. Already-installed tools are skipped, so re-running is safe. In order, it:
+
+1. Installs missing tools:
+
+   | Tool | Source |
+   |------|--------|
+   | Claude Code CLI | `claude.ai/install.sh` (to `~/.local/bin`) |
+   | Codex CLI | `brew install --cask codex` |
+   | pi | `pi.dev/install.sh` |
+   | omp | `can1357/tap/omp` |
+   | OpenCode | `brew install opencode` |
+   | pi-setup | `dogbrew` (needs Appgate; warns if dogbrew is missing) |
+   | Zed | `brew install --cask zed` |
+   | acli (Atlassian CLI for Jira/Confluence) | `atlassian/homebrew-acli` tap |
+   | Grinch | `bric3/tap/grinch` |
+   | OpenSpec CLI | `npm install -g @fission-ai/openspec` (installs `node` if missing) |
+
+   Third-party taps are trusted with `brew trust --tap` before installing from them. Casks that write to `/Applications` (Zed, Grinch) need sudo, so on a Jamf-managed Mac the script first asks Privileges for temporary admin (like `~/.privilegesalias` does for interactive `brew`) and brew then prompts for your password. A tool that fails to install becomes a warning at the end; fix it and re-run.
+2. Runs the Claude, Codex, pi, Zed, and Grinch config installers below. Each still asks before overwriting; a declined or failed installer becomes a warning instead of stopping setup.
+3. Regenerates the six `openspec-*` skills into `~/.pi/agent/skills` (`openspec init <tmp> --tools pi`), so they track the installed OpenSpec version.
+4. Runs the [Trajectory](https://github.com/datadog-labs/trajectory) installer last (asking first if it is already installed), so it reconnects every agent and re-adds its MCP entries after the config installs. OpenCode's config (`~/.config/opencode`) comes entirely from this step, so it is not backed up here.
+
+Afterwards, sign in: `claude`, `codex`, `opencode auth login`, and `acli jira auth login`.
 
 ## Install
 
@@ -96,6 +142,7 @@ ai_config/
 ./scripts/install-claude.sh
 ./scripts/install-codex.sh
 ./scripts/install-pi.sh
+./scripts/install-zed.sh
 ./scripts/install-grinch.sh
 ```
 
@@ -135,6 +182,7 @@ Actual AppGate authentication and browser-window selection still need a manual c
 ./scripts/sync-codex.sh
 ./scripts/sync-pi.sh
 ./scripts/sync-grinch.sh
+./scripts/sync-zed.sh
 ```
 
 Grinch sync requires a prior install and copies **only** `grinch.js`; its local
@@ -146,7 +194,7 @@ managed marker, diagnostic logs, and runtime files are excluded. Maintain the
 push script for Claude configuration. Use `sync-grinch.sh` for a Grinch-only backup
 without commits or pushes.
 
-All sync scripts support `--dry-run`. `sync-codex.sh` and `sync-pi.sh` require a prior install from this repo, which prevents an uninitialized machine from replacing the curated backup with empty or unrelated local directories.
+All sync scripts support `--dry-run`. `sync-codex.sh`, `sync-pi.sh`, and `sync-zed.sh` require a prior install from this repo, which prevents an uninitialized machine from replacing the curated backup with empty or unrelated local directories.
 
 ## Not backed up
 

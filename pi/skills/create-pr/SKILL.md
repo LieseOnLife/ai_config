@@ -191,7 +191,7 @@ Use the template, adapting sections as needed:
 - Keep it scannable
 
 ### Step 5: Create PR
-> **🔑 GitHub account by repo:** default is **`LieseOnLife`** for every repo. **Exception: in the `dd-source` repo, use `saje-liese_ddog`.** Switch with `gh auth switch --user saje-liese_ddog` (or back to `LieseOnLife`) before running any `gh` command, and confirm with `gh auth status`.
+> **🔑 GitHub account by repo:** repos owned by **`LieseOnLife`** (e.g. `LieseOnLife/ai_config`) use **`LieseOnLife`**. **Every other repo** (`dd-source`, `cloud-inventory`, anything under `DataDog`/`ddoghq`) uses **`saje-liese_ddog`**. Switch with `gh auth switch --user saje-liese_ddog` (or `--user LieseOnLife`) before running any `gh` command, and confirm with `gh auth status`.
 
 ```bash
 gh pr create --title "<title>" --body "$(cat <<'EOF'

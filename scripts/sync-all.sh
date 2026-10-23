@@ -38,6 +38,12 @@ if [[ -f "$HOME/.config/grinch/.ai-config-managed" ]]; then
     echo ""
 fi
 
+if [[ -f "$HOME/.config/zed/.ai-config-managed" ]]; then
+    echo ">>> Syncing Zed..."
+    "$SCRIPT_DIR/sync-zed.sh" "$@"
+    echo ""
+fi
+
 # Future: Add other AI tools here
 # if [[ -d "$HOME/.cursor" ]]; then
 #     echo ">>> Syncing Cursor..."

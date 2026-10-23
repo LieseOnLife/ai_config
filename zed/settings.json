@@ -1,0 +1,221 @@
+// Zed settings
+//
+// Datadog AI setup aggregated from:
+// https://datadoghq.atlassian.net/wiki/spaces/AIDEVX/pages/5840046112/Zed+with+AI
+//
+// Launch Zed with a current AI Gateway token:
+// DD_AI_GATEWAY_API_KEY="$(ddtool auth token rapid-ai-devx --datacenter us1.prod.dog)" zed
+{
+  // Avoid restoring every large workspace and starting all of their language servers.
+  "restore_on_startup": "last_workspace",
+
+  // Datadog policy: do not sign in to Zed until an enterprise agreement is in place.
+  "auto_update_extensions": {
+    "pink-candy-theme": false
+  },
+  "git_panel": {
+    "group_by": "staging",
+    "tree_view": true
+  },
+  "project_panel": {
+    "dock": "left"
+  },
+  "title_bar": {
+    "show_sign_in": false
+  },
+
+  "session": {
+    "trust_all_worktrees": true
+  },
+  "terminal": {
+    "env": {},
+    "max_scroll_history_lines": 10000
+  },
+  "minimap": {
+    "show": "always"
+  },
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000
+    }
+  },
+  "colorize_brackets": true,
+  "format_on_save": "on",
+  "base_keymap": "VSCode",
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Pink Candy Dark Warm"
+  },
+
+  // Datadog-hosted edit predictions through the production AI DevX gateway.
+  "show_edit_predictions": true,
+  "edit_predictions": {
+    "mode": "eager",
+    "provider": "ollama",
+    "ollama": {
+      "model": "qwen2.5-coder:7b",
+      "max_output_tokens": 128,
+      "api_url": "https://ai-devx-ide.us1.prod.dog/internal/ide/ollama"
+    }
+  },
+
+  // Keep gopls from expanding a focused folder to an entire monorepo, and cap its
+  // Go runtime memory as a backstop against another system-wide memory-pressure panic.
+  "lsp": {
+    "gopls": {
+      "binary": {
+        "env": {
+          "GOMEMLIMIT": "8GiB"
+        }
+      },
+      "initialization_options": {
+        "expandWorkspaceToModule": false
+      }
+    }
+  },
+
+  // Datadog AI Gateway-backed assistant defaults.
+  "agent": {
+    "inline_assistant_model": {
+      "provider": "DD_AI_GATEWAY",
+      "model": "gemini/gemini-2.5-flash-lite"
+    },
+    "default_model": {
+      "provider": "DD_AI_GATEWAY",
+      "model": "anthropic/claude-sonnet-4-5-20250929"
+    },
+    "model_parameters": []
+  },
+
+  "language_models": {
+    // Zed requires an Ollama language-model entry matching the edit-prediction URL.
+    // This provider is only for edit predictions, not Agent/Chat.
+    "ollama": {
+      "api_url": "https://ai-devx-ide.us1.prod.dog/internal/ide/ollama"
+    },
+    "openai_compatible": {
+      "DD_AI_GATEWAY": {
+        "api_url": "https://ai-devx-ide.us1.prod.dog/internal/ide/zed/v1",
+        "available_models": [
+          {
+            "name": "anthropic/claude-opus-4-8",
+            "display_name": "Claude Opus 4.8 (expensive)",
+            "max_tokens": 200000,
+            "max_output_tokens": 128000,
+            "max_completion_tokens": 128000,
+            "capabilities": {
+              "tools": true,
+              "images": true,
+              "parallel_tool_calls": true,
+              "prompt_cache_key": true
+            }
+          },
+          {
+            "name": "anthropic/claude-sonnet-5-20250929",
+            "display_name": "Claude Sonnet 5.0",
+            "max_tokens": 200000,
+            "max_output_tokens": 64000,
+            "max_completion_tokens": 64000,
+            "capabilities": {
+              "tools": true,
+              "images": true,
+              "parallel_tool_calls": true,
+              "prompt_cache_key": true
+            }
+          },
+          {
+            "name": "openai/gpt-5.6-terra",
+            "display_name": "GPT-5.6 Terra",
+            "max_tokens": 272000,
+            "max_output_tokens": 128000,
+            "max_completion_tokens": 128000,
+            "capabilities": {
+              "tools": true,
+              "images": true,
+              "parallel_tool_calls": true,
+              "prompt_cache_key": false
+            }
+          },
+          {
+            "name": "openai/gpt-5.6-sol",
+            "display_name": "GPT-5.6 Sol",
+            "max_tokens": 272000,
+            "max_output_tokens": 128000,
+            "max_completion_tokens": 128000,
+            "capabilities": {
+              "tools": true,
+              "images": true,
+              "parallel_tool_calls": true,
+              "prompt_cache_key": false
+            }
+          },
+          {
+            "name": "openai/gpt-5.6-luna",
+            "display_name": "GPT-5.6 Luna",
+            "max_tokens": 272000,
+            "max_output_tokens": 128000,
+            "max_completion_tokens": 128000,
+            "capabilities": {
+              "tools": true,
+              "images": true,
+              "parallel_tool_calls": true,
+              "prompt_cache_key": false
+            }
+          },
+          {
+            "name": "gemini/gemini-2.5-flash-lite",
+            "display_name": "Gemini 2.5 Flash Lite",
+            "max_tokens": 1048576,
+            "max_output_tokens": 65535,
+            "max_completion_tokens": 65535,
+            "capabilities": {
+              "tools": true,
+              "images": true,
+              "parallel_tool_calls": true,
+              "prompt_cache_key": true
+            }
+          },
+          {
+            "name": "datadoginternal/casperhansen/llama-3.3-70b-instruct-awq",
+            "display_name": "LLaMA 3.3 70B AWQ",
+            "max_tokens": 128000,
+            "max_output_tokens": 32000,
+            "max_completion_tokens": 32000,
+            "capabilities": {
+              "tools": false,
+              "images": false,
+              "parallel_tool_calls": false,
+              "prompt_cache_key": false
+            }
+          }
+        ]
+      }
+    }
+  },
+
+  // Working Datadog-supported remote MCP servers.
+  // Atlassian and Slack are intentionally omitted because the DD guide currently
+  // documents Zed OAuth-discovery incompatibilities for both endpoints.
+  "context_servers": {
+    "terraform-context-server": {
+      "enabled": true,
+      "remote": false,
+      "settings": {}
+    },
+    "datadog-google-workspace": {
+      "enabled": true,
+      "url": "https://google-workspace-mcp-server-834963730936.us-central1.run.app/mcp"
+    },
+    "datadog-gmail": {
+      "enabled": true,
+      "url": "https://gmail-mcp-server-834963730936.us-central1.run.app/mcp"
+    },
+    "datadog-google-calendar": {
+      "enabled": true,
+      "url": "https://google-calendar-mcp-server-834963730936.us-central1.run.app/mcp"
+    }
+  }
+}

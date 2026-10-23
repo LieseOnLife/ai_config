@@ -42,18 +42,26 @@ mkdir -p "$PI_DIR"
 
 # Directories to install
 SYNC_DIRS=(
+    "agents"
     "extensions"
     "prompts"
     "scripts"
     "skills"
 )
 
+# Managed by other installers; --delete must leave them alone (see sync-pi.sh).
+RSYNC_EXCLUDES=(--exclude='/openspec-*/' --exclude='/trajectory/')
+
 # Individual files to install
 SYNC_FILES=(
-    "AGENTS.md"
     "settings.json"
     "mcp.json"
 )
+
+# Top-level Markdown: AGENTS.md plus per-repo context notes (<repo>.md)
+shopt -s nullglob
+NOTE_FILES=("$BACKUP_DIR"/*.md)
+shopt -u nullglob
 
 echo "Installing pi config from: $BACKUP_DIR"
 echo ""
@@ -65,7 +73,7 @@ for dir in "${SYNC_DIRS[@]}"; do
             echo "Would create $PI_DIR/$dir and install its contents"
         else
             mkdir -p "$PI_DIR/$dir"
-            rsync -av --delete $DRY_RUN "$BACKUP_DIR/$dir/" "$PI_DIR/$dir/"
+            rsync -av --delete "${RSYNC_EXCLUDES[@]}" $DRY_RUN "$BACKUP_DIR/$dir/" "$PI_DIR/$dir/"
         fi
     fi
 done
@@ -75,6 +83,11 @@ for file in "${SYNC_FILES[@]}"; do
         echo "Installing $file"
         rsync -av $DRY_RUN "$BACKUP_DIR/$file" "$PI_DIR/$file"
     fi
+done
+
+for note in ${NOTE_FILES[@]+"${NOTE_FILES[@]}"}; do
+    echo "Installing $(basename "$note")"
+    rsync -av $DRY_RUN "$note" "$PI_DIR/"
 done
 
 if [[ -z "$DRY_RUN" ]]; then
