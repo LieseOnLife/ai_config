@@ -40,7 +40,6 @@ RSYNC_EXCLUDES=(--exclude='/openspec-*/' --exclude='/trajectory/')
 # Individual files to sync (durable config only — NO credentials/cache)
 SYNC_FILES=(
     "settings.json"
-    "mcp.json"
 )
 
 # Top-level Markdown: AGENTS.md plus per-repo context notes (<repo>.md)
@@ -67,6 +66,15 @@ for file in "${SYNC_FILES[@]}"; do
         rsync -av $DRY_RUN "$PI_DIR/$file" "$BACKUP_DIR/$file"
     fi
 done
+
+# The Trajectory installer adds an MCP entry with machine-specific paths; keep it out of the backup.
+if [[ -f "$PI_DIR/mcp.json" ]]; then
+    echo "Syncing mcp.json (without the Trajectory entry)"
+    if [[ -z "$DRY_RUN" ]]; then
+        jq 'del(.mcpServers.trajectory)' "$PI_DIR/mcp.json" > "$BACKUP_DIR/mcp.json.tmp"
+        mv "$BACKUP_DIR/mcp.json.tmp" "$BACKUP_DIR/mcp.json"
+    fi
+fi
 
 for note in ${NOTE_FILES[@]+"${NOTE_FILES[@]}"}; do
     echo "Syncing $(basename "$note")"

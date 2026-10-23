@@ -30,7 +30,7 @@ The detailed Claude-to-Codex mapping and deliberate omissions are documented in 
 - Helper scripts (worktree context, morning routine, CI checks, Obsidian tooling) in `pi/scripts/`
 - Skills in `pi/skills/`, mostly ported from Claude
 
-Not backed up: credentials (`auth.json`, `models-store.json`), the model registry (`models.json`), MCP cache, installed npm packages, sessions, and trust decisions. Two directories belong to other installers and are excluded from both sync and install (so `install-pi.sh --delete` leaves them alone): `skills/openspec-*`, which `setup.sh` regenerates from the OpenSpec CLI, and `extensions/trajectory`, which the Trajectory installer owns.
+Not backed up: credentials (`auth.json`, `models-store.json`), the model registry (`models.json`), MCP cache, installed npm packages, sessions, and trust decisions. Two directories belong to other installers and are excluded from both sync and install (so `install-pi.sh --delete` leaves them alone): `skills/openspec-*`, which `setup.sh` regenerates from the OpenSpec CLI, and `extensions/trajectory`, which the Trajectory installer owns. `sync-pi.sh` also drops Trajectory's machine-specific `trajectory` entry from `mcp.json` (requires `jq`).
 
 ### Zed
 
@@ -129,10 +129,10 @@ Run it after the dotfiles repo's `install_apps.sh` (or Datadog's `laptop-setup.s
    | Grinch | `bric3/tap/grinch` |
    | OpenSpec CLI | `npm install -g @fission-ai/openspec` (installs `node` if missing) |
 
-   Third-party taps are trusted with `brew trust --tap` before installing from them. Casks that write to `/Applications` (Zed, Grinch) need sudo, so on a Jamf-managed Mac the script first asks Privileges for temporary admin (like `~/.privilegesalias` does for interactive `brew`) and brew then prompts for your password. A tool that fails to install becomes a warning at the end; fix it and re-run.
+   Third-party formulae/casks are trusted individually (`brew trust --formula|--cask`) before installing. Casks that write to `/Applications` (Zed, Grinch) need sudo, so on a Jamf-managed Mac the script first asks Privileges for temporary admin (like `~/.privilegesalias` does for interactive `brew`), brew prompts for your password, and the admin grant is revoked when setup exits. Vendor installers are downloaded fully before they run. A tool that fails to install becomes a warning at the end; fix it and re-run.
 2. Runs the Claude, Codex, pi, Zed, and Grinch config installers below. Each still asks before overwriting; a declined or failed installer becomes a warning instead of stopping setup.
 3. Regenerates the six `openspec-*` skills into `~/.pi/agent/skills` (`openspec init <tmp> --tools pi`), so they track the installed OpenSpec version.
-4. Runs the [Trajectory](https://github.com/datadog-labs/trajectory) installer last (asking first if it is already installed), so it reconnects every agent and re-adds its MCP entries after the config installs. OpenCode's config (`~/.config/opencode`) comes entirely from this step, so it is not backed up here.
+4. Runs the [Trajectory](https://github.com/datadog-labs/trajectory) installer last (if it is already installed it asks, defaulting to yes), so it reconnects every agent and re-adds the MCP entries the config installs just reset. OpenCode's config (`~/.config/opencode`) comes entirely from this step, so it is not backed up here.
 
 Afterwards, sign in: `claude`, `codex`, `opencode auth login`, and `acli jira auth login`.
 

@@ -36,9 +36,8 @@ if [[ -z "$DRY_RUN" ]]; then
         echo "Aborted."
         exit 1
     fi
+    mkdir -p "$PI_DIR"
 fi
-
-mkdir -p "$PI_DIR"
 
 # Directories to install
 SYNC_DIRS=(
