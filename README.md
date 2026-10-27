@@ -32,13 +32,18 @@ Not backed up: credentials (`auth.json`, `models-store.json`), the model registr
 
 ### Grinch browser routing
 
-- `grinch/grinch.js`: external web links default to Commercial Chrome (`Default`).
-- `ddog-gov.com`, `fed.dog`, `amazonaws-us-gov.com` (AWS GovCloud console + regional subdomains), and the GovCloud SSO start host `d-9067f50546.awsapps.com` use GovCloud Chrome (`Profile 3`).
+- `grinch/grinch.js`: external web links default to the Commercial Chrome profile named `datadoghq.com`.
+- `ddog-gov.com`, `fed.dog`, `amazonaws-us-gov.com` (AWS GovCloud console + regional subdomains), and the GovCloud SSO start host `d-9067f50546.awsapps.com` use the GovCloud Chrome profile named `ddog-gov.com`.
 - `prod.dog`, `staging.dog`, `ddbuild.io`, all GitHub URLs, and unmatched URLs use Commercial.
 - `grinch/open-gov`: a terminal helper for explicitly opening any HTTP(S) URL in GovCloud.
 
-These directory names match Saje's Chrome profiles, not AppGate's connection labels
-(Commercial Green / gov-green). Verify mappings before installing on another Mac.
+Profiles are referenced by Chrome display name, not directory (`Default`, `Profile N`),
+because directory numbering differs per Mac. Grinch, `open-gov`, and the installer
+resolve names through Chrome's `Local State`; all three refuse a missing name.
+`open-gov` and the installer also refuse a name shared by several profiles (Grinch
+silently picks one, so keep names unique). Rename profiles in Chrome (or edit the
+names) before installing on another Mac. The names are unrelated to AppGate's
+connection labels (Commercial Green / gov-green).
 Normal navigation inside Chrome stays in its current profile; no browser extension
 or blanket AppGate/Terminal rule is installed. AppGate SSO on a different hostname
 needs an explicit rule; `fed.dog` routing alone does not verify the login flow.
@@ -118,7 +123,7 @@ handlers. Use **Reload Config** after subsequent rule edits too.
 
 ```bash
 open-gov 'https://identity.example/login' # explicitly bypass the Commercial default
-python3 grinch/test_grinch.py            # requires macOS and Grinch (tested with 0.8.4)
+python3 grinch/test_grinch.py            # requires macOS and Grinch (tested with 0.8.8)
 ```
 
 Tests use a temporary HOME and mock the browser launcher; they do not open URLs.

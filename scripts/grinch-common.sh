@@ -29,3 +29,18 @@ if [[ -L "$CONFIG_DIR" || -L "$BACKUP_DIR" ]]; then
     echo "Refusing to install or sync a symlinked Grinch configuration directory." >&2
     exit 1
 fi
+
+# Prints the Chrome profile directory whose display name is $1, or nothing when
+# missing or ambiguous. Keep in sync with the lookup in grinch/open-gov.
+chrome_profile_dir() {
+    osascript -l JavaScript - "$HOME/Library/Application Support/Google/Chrome/Local State" "$1" <<'JS' || true
+ObjC.import("Foundation");
+function run(argv) {
+    const text = $.NSString.stringWithContentsOfFileEncodingError(argv[0], $.NSUTF8StringEncoding, null);
+    if (text.isNil()) return "";
+    const cache = (JSON.parse(text.js).profile || {}).info_cache || {};
+    const dirs = Object.keys(cache).filter((dir) => cache[dir].name === argv[1]);
+    return dirs.length === 1 ? dirs[0] : "";
+}
+JS
+}
