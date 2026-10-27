@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+GOV_PROFILE_NAME="ddog-gov.com"
+CHROME_DIR="$HOME/Library/Application Support/Google/Chrome"
+
 if [[ $# -ne 1 ]]; then
     echo "Usage: open-gov <http(s)://url>" >&2
     exit 2
@@ -15,9 +18,23 @@ if [[ -z "$authority" || "$1" == *[[:space:]]* ]]; then
     echo "Expected a hostname and no unescaped whitespace in the URL." >&2
     exit 2
 fi
-if [[ ! -d "$HOME/Library/Application Support/Google/Chrome/Profile 3" ]]; then
-    echo "GovCloud Chrome profile (Profile 3) is missing; refusing to create it." >&2
+
+# Profile directories (Default, Profile N) differ per Mac; resolve the display name.
+# Keep in sync with chrome_profile_dir in scripts/grinch-common.sh.
+profile_dir=$(osascript -l JavaScript - "$CHROME_DIR/Local State" "$GOV_PROFILE_NAME" <<'JS' || true
+ObjC.import("Foundation");
+function run(argv) {
+    const text = $.NSString.stringWithContentsOfFileEncodingError(argv[0], $.NSUTF8StringEncoding, null);
+    if (text.isNil()) return "";
+    const cache = (JSON.parse(text.js).profile || {}).info_cache || {};
+    const dirs = Object.keys(cache).filter((dir) => cache[dir].name === argv[1]);
+    return dirs.length === 1 ? dirs[0] : "";
+}
+JS
+)
+if [[ -z "$profile_dir" || ! -d "$CHROME_DIR/$profile_dir" ]]; then
+    echo "GovCloud Chrome profile ($GOV_PROFILE_NAME) is missing or ambiguous; refusing to create it." >&2
     exit 1
 fi
 
-exec open -na "Google Chrome" --args --profile-directory="Profile 3" "$1"
+exec open -na "Google Chrome" --args --profile-directory="$profile_dir" "$1"

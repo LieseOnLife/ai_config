@@ -1,0 +1,10 @@
+{
+  "plugins": {
+    "maze": {
+      "version": "0.0.0",
+      "enabledFeatures": null,
+      "enabled": true
+    }
+  },
+  "settings": {}
+}

@@ -1,0 +1,39 @@
+symbolPreset: unicode
+composer:
+  shape: pi
+theme:
+  dark: titanium
+  light: light
+setupVersion: 2
+modelRoles:
+  slow: ai-gw-anthropic-1m/anthropic/claude-opus-5-5:max
+  default: ai-gw-anthropic-1m/anthropic/claude-opus-5-5:high
+  tiny: local/qwen2.5-1.5b
+defaultThinkingLevel: medium
+steeringMode: all
+followUpMode: all
+startup:
+  quiet: true
+skills:
+  customDirectories:
+    - /Users/saje.liese/.pi/agent/skills
+    - /Users/saje.liese/dd/datadog-pi-packages/packages/notifications/skills
+task:
+  agentModelOverrides:
+    reviewer: ai-gw-google/gemini-3.8-flash:high
+    security-reviewer: ai-gw-google/gemini-3.8-flash:high
+    scout: ai-gw-baseten/baseten/zai-org/GLM-5.3:high
+    sonic: ai-gw-baseten/baseten/zai-org/GLM-5.3-Flash:high
+    task: ai-gw-openai/openai/gpt-6-luna:max
+extensions:
+  - /Users/saje.liese/dd/datadog-pi-packages/packages/research-web/extensions/research-web/index.ts
+  - /Users/saje.liese/dd/datadog-pi-packages/packages/refresh-models/extensions/refresh-models/index.ts
+  - /Users/saje.liese/dd/datadog-pi-packages/packages/session-cost/extensions/session-cost/index.ts
+  - /Users/saje.liese/.pi/agent/npm/node_modules/pi-markdown-preview/index.ts
+autolearn:
+  enabled: true
+github:
+  enabled: true
+dev:
+  autoqaConsent: granted
+hideThinkingBlock: true

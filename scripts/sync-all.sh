@@ -32,6 +32,13 @@ if [[ -f "$HOME/.pi/agent/.ai-config-managed" ]]; then
     echo ""
 fi
 
+# Sync omp
+if [[ -f "$HOME/.omp/agent/.ai-config-managed" ]]; then
+    echo ">>> Syncing omp..."
+    "$SCRIPT_DIR/sync-omp.sh" "$@"
+    echo ""
+fi
+
 if [[ -f "$HOME/.config/grinch/.ai-config-managed" ]]; then
     echo ">>> Syncing Grinch..."
     "$SCRIPT_DIR/sync-grinch.sh" "$@"

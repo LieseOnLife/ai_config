@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "marketplaces": [
+    {
+      "name": "datadog-claude-plugins",
+      "sourceType": "local",
+      "sourceUri": "/Users/saje.liese/dd/claude-marketplace",
+      "catalogPath": "/Users/saje.liese/.omp/plugins/cache/marketplaces/datadog-claude-plugins/marketplace.json",
+      "addedAt": "2026-10-06T20:18:09.088Z",
+      "updatedAt": "2026-10-21T00:12:41.313Z"
+    }
+  ]
+}

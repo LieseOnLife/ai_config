@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "plugins": {
+    "maze@datadog-claude-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/Users/saje.liese/.omp/plugins/cache/plugins/datadog-claude-plugins___maze___0.0.0",
+        "version": "0.0.0",
+        "installedAt": "2026-10-06T20:18:09.230Z",
+        "lastUpdated": "2026-10-06T20:18:09.230Z"
+      }
+    ]
+  }
+}

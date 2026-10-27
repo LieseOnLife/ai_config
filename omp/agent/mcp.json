@@ -1,0 +1,81 @@
+{
+  "$schema": "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/config/mcp-schema.json",
+  "mcpServers": {
+    "atlassian": {
+      "type": "http",
+      "url": "https://mcp.atlassian.com/v1/mcp/authv2",
+      "oauth": {
+        "skipIssuerMetadataValidation": true,
+        "clientId": "2dbDCqR7aTzdQyTK6aCZsfH5eapgMkyI"
+      },
+      "headers": {},
+      "auth": {
+        "type": "oauth",
+        "credentialId": "mcp_oauth:profile:default:https://mcp.atlassian.com/v1/mcp/authv2",
+        "tokenUrl": "https://auth.atlassian.com/oauth/token",
+        "clientId": "2dbDCqR7aTzdQyTK6aCZsfH5eapgMkyI",
+        "resource": "https://mcp.atlassian.com/v1/mcp/authv2"
+      }
+    },
+    "datadog": {
+      "type": "http",
+      "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp"
+    },
+    "datadog-google-calendar": {
+      "type": "http",
+      "url": "https://google-calendar-mcp-server-834963730936.us-central1.run.app/mcp",
+      "oauth": {
+        "clientId": "7821121c-0a83-4e38-978f-8c2968f14857"
+      },
+      "headers": {},
+      "auth": {
+        "type": "oauth",
+        "credentialId": "mcp_oauth:profile:default:https://google-calendar-mcp-server-834963730936.us-central1.run.app/mcp",
+        "tokenUrl": "https://google-calendar-mcp-server-834963730936.us-central1.run.app/token",
+        "clientId": "7821121c-0a83-4e38-978f-8c2968f14857",
+        "resource": "https://google-calendar-mcp-server-834963730936.us-central1.run.app/mcp"
+      }
+    },
+    "datadog-google-workspace": {
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://google-workspace-mcp-server-834963730936.us-central1.run.app/mcp"
+      ],
+      "command": "npx"
+    },
+    "datadog-gmail": {
+      "type": "http",
+      "url": "https://gmail-mcp-server-834963730936.us-central1.run.app/mcp",
+      "oauth": {
+        "clientId": "d913a127-cf6e-458a-aa99-cfe6283a1028"
+      },
+      "headers": {},
+      "auth": {
+        "type": "oauth",
+        "credentialId": "mcp_oauth:profile:default:https://gmail-mcp-server-834963730936.us-central1.run.app/mcp",
+        "tokenUrl": "https://gmail-mcp-server-834963730936.us-central1.run.app/token",
+        "clientId": "d913a127-cf6e-458a-aa99-cfe6283a1028",
+        "resource": "https://gmail-mcp-server-834963730936.us-central1.run.app/mcp"
+      }
+    },
+    "slack": {
+      "type": "http",
+      "url": "https://mcp.slack.com/mcp",
+      "oauth": {
+        "clientId": "1601185624273.8899143856786",
+        "redirectUri": "http://localhost:3118/callback"
+      }
+    },
+    "trajectory": {
+      "args": [
+        "mcp"
+      ],
+      "command": "/Users/saje.liese/.pi/agent/extensions/trajectory/bin/trajectory"
+    },
+    "datadog-golden": {
+      "type": "http",
+      "url": "https://mcp.datadoghq.com/v1/mcp"
+    }
+  }
+}
