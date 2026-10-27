@@ -25,18 +25,27 @@ fi
 
 # Directories to sync (relative to ~/.pi/agent)
 SYNC_DIRS=(
+    "agents"
     "extensions"
     "prompts"
     "scripts"
     "skills"
 )
 
+# Managed by other installers, so never backed up (or deleted by install-pi.sh):
+# setup.sh regenerates openspec-* skills from the OpenSpec CLI, and the
+# Trajectory installer owns extensions/trajectory.
+RSYNC_EXCLUDES=(--exclude='/openspec-*/' --exclude='/trajectory/')
+
 # Individual files to sync (durable config only — NO credentials/cache)
 SYNC_FILES=(
-    "AGENTS.md"
     "settings.json"
-    "mcp.json"
 )
+
+# Top-level Markdown: AGENTS.md plus per-repo context notes (<repo>.md)
+shopt -s nullglob
+NOTE_FILES=("$PI_DIR"/*.md)
+shopt -u nullglob
 
 mkdir -p "$BACKUP_DIR"
 
@@ -47,7 +56,7 @@ for dir in "${SYNC_DIRS[@]}"; do
     if [[ -d "$PI_DIR/$dir" ]]; then
         echo "Syncing $dir/"
         mkdir -p "$BACKUP_DIR/$dir"
-        rsync -av --delete $DRY_RUN "$PI_DIR/$dir/" "$BACKUP_DIR/$dir/"
+        rsync -av --delete "${RSYNC_EXCLUDES[@]}" $DRY_RUN "$PI_DIR/$dir/" "$BACKUP_DIR/$dir/"
     fi
 done
 
@@ -56,6 +65,20 @@ for file in "${SYNC_FILES[@]}"; do
         echo "Syncing $file"
         rsync -av $DRY_RUN "$PI_DIR/$file" "$BACKUP_DIR/$file"
     fi
+done
+
+# The Trajectory installer adds an MCP entry with machine-specific paths; keep it out of the backup.
+if [[ -f "$PI_DIR/mcp.json" ]]; then
+    echo "Syncing mcp.json (without the Trajectory entry)"
+    if [[ -z "$DRY_RUN" ]]; then
+        jq 'del(.mcpServers.trajectory)' "$PI_DIR/mcp.json" > "$BACKUP_DIR/mcp.json.tmp"
+        mv "$BACKUP_DIR/mcp.json.tmp" "$BACKUP_DIR/mcp.json"
+    fi
+fi
+
+for note in ${NOTE_FILES[@]+"${NOTE_FILES[@]}"}; do
+    echo "Syncing $(basename "$note")"
+    rsync -av $DRY_RUN "$note" "$BACKUP_DIR/"
 done
 
 echo ""

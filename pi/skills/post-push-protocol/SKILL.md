@@ -18,7 +18,13 @@ A `git push` is not "done". Run every step automatically, every time. Don't decl
    - *Real failure* (your change broke it): fix immediately and push (re-triggers this protocol). Don't hand a fixable failure back to Saje.
    - *Ambiguous / needs Saje's call*: bring the check name, log excerpt, and a recommendation.
 
-3. **Auto-review your diff (major changes only** — new PR or ~50+ lines of real logic; skip typos/renames). Run a `reviewer` subagent on the diff; for security-sensitive code (auth, secrets, IAM, infra/access) also run `security-reviewer` (or `platform-security-reviewer`). Auto-fix obvious/safe issues and push; surface design-tradeoff findings to Saje with file:line and a recommendation — don't auto-apply those.
+3. **Auto-review your diff (major changes only** — new PR or ~50+ lines of real logic; skip typos/renames). Dispatch the full reviewer panel **simultaneously in one `task` call's `tasks[]` batch** — never sequentially:
+   - `reviewer` (primary, default model from `task.agentModelOverrides`)
+   - `security-reviewer` (default model)
+   - `reviewer` with `model: ai-gw-openai/openai/gpt-6.1-sol:max` (secondary)
+   - `reviewer` with `model: ai-gw-anthropic-200k/anthropic/claude-opus-5-5:xhigh` (secondary)
+
+   Same diff and brief to each (BLOCKING/IMPORTANT findings with file:line + recommendation; security brief for `security-reviewer`). Merge and dedupe findings across reviewers, noting which models agreed. Auto-fix obvious/safe issues and push; surface design-tradeoff findings to Saje with file:line and a recommendation — don't auto-apply those. Small diffs skip the panel.
 
 4. **Address PR comments** reported by `PrWatch` (the `/review-pr-comments` / `get-pr-feedback` process, unprompted):
    - *Bots* (codex, sonarcloud, codecov, github-actions, `*[bot]`): respond **definitively** — fix + reply, or reply why it's not applicable. Never leave an open question.
