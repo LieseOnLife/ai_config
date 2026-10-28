@@ -34,7 +34,7 @@ git worktree add ../${REPO}-worktrees/feature-name saje/feature-name       # exi
 
 **Conflicts:** if the worktree/branch already exists, **don't delete it** — increment instead (`saje/feature-v2`, `-v3`, …).
 
-**Deletion (requires explicit approval):** never run `git worktree remove`, `git branch -d/-D`, or `git push origin --delete` without asking. (A `worktree-guard` extension enforces this — prefix with `# APPROVED:` after Saje approves.)
+**Deletion (requires explicit approval):** never run `git worktree remove`, `git branch -d/-D`, or `git push origin --delete` without asking, except for merged PRs (see the standing approval below). (A `worktree-guard` extension enforces this — prefix with `# APPROVED:` after Saje approves.)
 
 **Standing approval: merged PR → remove its worktree and branches.** When Saje says a PR is merged, or you find it merged (`gh pr view --json state` = `MERGED`), clean up right away without asking (`# APPROVED: PR merged` prefix): run `git worktree remove` on its worktree, delete the local branch with `git branch -D`, and delete the remote branch with `git push origin --delete` if GitHub didn't auto-delete it. Run `git status --porcelain` in the worktree first. If there are uncommitted changes, stop and ask. Branches of unmerged or closed-unmerged PRs still need explicit approval.
 
@@ -80,6 +80,7 @@ When scoping or planning any project/feature, break the work into small stacked 
   ```
   If the 3-dot diff lists files from other domains/teams, the stack is tangled — stop and restack, don't push.
 - **Audit the file list, not just the number.** An unexpected file from another team (e.g. `domains/apm/...` in a `domains/compute` PR) is the tell-tale sign of a tangled base.
+- **Exception: rebase-only repos.** In `cloud-inventory`, never merge `master` into any branch; restack with `git rebase` / `git rebase --onto` instead (see `cloud-inventory.md`).
 
 # Advisor Checkpoints
 
@@ -111,7 +112,7 @@ Call an advisor subagent (fresh-context read-only reviewer) in these circumstanc
    - *Bots* (codex, sonarcloud, codecov, github-actions, `*[bot]`): respond **definitively** — fix + reply, or reply why it's not applicable. Never leave an open question in a PR comment.
    - *Humans*: do NOT auto-reply. Surface to Saje with the link, summary, recommendation, and a draft reply for approval.
 
-5. **Report back** in-session: what CI did (incl. re-runs), auto-review findings (fixed vs. needs-decision), comments handled, and anything needing Saje's attention. Bring issues proactively — he shouldn't have to ask "what's the status."
+5. **Report back** in-session: what CI did (incl. re-runs), auto-review findings (fixed vs. needs-decision), comments handled, and anything needing Saje's attention. Bring issues proactively — she shouldn't have to ask "what's the status."
 
 # Execution Style
 - Maximize parallelism — use subagents, background agents, and parallel tool calls whenever possible.

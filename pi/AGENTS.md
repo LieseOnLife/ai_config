@@ -52,7 +52,7 @@ git worktree add ../${REPO}-worktrees/feature-name saje/feature-name       # exi
 
 **Conflicts:** if the worktree/branch already exists, **don't delete it** — increment instead (`saje/feature-v2`, `-v3`, …).
 
-**Deletion (requires explicit approval):** never run `git worktree remove`, `git branch -d/-D`, or `git push origin --delete` without asking. (A `worktree-guard` extension enforces this — prefix with `# APPROVED:` after Saje approves.)
+**Deletion (requires explicit approval):** never run `git worktree remove`, `git branch -d/-D`, or `git push origin --delete` without asking, except for merged PRs (see the standing approval below). (A `worktree-guard` extension enforces this — prefix with `# APPROVED:` after Saje approves.)
 
 **Standing approval: merged PR → remove its worktree and branches.** When Saje says a PR is merged, or you find it merged (`gh pr view --json state` = `MERGED`), clean up right away without asking (`# APPROVED: PR merged` prefix): run `git worktree remove` on its worktree, delete the local branch with `git branch -D`, and delete the remote branch with `git push origin --delete` if GitHub didn't auto-delete it. Run `git status --porcelain` in the worktree first. If there are uncommitted changes, stop and ask. Branches of unmerged or closed-unmerged PRs still need explicit approval.
 
@@ -69,7 +69,7 @@ git worktree add ../${REPO}-worktrees/feature-name saje/feature-name       # exi
 - Use Slack's mrkdwn for links: `<url|display text>`, bold: `*text*`, code: `` `code` ``.
 
 ## Stacked PRs (HARD)
-Break non-trivial work into small, vertically sliced stacked PRs (`saje/feature-name-pr1`, `-pr2`, …; ~200-550 lines each as a target). Every implementation plan opens with a PR-stack table; STOP after each PR group until Saje says go; flag scope drift instead of growing a PR. **NEVER `git merge main` into a child branch** — restack bottom-up. Load the `stacked-prs` skill for the table format, gates, and restack/verify procedure.
+Break non-trivial work into small, vertically sliced stacked PRs (`saje/feature-name-pr1`, `-pr2`, …; ~200-550 lines each as a target). Every implementation plan opens with a PR-stack table; STOP after each PR group until Saje says go; flag scope drift instead of growing a PR. **NEVER `git merge main` into a child branch** — restack bottom-up. Load the `stacked-prs` skill for the table format, gates, and restack/verify procedure. **Exception:** in `cloud-inventory`, never merge `master` into any branch; restack with `git rebase --onto` (see `cloud-inventory.md`).
 
 # Execution Momentum (HARD)
 
