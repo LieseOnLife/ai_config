@@ -141,19 +141,26 @@
     "skill-creator@claude-plugins-official": true,
     "appgate@datadog-claude-plugins": true,
     "perf-feedback@datadog-claude-plugins": true,
-    "cloud-accounts@datadog-claude-plugins": true
+    "cloud-accounts@datadog-claude-plugins": true,
+    "trajectory@trajectory": true
   },
   "extraKnownMarketplaces": {
     "datadog-claude-plugins": {
       "source": {
-        "source": "git",
-        "url": "https://github.com/DataDog/claude-marketplace.git"
+        "source": "github",
+        "repo": "ddoghq/claude-marketplace"
       }
     },
     "sttts-skills": {
       "source": {
         "source": "git",
         "url": "https://github.com/sttts/skills.git"
+      }
+    },
+    "trajectory": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/saje.liese/.trajectory/claude-marketplace"
       }
     }
   },
