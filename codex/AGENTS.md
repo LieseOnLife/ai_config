@@ -36,7 +36,9 @@ git worktree add ../${REPO}-worktrees/feature-name saje/feature-name       # exi
 
 **Conflicts:** if the worktree/branch already exists, **don't delete it** — increment instead (`saje/feature-v2`, `-v3`, …).
 
-**Deletion (requires explicit approval):** never run `git worktree remove`, `git branch -d/-D`, or `git push origin --delete` without asking.
+**Deletion (requires explicit approval):** never run `git worktree remove`, `git branch -d/-D`, or `git push origin --delete` without asking, except for merged PRs (see the standing approval below).
+
+**Standing approval: merged PR → remove its worktree and branches.** When Saje says a PR is merged, or you find it merged (`gh pr view --json state` = `MERGED`), clean up right away without asking: run `git worktree remove` on its worktree, delete the local branch with `git branch -D`, and delete the remote branch with `git push origin --delete` if GitHub didn't auto-delete it. Run `git status --porcelain` in the worktree first. If there are uncommitted changes, stop and ask. Branches of unmerged or closed-unmerged PRs still need explicit approval.
 
 **Subagents in worktrees:**
 - Pass the full absolute worktree path in the prompt; the subagent must `cd` there first and use absolute paths for all file ops.
@@ -95,7 +97,7 @@ Pause for an advisor checkpoint in these circumstances. Use an available advisor
    - *Bots* (codex, sonarcloud, codecov, github-actions, `*[bot]`): respond **definitively** — fix + reply, or reply why it's not applicable. Never leave an open question in a PR comment.
    - *Humans*: do NOT auto-reply. Surface to Saje with the link, summary, recommendation, and a draft reply for approval.
 
-5. **Report back** in-session: what CI did (incl. re-runs), auto-review findings (fixed vs. needs-decision), comments handled, and anything needing Saje's attention. Bring issues proactively — he shouldn't have to ask "what's the status."
+5. **Report back** in-session: what CI did (incl. re-runs), auto-review findings (fixed vs. needs-decision), comments handled, and anything needing Saje's attention. Bring issues proactively — she shouldn't have to ask "what's the status."
 
 # Execution Style
 - Maximize parallelism — use subagents, background agents, and parallel tool calls whenever possible.

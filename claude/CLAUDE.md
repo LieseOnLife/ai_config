@@ -34,18 +34,24 @@ git worktree add ../${REPO}-worktrees/feature-name saje/feature-name       # exi
 
 **Conflicts:** if the worktree/branch already exists, **don't delete it** — increment instead (`saje/feature-v2`, `-v3`, …).
 
-**Deletion (requires explicit approval):** never run `git worktree remove`, `git branch -d/-D`, or `git push origin --delete` without asking.
+**Deletion (requires explicit approval):** never run `git worktree remove`, `git branch -d/-D`, or `git push origin --delete` without asking, except for merged PRs (see the standing approval below). (A `worktree-guard` extension enforces this — prefix with `# APPROVED:` after Saje approves.)
+
+**Standing approval: merged PR → remove its worktree and branches.** When Saje says a PR is merged, or you find it merged (`gh pr view --json state` = `MERGED`), clean up right away without asking (`# APPROVED: PR merged` prefix): run `git worktree remove` on its worktree, delete the local branch with `git branch -D`, and delete the remote branch with `git push origin --delete` if GitHub didn't auto-delete it. Run `git status --porcelain` in the worktree first. If there are uncommitted changes, stop and ask. Branches of unmerged or closed-unmerged PRs still need explicit approval.
 
 **Subagents in worktrees:**
 - Pass the full absolute worktree path in the prompt; the subagent must `cd` there first and use absolute paths for all file ops.
-- Get worktree context via `~/.claude/scripts/worktree-context.sh` (returns `worktree_path`, `main_repo`, `branch`, `is_worktree`).
-- If a subagent is blocked from a worktree path, ask Saje to add `Read`/`Write`/`Bash(cd …)` perms for it to the project's `.claude/settings.local.json`.
+- Get worktree context via `~/.pi/agent/scripts/worktree-context.sh` (returns `worktree_path`, `main_repo`, `branch`, `is_worktree`).
+- See the `/worktree-subagent` prompt template for the standard prompt format.
 
 ## GitHub
 - Always use the `gh` CLI for github.com.
-- When working in a repo, also load `{repo}.md` from `~/.claude`.
+- When working in a repo, also load `{repo}.md` from `~/.pi/agent` (project context).
 - PR descriptions: describe the diff between the whole PR and main/master, not commit-to-commit.
 - **NEVER merge a PR** — no `gh pr merge`, no `/merge` comment, no merge queue. Saje merges when ready.
+
+## Slack
+- **No markdown tables in Slack messages or drafts.** Slack does not render them — they appear as raw pipes and dashes. Use bullets and bold instead.
+- Use Slack's mrkdwn for links: `<url|display text>`, bold: `*text*`, code: `` `code` ``.
 
 ## Stacked PRs
 When scoping or planning any project/feature, break the work into small stacked PRs by default:
@@ -54,19 +60,31 @@ When scoping or planning any project/feature, break the work into small stacked 
 - Target ~200-400 lines of diff per PR; smaller is better. PRs build in sequence; each merges independently once its parent lands.
 - Branches: `saje/feature-name-pr1`, `-pr2`, etc.
 
-**Plan-time gate (HARD — no code without it):** every implementation plan MUST open with a PR-stack table. Group tasks by PR boundary and end each group with an explicit "Open PR" step. **If any PR row estimates >400 lines, split it before writing code.**
+**Plan-time gate (HARD — no code without it):** every implementation plan MUST open with a PR-stack table. Group tasks by PR boundary and end each group with an explicit "Open PR" step. **If any PR row estimates >400 lines, split it before writing code.** (A `pr-size-guard` extension warns on `gh pr create` over 400 lines / 10 files.)
 
 | PR | Purpose (one behavior) | Est. diff | Depends on |
 |----|------------------------|-----------|------------|
 | pr1 | ... | ~250 lines | — |
 
-**Execution-time gate:** when you finish a PR group, **STOP** — open the PR (use the `create-pr` skill) and don't start the next group until Saje says go.
+**Execution-time gate:** when you finish a PR group, **STOP** — open the PR (use the `/skill:create-pr` skill) and don't start the next group until Saje says go.
 
 **Scope-drift flag:** if you need to touch files outside the agreed slice, STOP and flag it ("needs files X/Y outside the slice — expand scope, or follow-up PR?") instead of silently growing the PR.
 
+**Keeping a stack in sync when `main` moves (HARD — this has burned us):**
+- **NEVER `git merge main` (or `origin/main`) into a child branch of a stack.** Merging `main` independently into two stacked branches makes them diverge — their merge-base regresses into `main`, so the child PR's diff balloons with dozens of unrelated commits/files and DDCI task-sourcing breaks.
+- **Update a stack from the bottom up:** merge latest `main` into the *base* branch (pr1) only, then cascade **parent → child** merges up the stack (`merge pr1 into pr2`, then `merge pr2 into pr3`, …). Each child gets `main` transitively through its parent, so all branches share one `main` baseline.
+- **Verify after any restack — do NOT trust `git diff --stat` counts alone.** For every parent→child pair run:
+  ```bash
+  git merge-base --is-ancestor origin/saje/<parent> origin/saje/<child> && echo CLEAN || echo DIVERGED
+  git diff --name-only origin/saje/<parent>...origin/saje/<child>   # must show ONLY the child's real files
+  ```
+  If the 3-dot diff lists files from other domains/teams, the stack is tangled — stop and restack, don't push.
+- **Audit the file list, not just the number.** An unexpected file from another team (e.g. `domains/apm/...` in a `domains/compute` PR) is the tell-tale sign of a tangled base.
+- **Exception: rebase-only repos.** In `cloud-inventory`, never merge `master` into any branch; restack with `git rebase` / `git rebase --onto` instead (see `cloud-inventory.md`).
+
 # Advisor Checkpoints
 
-Call `advisor()` in these circumstances — add new entries as patterns emerge:
+Call an advisor subagent (fresh-context read-only reviewer) in these circumstances — add new entries as patterns emerge:
 
 | Circumstance | When exactly |
 |---|---|
@@ -78,22 +96,23 @@ Call `advisor()` in these circumstances — add new entries as patterns emerge:
 
 # Post-Push Protocol (MANDATORY, AUTOMATIC)
 
-**A `git push` is not "done" — it triggers this protocol, which you run automatically every time** (including force pushes and rebases). A hook (`~/.claude/hooks/post-push-protocol.sh`) re-injects it on every push so it can't be forgotten. Don't declare a task complete while any step is outstanding.
+**A `git push` is not "done" — it triggers this protocol, which you run automatically every time** (including force pushes and rebases). A `post-push` extension re-injects it on every push so it can't be forgotten. Don't declare a task complete while any step is outstanding.
 
 1. **Watch CI.** Never claim CI will pass. Resolve the PR (`gh pr view --json url -q .url`) and run `gh pr checks <url> --watch` until every check completes. Don't switch tasks or report "done" while checks run.
+   - **`devflow/mergegate` on dd-source PRs requires a human approval** — it will sit `pending`/`in_progress` indefinitely (observed 5.5+ hrs) purely waiting on that, not because it's hung. If it's the *only* non-passing check, report it as "awaiting approval," not "stuck" — don't recommend a retrigger/empty-commit push for it specifically.
 
 2. **Triage failures before escalating:**
    - *Flaky/infra* (timeout, network, dead runner, known-flaky test): re-run the failed job **once** (`gh run rerun <run-id> --failed`). Passes → note it, continue. Fails the same way → treat as real.
    - *Real failure* (your change broke it): fix immediately and push the fix (re-triggers this protocol). Don't hand a fixable failure back to Saje.
    - *Ambiguous / needs Saje's call*: bring it to Saje with the check name, log excerpt, and a recommendation.
 
-3. **Auto-review your diff (major changes only** — new PR or ~50+ lines of real logic; skip typos/renames). Run the right reviewer: `go-code-reviewer` for Go, `dd:platform-security-reviewer` for security-sensitive code (auth, secrets, IAM, infra/access). Auto-fix obvious/safe issues and push; surface design-tradeoff findings to Saje with file:line and a recommendation.
+3. **Auto-review your diff (major changes only** — new PR or ~50+ lines of real logic; skip typos/renames). Run a `reviewer` subagent (pi-subagents) on the diff; for security-sensitive code (auth, secrets, IAM, infra/access) run a second `reviewer` with a security brief. Auto-fix obvious/safe issues and push; surface design-tradeoff findings to Saje with file:line and a recommendation.
 
 4. **Address PR comments** (run the `/review-pr-comments` process unprompted):
    - *Bots* (codex, sonarcloud, codecov, github-actions, `*[bot]`): respond **definitively** — fix + reply, or reply why it's not applicable. Never leave an open question in a PR comment.
    - *Humans*: do NOT auto-reply. Surface to Saje with the link, summary, recommendation, and a draft reply for approval.
 
-5. **Report back** in-session: what CI did (incl. re-runs), auto-review findings (fixed vs. needs-decision), comments handled, and anything needing Saje's attention. Bring issues proactively — he shouldn't have to ask "what's the status."
+5. **Report back** in-session: what CI did (incl. re-runs), auto-review findings (fixed vs. needs-decision), comments handled, and anything needing Saje's attention. Bring issues proactively — she shouldn't have to ask "what's the status."
 
 # Execution Style
 - Maximize parallelism — use subagents, background agents, and parallel tool calls whenever possible.

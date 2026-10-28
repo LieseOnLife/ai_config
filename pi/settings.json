@@ -1,6 +1,6 @@
 {
-  "defaultProvider": "ai-gw-baseten",
-  "defaultModel": "baseten/zai-org/GLM-5.2",
+  "defaultProvider": "ai-gw-logical",
+  "defaultModel": "glm-5-3",
   "defaultThinkingLevel": "high",
   "packages": [
     "npm:context-mode",
@@ -13,9 +13,30 @@
     "../../dd/datadog-pi-packages/packages/refresh-models",
     "../../dd/datadog-pi-packages/packages/research-web",
     "../../dd/datadog-pi-packages/packages/session-cost",
-    "../../dd/datadog-pi-packages/packages/compaction-continue"
+    "../../dd/datadog-pi-packages/packages/compaction-continue",
+    "../../dd/datadog-pi-packages/packages/pi-npm-guard",
+    "../../dd/datadog-pi-packages/packages/npm-update-cooldown",
+    "../../dd/datadog-pi-packages/packages/mcp-port-forward",
+    "npm:@getpipher/vision"
   ],
-  "lastChangelogVersion": "0.84.2",
+  "lastChangelogVersion": "1.3.0",
   "theme": "dark",
-  "tuiMode": "regular"
+  "tuiMode": "regular",
+  "extensions": [
+    "-builtin:mcp"
+  ],
+  "npmCommand": [
+    "/Users/saje.liese/dd/datadog-pi-packages/packages/pi-npm-guard/bin/pi-npm-guard.mjs"
+  ],
+  "npmGuard": {
+    "enabled": true,
+    "middlewares": [
+      {
+        "path": "/Users/saje.liese/dd/datadog-pi-packages/packages/npm-update-cooldown/middleware/cooldown.mjs",
+        "config": {
+          "days": 2
+        }
+      }
+    ]
+  }
 }
