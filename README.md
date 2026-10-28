@@ -55,7 +55,8 @@ Not backed up: credentials and OAuth state, `*.db` files (agent, history, models
 
 - `grinch/grinch.js`: external web links default to the Commercial Chrome profile named `datadoghq.com`.
 - `ddog-gov.com`, `fed.dog`, `amazonaws-us-gov.com` (AWS GovCloud console + regional subdomains), and the GovCloud SSO start host `d-9067f50546.awsapps.com` use the GovCloud Chrome profile named `ddog-gov.com`.
-- `prod.dog`, `staging.dog`, `ddbuild.io`, all GitHub URLs, and unmatched URLs use Commercial.
+- `github.com/LieseOnLife/…` (personal repos, PRs, issues; owner matched case-insensitively) uses the personal Chrome profile named `Your Chrome`.
+- `prod.dog`, `staging.dog`, `ddbuild.io`, all other GitHub URLs, and unmatched URLs use Commercial.
 - `grinch/open-gov`: a terminal helper for explicitly opening any HTTP(S) URL in GovCloud.
 
 Profiles are referenced by Chrome display name, not directory (`Default`, `Profile N`),

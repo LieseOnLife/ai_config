@@ -148,21 +148,27 @@ class GrinchTests(unittest.TestCase):
                "https://console.amazonaws-us-gov.com",
                "https://us-gov-west-1.console.amazonaws-us-gov.com/ecs",
                "https://d-9067f50546.awsapps.com/start/#/?tab=accounts"]
+        personal = ["https://github.com/LieseOnLife", "https://github.com/LieseOnLife/",
+                    "https://github.com/LieseOnLife/ai_config/pull/18",
+                    "https://github.com/lieseonlife/ai_config/issues?q=is%3Aopen"]
         commercial = ["https://datadoghq.com", "https://prod.dog", "https://vault.prod.dog",
                       "https://staging.dog", "https://ddbuild.io", "https://ci.ddbuild.io",
-                      "https://github.com/DataDog", "https://github.com/LieseOnLife",
+                      "https://github.com/DataDog", "https://github.com/ddoghq/cloud-inventory/pull/130",
+                      "https://github.com/LieseOnLifeX", "https://github.com/foo/LieseOnLife",
+                      "https://api.github.com/repos/LieseOnLife/ai_config",
                       "https://datadoghq.atlassian.net/wiki", "https://example.com",
                       "https://notfed.dog", "https://fed.dog.example.com",
                       "https://ddog-gov.com.example.com", "https://example.com/?next=fed.dog",
                       "https://awsapps.com", "https://console.aws.amazon.com",
                       "https://amazonaws-us-gov.com.example.com",
                       "https://d-9067f50546.awsapps.com.example.com"]
-        for url in gov + commercial:
+        for url in gov + personal + commercial:
             with self.subTest(url=url):
                 output = self.command([GRINCH, "--test", url])
                 fields = dict(line.split(":", 1) for line in output.splitlines() if ":" in line)
                 self.assertEqual(fields["Browser"].strip(), "com.google.Chrome")
-                profile = "Profile 2" if url in gov else "Profile 1"
+                profile = ("Profile 2" if url in gov else
+                           "Default" if url in personal else "Profile 1")
                 self.assertEqual(fields["Args"].strip(), f"--profile-directory={profile}")
                 self.assertEqual(fields["Final"].strip(), url)
 

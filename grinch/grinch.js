@@ -10,5 +10,10 @@ module.exports = {
       ),
       open: { name: "Google Chrome", profile: "ddog-gov.com" },
     },
+    {
+      // Personal GitHub org/user (repos, PRs, issues); GitHub owner names are case-insensitive.
+      match: (url) => url.hostname === "github.com" && /^\/lieseonlife(\/|$)/i.test(url.pathname),
+      open: { name: "Google Chrome", profile: "Your Chrome" },
+    },
   ],
 };
