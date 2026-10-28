@@ -96,6 +96,7 @@ Pause for an advisor checkpoint in these circumstances. Use an available advisor
 4. **Address PR comments** (run the `$review-pr-comments` process unprompted):
    - *Bots* (codex, sonarcloud, codecov, github-actions, `*[bot]`): respond **definitively** — fix + reply, or reply why it's not applicable. Never leave an open question in a PR comment.
    - *Humans*: do NOT auto-reply. Surface to Saje with the link, summary, recommendation, and a draft reply for approval.
+   - *Reply format*: reply body in a `>` blockquote, then one attribution line saying who wrote it: 🤖 agent-written and not reviewed, 🤖✅ agent-drafted and approved by Saje, 👩‍💻 Saje's own words. Templates are in `$review-pr-comments`.
 
 5. **Report back** in-session: what CI did (incl. re-runs), auto-review findings (fixed vs. needs-decision), comments handled, and anything needing Saje's attention. Bring issues proactively — she shouldn't have to ask "what's the status."
 

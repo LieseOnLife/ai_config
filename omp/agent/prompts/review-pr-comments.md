@@ -64,19 +64,26 @@ When evaluating a bot suggestion:
 All replies must:
 1. Be definitive (no "should we...?" or "what do you think?")
 2. State the decision clearly
-3. Credit who made the decision
-4. Sign as your current model name (e.g., Claude, GPT, Gemini — whatever model you actually are)
+3. Put the whole reply body in a `>` blockquote: prefix every line, and use a bare `>` for blank lines
+4. End with one attribution line, **outside** the blockquote, saying honestly who wrote it:
+
+| Who wrote it | Footer |
+|---|---|
+| Agent, not reviewed by Saje (bot replies, autonomous follow-ups) | `🤖 *Written by <your model name> · not reviewed by @<saje>*` |
+| Agent draft that Saje approved in-session (human-comment replies) | `🤖✅ *Drafted by <your model name> · approved by @<saje>*` |
+| Saje's own words, posted verbatim | `👩‍💻 *Written by @<saje>*` |
+
+- `@<saje>` is Saje's account on that repo: `saje-liese_ddog` on `ddoghq`/`DataDog` repos, `LieseOnLife` on personal ones.
+- A subagent writes "a <your model name> subagent".
+- Use 🤖✅ only when Saje approved that reply or its draft. A follow-up or correction she didn't see is 🤖.
 
 **Template:**
 ```
-[Decision statement]
+> [Decision statement]
+>
+> [Rationale if needed]
 
-[Rationale if needed]
-
-**Decision by:** [<your model name> / User @username via pi]
-
----
-*Comment by pi (<your model name>)*
+🤖 *Written by <your model name> · not reviewed by @<saje>*
 ```
 
 ## Output Format
@@ -96,6 +103,8 @@ All replies must:
 
 **Draft response:**
 > [suggested reply text]
+
+🤖✅ *Drafted by <your model name> · approved by @<saje>*
 
 → Approve this response? [Y/n/edit]
 ---
@@ -124,42 +133,30 @@ Automated reviewers (respond definitively):
 
 **Fixed:**
 ```
-Fixed in commit abc123.
+> Fixed in commit abc123.
 
-**Decision by:** <your model name>
-
----
-*Comment by pi (<your model name>)*
+🤖 *Written by <your model name> · not reviewed by @<saje>*
 ```
 
-**Deferred (<your model name> decided):**
+**Deferred (agent decided):**
 ```
-Acknowledged. This role doesn't exist yet in customer-access org since we're bootstrapping.
-Will be added in Phase 3 when state management infrastructure is set up.
+> Acknowledged. This role doesn't exist yet in the customer-access org since we're bootstrapping.
+> It will be added in Phase 3 when state management infrastructure is set up.
 
-**Decision by:** <your model name> (deferred to future phase - role prerequisite missing)
-
----
-*Comment by pi (<your model name>)*
+🤖 *Written by <your model name> · not reviewed by @<saje>*
 ```
 
-**Deferred (User decided):**
+**Deferred (Saje decided):**
 ```
-Acknowledged. Deferring to Phase 3 per project scope.
+> Acknowledged. Deferring to Phase 3 per project scope.
 
-**Decision by:** User @saje.liese via pi
-
----
-*Comment by pi (<your model name>)*
+🤖✅ *Drafted by <your model name> · approved by @<saje>*
 ```
 
 **Not applicable:**
 ```
-This doesn't apply here. The customer-access org uses a different state backend
-pattern than ddog - the emissary role has direct S3 access.
+> This doesn't apply here. The customer-access org uses a different state backend
+> pattern than ddog: the emissary role has direct S3 access.
 
-**Decision by:** <your model name> (context difference from referenced config)
-
----
-*Comment by pi (<your model name>)*
+🤖 *Written by <your model name> · not reviewed by @<saje>*
 ```
