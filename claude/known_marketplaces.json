@@ -5,7 +5,7 @@
       "repo": "ddoghq/claude-marketplace"
     },
     "installLocation": "/Users/saje.liese/.claude/plugins/marketplaces/datadog-claude-plugins",
-    "lastUpdated": "2026-10-22T01:49:54.493Z"
+    "lastUpdated": "2026-10-28T15:30:13.141Z"
   },
   "trajectory": {
     "source": {
@@ -14,5 +14,37 @@
     },
     "installLocation": "/Users/saje.liese/.trajectory/claude-marketplace",
     "lastUpdated": "2026-10-22T15:27:34.300Z"
+  },
+  "claude-plugins-official": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    },
+    "installLocation": "/Users/saje.liese/.claude/plugins/marketplaces/claude-plugins-official",
+    "lastUpdated": "2026-10-28T15:29:56.450Z"
+  },
+  "obsidian-skills": {
+    "source": {
+      "source": "github",
+      "repo": "kepano/obsidian-skills"
+    },
+    "installLocation": "/Users/saje.liese/.claude/plugins/marketplaces/obsidian-skills",
+    "lastUpdated": "2026-10-28T15:29:58.774Z"
+  },
+  "sttts-skills": {
+    "source": {
+      "source": "git",
+      "url": "https://github.com/sttts/skills.git"
+    },
+    "installLocation": "/Users/saje.liese/.claude/plugins/marketplaces/sttts-skills",
+    "lastUpdated": "2026-10-28T15:30:00.047Z"
+  },
+  "datadog-dd-source-claude-plugins": {
+    "source": {
+      "source": "directory",
+      "path": "/Users/saje.liese/dd/dd-source/.claude-plugins"
+    },
+    "installLocation": "/Users/saje.liese/dd/dd-source/.claude-plugins",
+    "lastUpdated": "2026-10-28T15:30:00.542Z"
   }
 }

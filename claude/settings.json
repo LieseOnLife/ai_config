@@ -162,6 +162,24 @@
         "source": "directory",
         "path": "/Users/saje.liese/.trajectory/claude-marketplace"
       }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "obsidian-skills": {
+      "source": {
+        "source": "github",
+        "repo": "kepano/obsidian-skills"
+      }
+    },
+    "datadog-dd-source-claude-plugins": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/saje.liese/dd/dd-source/.claude-plugins"
+      }
     }
   },
   "effortLevel": "high",
