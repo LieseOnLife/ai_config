@@ -54,6 +54,8 @@ git worktree add ../${REPO}-worktrees/feature-name saje/feature-name       # exi
 
 **Deletion (requires explicit approval):** never run `git worktree remove`, `git branch -d/-D`, or `git push origin --delete` without asking. (A `worktree-guard` extension enforces this — prefix with `# APPROVED:` after Saje approves.)
 
+**Standing approval: merged PR → remove its worktree and branches.** When Saje says a PR is merged, or you find it merged (`gh pr view --json state` = `MERGED`), clean up right away without asking (`# APPROVED: PR merged` prefix): run `git worktree remove` on its worktree, delete the local branch with `git branch -D`, and delete the remote branch with `git push origin --delete` if GitHub didn't auto-delete it. Run `git status --porcelain` in the worktree first. If there are uncommitted changes, stop and ask. Branches of unmerged or closed-unmerged PRs still need explicit approval.
+
 **Subagents in worktrees:** pass the full absolute worktree path; the child `cd`s there first. Details in the `delegation` skill.
 
 ## GitHub

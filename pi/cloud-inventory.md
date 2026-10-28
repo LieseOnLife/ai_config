@@ -9,6 +9,13 @@ Cloud infrastructure management for GCP projects, AWS accounts, and Azure subscr
 
 **Build:** `bazel build //...` or `bzl build //...`
 
+## Updating a branch from master: rebase, never merge
+
+Bring a cloud-inventory branch up to date with `git rebase origin/master` + `git push --force-with-lease`. **Never `git merge master`** into a PR branch.
+- Why: `terraform-pipeline-generate` (cloud-tf-ci `src/gitlab-ci/cloud-inventory.yml`) computes `MASTER_BRANCH_CHANGED_DIRECTORIES` from `git diff ${CI_COMMIT_SHA}^1 ${CI_COMMIT_SHA}`. On a merge commit `^1` is the old branch head, so the diff spans every master commit pulled in; on a stale branch that overflows exec with `Argument list too long` and the job fails after all retries (hit on ddoghq/cloud-inventory#130, 2005 commits behind).
+- Stale branches also carry pre-org-move `@DataDog/*` CODEOWNERS; rebasing onto master picks up the `@ddoghq/*` owners.
+- Stacks: rebase pr1 onto master, then each child onto its rebased parent (`git rebase --onto saje/<x>-pr1 <old-pr1-sha> saje/<x>-pr2`). This overrides the global "merge main into the base branch" stack rule for this repo.
+
 ## Terraform modules (`terraform-modules/<name>/`)
 
 Every module change MUST include all of these in the same PR:
