@@ -5,7 +5,7 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/grinch-common.sh"
 for file in grinch.js open-gov; do
     [[ -f "$BACKUP_DIR/$file" ]] || { echo "Missing $BACKUP_DIR/$file" >&2; exit 1; }
 done
-for profile in "datadoghq.com" "ddog-gov.com"; do
+for profile in "datadoghq.com" "ddog-gov.com" "Your Chrome"; do
     dir=$(chrome_profile_dir "$profile")
     if [[ -z "$dir" || ! -d "$HOME/Library/Application Support/Google/Chrome/$dir" ]]; then
         echo "Missing or ambiguous Chrome profile named $profile; verify profile mappings before installing." >&2
