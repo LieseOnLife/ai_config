@@ -73,6 +73,43 @@ De-dupe against any wikilinks already in the callout. Preserve any lines the use
 
 **Calendar configuration:** edit the `targetNames` list in the Swift script to control which calendars are queried. Default: `saje.liese@datadoghq.com`, `Calendar`, `Infra Teams`.
 
+### Step 1.5: Fill In Past Meeting Notes
+
+For every day in the Step 0 date range, fill in that day's meeting notes from the AI summaries Zoom and Google Meet send after each meeting. Run this after Step 1 so today's notes exist, and before the standup so the standup can use the recaps.
+
+**1. Collect the summaries.** Search the whole range plus today, because emails can arrive hours later:
+- **Zoom:** in Gmail, `from:no-reply@zoom.us subject:"Meeting assets for" after:<first day, YYYY/MM/DD> before:<tomorrow>`. Fetch each message. The body is HTML, so strip the tags and keep the "View in Zoom" link (`datadog.zoom.us/launch/hub?type=summary&mid=…`) and each `tasks.zoom.us?…&stepId=…` link next to its next-step text. The sections are *Quick recap*, *Next steps* (grouped by owner) and *Summary* (topic headings), and the attendees are listed at the end.
+- **Google Meet:** in Gmail, `from:gemini-notes@google.com after:… before:…`. The subjects look like `Notes: “<title>” <Mon D, YYYY>`. Read the full notes from the Drive doc named `<title> - YYYY/MM/DD HH:MM TZ - Notes by Gemini`: find it with `search_files` (`name contains 'Notes by Gemini' and modifiedTime > '<first day>T00:00:00'`) and read it with `get_doc_as_markdown`.
+- List each day's calendar events (as in Step 1) so you can tie a summary to its meeting by title and start time. Zoom subjects use the raw calendar title (e.g. `⛵Mentoring-the-Ship`, `Cloud Accounts: Ops Review/Oncall Handoff`), not the note name.
+
+**2. Find the note.** Glob `Calendar/Meetings/📣 YYYY-MM-DD - *` for the meeting's date. Match on title words, recurring parent and attendees, not the exact filename Step 1 created, because Saje often renames notes (e.g. drops ` with <Person>`). For generic titles, confirm by attendees, as in Step 1. If the meeting has no note (accepted late, or not created that morning), create it now under Step 1's rules and add it to that day's `>[!meetings]` callout if the daily note exists. If no note can be resolved, append the summary to that day's daily note under `## 🤖AI notes - <meeting title>`.
+
+**3. Write `## 🤖AI notes`** at the end of the note, below anything already under `# Overview`. **Never change Saje's own notes.** If the note already has `## 🤖AI notes`, skip it, so re-runs never duplicate. Layout:
+
+```markdown
+## 🤖AI notes
+_Zoom summary ([view in Zoom](<hub link>)). Attendees: <names, rooms>._
+
+### Quick recap
+<one tight paragraph>
+
+### Next steps
+- [ ] [<Saje's action>](<tasks.zoom.us link>) #week/YYYY-Www
+- [i] [[👤First Last]] [<someone else's action>](<tasks.zoom.us link>)
+
+### Summary
+#### <Topic>
+<2–4 short sentences>
+```
+
+- For Gemini, start with `_Gemini notes ([doc](<doc link>)). Attendees: …_` and use the doc's *Summary* and *Suggested next steps*.
+- **Rewrite rather than paste.** Use short, plain sentences, refer to Saje as "you", and cut small talk (laptops, injuries) unless it matters.
+- **Fix obvious transcription errors** (e.g. "Databricks"/"Cavum"/"Sage" → Datadog/CAVM/Saje) and say so in the italic line.
+- **Rooms:** Zoom lists conference rooms as attendees (e.g. `NYC 17.06 Marigold`). Use a person's name only when the summary names them (e.g. "Roashan (NYC)"). Otherwise write `NYC room (attendee unclear)`.
+- **Action items:** for Saje's own, use `- [ ]` (`- [!]` if urgent or blocked), tagged with the current week (`#week/YYYY-Www`). They appear on the weekly page through its live query, so Step 6.5 must not copy them. Note any that repeat an older meeting's open item, e.g. "carried over from 10-19". For everyone else's, use `- [i] [[👤Person]]`, grouping one person's items on a single line joined with ` · `. Link a follow-up to its next meeting when one is scheduled (`→ [[📣 YYYY-MM-DD - …]]`).
+
+**4. Summarize** in the final report: each note filled in, each one with no summary (e.g. Meet calls without Gemini, or in-person meetings), and Saje's new action items.
+
 ### Step 2: Generate Standup
 Run `/slack:standup` to generate the standup from the date range above.
 
@@ -221,7 +258,7 @@ If the Slack Summary file already exists for today, warn and ask whether to over
 After the Slack Summary is written, read `~/.claude/skills/weekly/SKILL.md` and follow **Morning Integration**. Preserve the `scheduled-headless` argument when present. This pass links today's daily note, imports only new actionable Slack/DM work, or handles a missing weekly page exactly as that skill specifies. Failure here must not undo the Slack Summary.
 
 ### Step 7: Done
-Do **not** offer to post the standup to Slack.
+Do **not** offer to post the standup to Slack. Include Step 1's meeting list and Step 1.5's notes report in the final reply.
 
 ## Channel Configuration
 To update channels, edit this file directly. The three tiers are:
