@@ -75,7 +75,7 @@ People are **always** linked by name. Projects, topics, Jira and meetings link *
 |---|---|---|---|
 | People | `People/👤*.md` | `people:` lists every non-Saje human participant, plus anyone central to the topic, as `"[[👤First Last]]"` **whether or not the note exists yet** | `[[👤First Last]]` on first mention in the summary and action items |
 | Projects | `Datadog/Projects/*.md` (emoji-prefixed, e.g. `🎱 CAVM Account Pooling`) | `project:`, a single `"[[…]]"` for the main project; mention others inline | `[[🎱 CAVM Account Pooling\|Account Pooling]]` |
-| Topics | `Topics/**/💡*.md` and `Datadog/**/💡*.md` | `topics:` list | inline when useful |
+| Topics | `Topics/**/*💡*.md` and `Datadog/**/*💡*.md` (some carry a prefix, e.g. `🔵💡Azure Tennent Sync`) | `topics:` list | inline when useful |
 | Jira | `Datadog/Tasks/🎞️ {KEY}*.md`; otherwise a Jira URL | — | `[[🎞️ CLOUDA-1234 …\|CLOUDA-1234]]` or `[CLOUDA-1234](https://datadoghq.atlassian.net/browse/CLOUDA-1234)` |
 | Meetings | `📢` parents, `📣`/`💬` notes that this conversation follows up or sets up | `meeting:` (recurring parent only) | `→ [[📣 YYYY-MM-DD - …]]` |
 | PRs/docs | — | — | Markdown links: `[dd-source #123](https://github.com/ddoghq/dd-source/pull/123)` |
