@@ -25,7 +25,7 @@ The detailed Claude-to-Codex mapping and deliberate omissions are documented in 
 - Provider, model, thinking, and package defaults in `pi/settings.json`
 - MCP server config (Atlassian, Datadog, Slack, Google Workspace) in `pi/mcp.json`
 - Five lifecycle extensions ported from Claude hooks (worktree guard, PR size guard, terraform OTEL fix, auto-format-on-edit, post-push protocol), plus the `/snippets` prompt-snippets extension, in `pi/extensions/`
-- Subagent definitions (`advisor`, `bzl`, `coder`) in `pi/agents/`
+- Subagent definitions (`advisor`, `bzl`, `coder`, `slack-scribe`) in `pi/agents/`
 - Slash-command prompt templates in `pi/prompts/`
 - Helper scripts (worktree context, morning routine, CI checks, Obsidian tooling) in `pi/scripts/`
 - Skills in `pi/skills/`, mostly ported from Claude
