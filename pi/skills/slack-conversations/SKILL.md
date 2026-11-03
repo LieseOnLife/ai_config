@@ -118,6 +118,7 @@ Body:
   ```
   - Put the date in the header on the first message and whenever it changes. Otherwise use `HH:MM` (24h, ET).
   - **Verbatim** means keeping typos, emoji shortcodes (`:bufo-wave:`) and code blocks exactly as written. Nest quoted or forwarded messages as `> >`.
+  - **Never transcribe secrets:** passwords, tokens, API keys, recovery codes or private keys. Replace each one with `_(secret redacted)_`, and skip conversations that exist only to hand one over.
   - Convert Slack mrkdwn links `<url|text>` → `[text](url)` and `<url>` → `<url>`. Resolve user mentions `<@U…|name>` → `@name`.
   - Escape every `$` as `\$`, in the transcript and the summary, so Obsidian doesn't render dollar amounts as math.
   - Note attachments as `_(file attached: name)_`. Note reactions only if they carry meaning. Slack doesn't say who reacted, so write `_(reacted 💯)_` and never name the reactor.
