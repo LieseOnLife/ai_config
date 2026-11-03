@@ -30,7 +30,7 @@ Check every DM and group DM in the range, every channel thread Saje posted in, a
 - bots and system messages
 - one-line asks or acks
 - PR-review pings (`:ptal:` plus a stamp)
-- routine on-call support Q&A that's already tracked in the on-call note
+- routine on-call support Q&A (routing, form links, one-step fixes) that's already tracked in the on-call note. Support threads with a decision or design discussion still get a note.
 - pure social chatter, unless Saje made a commitment in it
 
 If you're unsure, include it. A short note is cheaper than a lost decision.
@@ -62,7 +62,7 @@ Three outcomes:
 ## 4. Classify and name
 
 - **Recurring:** the participants and topic match a `📢` parent in `Calendar/Meetings/` (e.g. a DM following up a 1-1). Name it `💬 YYYY-MM-DD - 📢 <Parent Title>.md`.
-- **One-off DM:** `💬 YYYY-MM-DD - <Topic> with <Person>.md`
+- **One-off DM or group DM:** `💬 YYYY-MM-DD - <Topic> with <Person>.md`. For a group DM, use the main counterpart.
 - **One-off channel thread or single-topic channel:** `💬 YYYY-MM-DD - <Topic> in <channel-name>.md`
 
 Keep `<Topic>` to 2–6 words, in title case. Strip any `/ \ : * ? " < > |` from it.
@@ -117,7 +117,9 @@ Body:
   > reply
   ```
   - Put the date in the header on the first message and whenever it changes. Otherwise use `HH:MM` (24h, ET).
-  - **Verbatim** means keeping typos, emoji shortcodes (`:bufo-wave:`) and code blocks exactly as written. Nest quoted or forwarded messages as `> >`.
+  - **Verbatim** means keeping typos, emoji shortcodes (`:bufo-wave:`) and code blocks exactly as written. Nest quoted messages as `> >`.
+  - Write forwarded messages as `> > _Forwarded from Name:_` followed by the text. Slack truncates them, so restore the full text from the original message (or an existing note) when you can.
+  - Saje's replies relayed by the Jira sync bot are her words: write them as `**🧚🏻‍♀️ Saje** · HH:MM _(via Jira sync)_`, not as bot lines.
   - **Never transcribe secrets:** passwords, tokens, API keys, recovery codes or private keys. Replace each one with `_(secret redacted)_`, and skip conversations that exist only to hand one over.
   - Convert Slack mrkdwn links `<url|text>` → `[text](url)` and `<url>` → `<url>`. Resolve user mentions `<@U…|name>` → `@name`.
   - Escape every `$` as `\$`, in the transcript and the summary, so Obsidian doesn't render dollar amounts as math.
