@@ -45,6 +45,7 @@ fi
 
 # Directories to install (relative to ~/.omp/agent)
 SYNC_DIRS=(
+    "agents"
     "extensions"
     "lib"
     "managed-skills"

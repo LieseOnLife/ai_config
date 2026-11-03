@@ -133,9 +133,9 @@ Significant Slack conversations become `💬` meeting notes with a verbatim tran
 
 1. **Build the candidate list** from Steps 2–3 (`from:me` and `to:me` results). Include every human DM or group DM with messages in the range, and every channel thread Saje posted in. Use one line per conversation: `channel_id | thread_ts or - | participants | one-line hint`. Don't pre-filter beyond dropping bots; the subagent applies the qualify rules.
 2. **Dispatch** one `slack-scribe` task with the date range and the candidate list, then go straight on to Step 4. Don't wait. Saje's Slack calls are rate-sensitive, so keep your own Step 4 channel reads at most 3–4 concurrent while the scribe runs.
-3. **Before Step 5**, collect the scribe's report table (wait for it if it hasn't finished). In the Slack Summary, every DM or channel bullet about a recorded conversation also links its note: `— [[💬 YYYY-MM-DD - <title>|notes]]`.
+3. **Before Step 5**, collect the scribe's report table (wait for it if it hasn't finished). In the Slack Summary, every DM or channel bullet about a recorded conversation (created, continued or unchanged) also links its note: `— [[💬 YYYY-MM-DD - <title>|notes]]`.
 4. **If the scribe fails or Slack is unavailable,** write the Slack Summary anyway and add this once to today's daily note: `- [!] Re-run /skill:slack-conversations for <date range> ➕ YYYY-MM-DD`.
-5. List each conversation in the final report as **created**, **continued** or **skipped** (with the reason), plus Saje's new action items from those notes.
+5. List each conversation in the final report as **created**, **continued**, **unchanged** or **skipped** (with the reason), plus Saje's new action items from those notes.
 
 ### Step 4: Generate Tiered Channel Digests
 Read each channel via the Slack MCP server (`slack_search_channels` to resolve the channel ID, then `slack_read_channel` with date-range filtering) and summarize threads, decisions, and action items. Generate digests in 3 tiers:
@@ -263,7 +263,7 @@ The Daily Note template automatically embeds `![[YYYY-MM-DD - Slack Summary]]` o
 If the Slack Summary file already exists for today, warn and ask whether to overwrite or skip.
 
 ### Step 6.5: Weekly Dashboard
-After the Slack Summary is written, read `~/.pi/agent/skills/weekly/SKILL.md` and follow **Morning Integration**. Preserve the `scheduled-headless` argument when present. This pass links today's daily note, imports only new actionable Slack/DM work, or handles a missing weekly page exactly as that skill specifies. Failure here must not undo the Slack Summary.
+After the Slack Summary is written, read `~/.pi/agent/skills/weekly/SKILL.md` and follow **Morning Integration**. Preserve the `scheduled-headless` argument when present. This pass links today's daily note, imports only new actionable Slack/DM work, or handles a missing weekly page exactly as that skill specifies. Skip any Slack/DM action that Step 3.5 already recorded as a checkbox or `Tracked on` bullet in a `💬` note: week-tagged ones already reach the weekly page through its live query. Failure here must not undo the Slack Summary.
 
 ### Step 7: Done
 Do **not** offer to post the standup to Slack. Include Step 1's meeting list, Step 1.5's notes report and Step 3.5's Slack-conversation report in the final reply.
