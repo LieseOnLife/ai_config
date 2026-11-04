@@ -82,6 +82,25 @@ new state
 
 ---
 
+## 🚶 Code Walkthrough
+
+> Read in this order. Hand-written code is `file_a.go` and `file_b.go`; the rest is generated.
+
+**1. `file_a.go`**
+- What changed and why, one bullet per notable decision
+
+**2. `file_b.go`**
+
+| Input | Result |
+|---|---|
+| case one | outcome |
+| case two | outcome |
+
+**3. Tests**
+- 🧪 What each new test proves
+
+---
+
 ## 🧪 Test Plan
 
 - [ ] Test step one
@@ -180,6 +199,7 @@ Examples:
 Use the template, adapting sections as needed:
 - Skip sections that don't apply
 - Add sections if needed (e.g., "⚠️ Breaking Changes")
+- **Always include `🚶 Code Walkthrough`** for any PR with real logic: number the hand-written files in the order a reviewer should read them, say which files are generated, and use a small table when behavior branches on inputs. Skip it only for trivial PRs (typos, renames, version bumps).
 - Keep it scannable
 
 ### Step 5: Create PR
