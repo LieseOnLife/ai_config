@@ -25,7 +25,7 @@ The detailed Claude-to-Codex mapping and deliberate omissions are documented in 
 - Provider, model, thinking, and package defaults in `pi/settings.json`
 - MCP server config (Atlassian, Datadog, Slack, Google Workspace) in `pi/mcp.json`
 - Five lifecycle extensions ported from Claude hooks (worktree guard, PR size guard, terraform OTEL fix, auto-format-on-edit, post-push protocol), plus the `/snippets` prompt-snippets extension, in `pi/extensions/`
-- Subagent definitions (`advisor`, `bzl`, `coder`) in `pi/agents/`
+- Subagent definitions (`advisor`, `bzl`, `coder`, `slack-scribe`) in `pi/agents/`
 - Slash-command prompt templates in `pi/prompts/`
 - Helper scripts (worktree context, morning routine, CI checks, Obsidian tooling) in `pi/scripts/`
 - Skills in `pi/skills/`, mostly ported from Claude
@@ -44,7 +44,7 @@ Not backed up: extensions, themes, the prompt library database, and Zed's local 
 - Model roles, subagent model overrides, skill directories, extension paths, and UI defaults in `omp/agent/config.yml`
 - MCP server config (Atlassian, Datadog, Gmail, Google Calendar/Workspace, Slack) in `omp/agent/mcp.json`
 - Lifecycle extensions (worktree guard, PR size guard, post-push protocol, auto-format, terraform OTEL fix, prompt snippets, pi model/Baseten shims) in `omp/agent/extensions/` and shared helpers in `omp/agent/lib/`
-- Prompt templates in `omp/agent/prompts/`, domain rules in `omp/agent/rules/`, and auto-learned skills in `omp/agent/managed-skills/`
+- Prompt templates in `omp/agent/prompts/`, subagent definitions (`advisor`, `bzl`, `coder`, `slack-scribe`) in `omp/agent/agents/`, domain rules in `omp/agent/rules/`, and auto-learned skills in `omp/agent/managed-skills/`
 - Plugin and marketplace metadata (`omp/marketplaces.json`, `omp/plugins/*.json`), but not plugin contents
 
 Skills from `~/.pi/agent/skills` are loaded by omp through `config.yml` and are backed up under `pi/`.
@@ -104,6 +104,7 @@ ai_config/
 │   └── settings.json
 ├── omp/
 │   ├── agent/
+│   │   ├── agents/
 │   │   ├── extensions/
 │   │   ├── lib/
 │   │   ├── managed-skills/

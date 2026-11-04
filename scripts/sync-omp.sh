@@ -26,6 +26,7 @@ fi
 
 # Directories to sync (relative to ~/.omp/agent)
 SYNC_DIRS=(
+    "agents"
     "extensions"
     "lib"
     "managed-skills"
