@@ -265,8 +265,10 @@ If the Slack Summary file already exists for today, warn and ask whether to over
 ### Step 6.5: Weekly Dashboard
 After the Slack Summary is written, read `~/.pi/agent/skills/weekly/SKILL.md` and follow **Morning Integration**. Preserve the `scheduled-headless` argument when present. This pass links today's daily note, imports only new actionable Slack/DM work, or handles a missing weekly page exactly as that skill specifies. Skip any Slack/DM action that Step 3.5 already recorded as a checkbox or `Tracked on` bullet in a `💬` note: week-tagged ones already reach the weekly page through its live query. Failure here must not undo the Slack Summary.
 
-### Step 6.6: Retro Trends (runs alongside Step 6.5)
-For each meeting note Step 1 handled today whose title contains `retro` (case-insensitive), read `~/.pi/agent/skills/retro-trends/SKILL.md` and write its **📈 Trends since last retro** section into that note. It covers the window since the previous retro in the same series. It needs today's Slack Summary (the file dated today covers up to yesterday), so start it after Step 6. Dispatch it as one subagent per retro note so the main session doesn't load the raw evidence. An existing section is left alone; the skill is idempotent. If it fails, add this once to today's daily note: `- [!] Re-run /skill:retro-trends for [[<retro note>]] ➕ YYYY-MM-DD`. Failure here must not undo the Slack Summary.
+### Step 6.6: Retro Trends
+Run this after Step 6.5 finishes: it reads the current week's page, which Step 6.5 updates. Pick each meeting note Step 1 handled today whose title or `meeting:` link contains `retro` (case-insensitive) and that doesn't already have `## 📈 Trends since last retro`. Dispatch one subagent per note. Each subagent reads `~/.pi/agent/skills/retro-trends/SKILL.md`, writes the section into that note only, and returns the skill's §4 report. Wait for them before Step 7.
+
+If a subagent fails, the main session adds this to today's daily note, unless an open copy for that note is already there: `- [!] Re-run /skill:retro-trends for [[<retro note>]] ➕ YYYY-MM-DD`. Failure here must not undo the Slack Summary.
 
 ### Step 7: Done
 Do **not** offer to post the standup to Slack. Include Step 1's meeting list, Step 1.5's notes report, Step 3.5's Slack-conversation report and Step 6.6's retro-trends headlines (window and length, plus missing sources) in the final reply.
