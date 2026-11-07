@@ -6,65 +6,78 @@ description: Write a "📈 Trends since last retro" section into a retro meeting
 ## Configuration
 - Vault: `/Users/saje.liese/Obsidian/Tech-2/`
 - Retro notes: `Calendar/Meetings/📣 YYYY-MM-DD - <title>.md` where the title contains `retro` (case-insensitive).
-- Slack Summaries: `Calendar/Daily Notes/YYYY-MM-DD - Slack Summary.md`. A file named for day D covers the day(s) **before** D.
+- Slack Summaries: `Calendar/Daily Notes/YYYY-MM-DD - Slack Summary.md`. A file dated D covers the day(s) **before** D. Files exist on weekdays only; Monday's covers the weekend.
 - Weekly pages: `Calendar/Weekly Notes/` (`type: weekly_notes`, `date_start`/`date_end`).
 - On-call / Cloud Admin notes: `Datadog/Ops/🌧️YYYY-MM-DD - Cloud Admin.md`, `Datadog/Ops/🌧️YYYY-MM-DD - Cloud Accounts Primary Oncall.md`.
-- Jira project: `CLOUDA`. Support channel: `cloud-accounts-support` (`C08MPTABY23`). CAVM alerts: `cavm-ops` (`C06UGQPFU5A`).
+- Jira project: `CLOUDA` (cloudId `datadoghq.atlassian.net`).
 
 ## 1. Resolve the Series and Window
 1. **Target:** the retro note you were given. Its `date:` frontmatter is the target date `T`.
-2. **Series key:** take the filename, drop `📣 YYYY-MM-DD - ` and any leading `📢`, drop a trailing ` with <…>`, then lowercase and collapse whitespace. For example, `📣 2026-11-06 - Cloud Accounts Retro with Cloud Accounts team` becomes `cloud accounts retro`, which matches the older `📣 2026-07-17 - Cloud Accounts Retro`.
-3. **Previous retro `P`:** the newest note in the same series with a date before `T`. **The retro before that, `PP`,** sets the comparison window.
-4. **Window:** `P` through `T−1` inclusive. That's the Slack Summary files dated `P+1` through `T`, plus every other source filtered to those dates. **Previous window:** `PP` through `P−1`.
-   - Slack Summaries are written on **weekdays only**: Monday's file covers the weekend. A missing Saturday or Sunday file is expected. Report only missing **weekday** files, as a single line in the header.
-5. **Length:** calendar days `T − P` and working days (Mon–Fri). Windows often differ in length, so compare counts **per working day**. For Slack-marker rates, divide by the number of weekday summary files that exist in the window, not by the window's working days.
-6. **No `P`** (first retro in a series): use the 14 days before `T`, label it "first retro in this series", and leave out the Previous column.
+2. **Series key:** take the basename without `.md`, drop `📣 YYYY-MM-DD - `, any leading `📢`, and a trailing ` with <…>` or ` (from #…)`, then lowercase and collapse whitespace. For example, `📣 2026-11-06 - Cloud Accounts Retro with Cloud Accounts team` becomes `cloud accounts retro`, which matches `📣 2026-07-17 - Cloud Accounts Retro`. Two notes with the same non-empty `meeting:` link are also the same series.
+3. **Previous retro `P`:** the newest note in the same series dated before `T`. **`PP`** is the one before `P`.
+4. **Windows:** current = dates `P` through `T−1`; previous = dates `PP` through `P−1`.
+   - Slack Summaries: read the files dated `P+1` through `T` (previous window: `PP+1` through `P`).
+   - Every other source: filter to the window's own dates. Exclude `P`'s retro note itself from source F.
+   - A missing weekend file is expected. List missing **weekday** files once, in the header's Missing line.
+5. **Rates:** Slack-marker rates are **per summary file** (divide by the number of files that exist). Every other rate is **per working day** (Mon–Fri). The header gives both denominators.
+6. **Missing history:**
+   - **No `P`** (first retro in the series): the current window is the 14 days before `T`. Omit *Last retro follow-through*, the Previous/Trend columns, and the directions in Headlines. Label the header "first retro in this series".
+   - **No `PP`** (second retro in the series): omit the Previous/Trend columns and say "no earlier window to compare" in the header.
 
 ## 2. Gather Read-only Evidence
-Run the six sources in parallel, with one subagent per source; each one returns facts plus links, not prose. For every claim, keep its link: Slack permalink, Jira key, PR, incident, or the `[[note]]` it came from. Record any source that's unavailable; a failed source must not block the others.
+**Budget: about 15 minutes.** Use at most **three lanes** in parallel. Lanes are subagents when this skill runs at the top level; when it is already running as a subagent (e.g. `/morning` Step 6.6), do them yourself, in order. Every claim keeps its link: Slack permalink, Jira key, PR, incident, or the `[[note]]` it came from. Each lane returns every relevant item **with its date and link**, not themes already filtered; the synthesis groups themes across sources (§3). Record any source that's unavailable; a failure must not block the other lanes.
+- **Vault lane** (no network): B, the vault parts of C and D, E, F.
+- **Jira/Datadog lane:** the CLOUDA queries in C and the incident query in D.
+- **Follow-through lane:** A. This is the only lane allowed Slack calls: at most **one** combined search, and only for items the vault can't settle.
 
-**Time budget: the whole skill should take about 15 minutes.** Each source subagent gets an 8-minute budget and returns what it has, marked `partial`, when the budget runs out. Prefer counts from the vault and from single queries over paging through Slack history:
-- **Never page through channel history** (`slack_read_channel`) for either window. Use one search per count and read threads only for samples.
-- **The previous window is counts-only.** It comes from vault files and JQL. Don't sample Slack, read threads, or search incidents for it.
+Never page through Slack channel history.
 
 **A. Last retro follow-through**
-- Action items come from `P`'s note: Zoom/Gemini *Next steps*, `## 🤖AI notes`, `- [ ]`/`- [i]` lines, plus any `💬` note that links `[[P's basename]]` (e.g. "Retro Tasks in cloud-accounts-team").
-- If `P`'s note has no action items, fetch its recap instead. Search Gmail with `from:no-reply@zoom.us subject:"Meeting assets for" <raw calendar title>` dated `P`, or the Gemini doc for that date. If neither exists, write a single `⏸ no evidence` row: "recap unavailable". Don't infer that there were no actions, and don't search further.
-- For each item, find its status from linked Jira keys (Atlassian MCP), checkbox state, PR state (`gh`), and Slack mentions in the window.
+- Action items come from `P`'s note: Zoom/Gemini *Next steps*, `## 🤖AI notes`, and checkbox lines in any state (`- [ ]`, `[x]`, `[/]`, `[-]`, `[!]`, `[?]`, `[i]`). Also include any `💬` note that links `[[<P basename>` (aliased links `[[…|…]]` count too).
+- If `P`'s note has none, fetch the recap instead. Search Gmail with `from:no-reply@zoom.us subject:"Meeting assets for" after:<P−1> before:<P+2>` and match it on the series title words. Failing that, search Drive for `name contains 'Notes by Gemini'` around `P`. If neither exists, write a single `⏸ no evidence` row reading "recap unavailable". Don't infer that there were no actions, and don't search further.
+- Status for each item: checkbox state first, then linked Jira keys, PR state (`gh`), and vault mentions; the one Slack search is the last resort.
 - Status values: ✅ done · 🔄 in progress · ⏸ no evidence · ❌ dropped or cancelled. "No evidence" is a finding; don't guess.
 
-**B. Slack Summary markers** (window files, and the previous window's files for comparison)
+**B. Slack Summary markers** (both windows)
 - Count `- [f]`, `- [w]`, `- [k]`, `- [I]`, `- [!]` and `- [?]` lines, only inside callouts (lines starting with `>`).
-- Group items into themes by topic (e.g. "CAVM pooling", "cloud-inventory CI", "AppGate"). Keep themes that show up on 2 or more **distinct dates**, and note which channels they came from.
+- Return each marked item with its date, channel and topic.
 
-**C. Support / on-call load** (window vs previous window)
-- CLOUDA: JQL `project = CLOUDA AND created >= "<start>" AND created < "<end+1>"` gives the count created. The same query with `resolved` gives the count resolved, and `AND statusCategory != Done` gives the count still open. Report counts only, plus the top 3 categories from summary keywords, components or labels. **Don't list ticket keys** beyond one example per category.
-- #cloud-accounts-support, **current window only:** one search, `in:<#C08MPTABY23> after:<start−1> before:<end+1>`, for the count of top-level threads. Then sample 15 threads and estimate the share that were redirects to other teams (Cloud Security, IT/Beyond Identity, Procurement) versus real Cloud Accounts work.
-- On-call: the Primary Oncall / Cloud Admin notes and the `Ops Review & Oncall Handoff` meeting notes dated in the window. Look for handoff themes and anything that kept coming back.
+**C. Support / on-call load**
+- **CLOUDA, both windows.** Use `searchResultMode: "count"` for count-only queries.
+  - Created: `project = CLOUDA AND created >= "<start>" AND created < "<end+1>"`
+  - Resolved: `project = CLOUDA AND resolved >= "<start>" AND resolved < "<end+1>"`
+  - Open at window end: the Created query `AND (resolved is EMPTY OR resolved >= "<end+1>")`. This is a point-in-time count, so a re-run gives the same answer.
+  - Top 3 categories: one current-window Created query with `searchResultMode: "all"`, `maxResults: 100` and `fields: ["summary","components","labels"]`. Give one example key per category; never list keys beyond that.
+- **Support threads, both windows:** count the bullets under `### [cloud-accounts-support]` in the Slack Summaries. For the current window, classify each one as a redirect to another team (Cloud Security, IT/Beyond Identity, Procurement) or as real Cloud Accounts work. Don't call Slack for this.
+- **On-call:** the Primary Oncall / Cloud Admin notes and the `Ops Review & Oncall Handoff` notes in each window. Return the handoff items, each with its date.
 
-**D. Incidents**
-- `IR-*` / `app.datadoghq.com/incidents/*` links in the window's Slack Summaries and meeting notes, plus **one** Datadog `search_datadog_incidents` query for Cloud Accounts / CAVM incidents created in the current window.
-- CAVM alerts: count alert items in the `cavm-ops` section of the Slack Summaries, for both windows; don't read the channel. **Repeat offenders** are the same monitor, workflow or activity alerting on 2 or more distinct dates.
+**D. Incidents and CAVM alerts** (both windows, same method in each)
+- **Incidents:** deduplicated `IR-*` / `incident-*` / `app.datadoghq.com/incidents/*` IDs found in the window's Slack Summaries and meeting notes. Add **one** Datadog `search_datadog_incidents` query covering `PP` through `T−1` for Cloud Accounts / CAVM, and split the results at `P` by created date.
+- **CAVM alerts:** alert bullets under `### [cavm-ops]` in the Slack Summaries: monitor, workflow or activity failures and warnings. Exclude the routine "CAVM bot requested approval/merge" PR bullets. **Repeat offenders** are the same monitor, workflow or activity on 2 or more distinct dates.
 
 **E. Weekly pages**
-- Each page belongs to the window that holds the **majority of its Mon–Fri days**. A week that spans a retro is counted once, and the current week counts toward the current window.
-- For each approved outcome, report met, partly met or missed, using *Outcome Review* / *Friday Close Snapshot* (or the live state for the current week). Also pull *Wins* and *Unexpected Work*, and anything carried forward 2 or more times.
+- Each page belongs to the window that holds the majority of its Mon–Fri days, so it's counted once.
+- Count outcomes only from **closed** weeks (those with *Outcome Review* or *Friday Close Snapshot*). Report them as `met (+partly)/total`.
+- For an open current week, mention any outcome already met in Headlines rather than in the count.
+- Also pull *Wins* and *Unexpected Work*, and anything carried forward 2 or more times.
 
 **F. Meeting AI notes**
-- `## 🤖AI notes` sections and `💬` note summaries dated in the window. The unit is the **distinct date**: keep themes raised on 2 or more distinct dates (e.g. "testing/validation", "reporting lines"), and include who raised them.
+- `## 🤖AI notes` sections and `💬` note summaries dated in the window. Return each topic with its date, the note it came from, and who raised it.
 
-## 3. Write
-- **Placement:** at the end of the target note's `# Overview` section, after Saje's own notes and **before** any `## 🤖AI notes` or the next `#` heading, so the parent's `#Overview` embed shows it. Never change existing content.
-- **Idempotent:** if `## 📈 Trends since last retro` already exists, skip it unless Saje asked for a refresh. A refresh replaces only that section.
-- **Style:** short, plain sentences. Refer to Saje as "you" and use `[[👤First Last]]` for people. Every bullet and table row links its evidence, with **at most 2 links each**. Synthesize; don't re-list items. Write real dates, never the `P`/`T`/`PP` labels. Caveats belong only in the header's Missing list, not in each bullet. Plain bullets only; this is prep material, not a task list. Saje's own follow-ups are the only exception: write those as `- [ ] … #week/YYYY-Www ➕ YYYY-MM-DD`.
-- **Length caps:** at most 5 headlines of 30 words or fewer each, the 7 table rows shown below, at most 5 recurring themes (ranked by distinct dates), at most 5 wins, and at most 4 topics. The whole section should fit on roughly one screen.
+## 3. Synthesize and Write
+- **Themes:** group topics across B, C, D and F. Rank them by the count of **distinct dates**, deduplicated across sources, and keep themes with 2 or more.
+- **Placement:** at the end of the target note's `# Overview`, after Saje's own notes and **before** `## 🤖AI notes` or any other `##`/`#` heading. This keeps it inside the parent's `#Overview` embed. Never change existing content.
+- **Idempotent:** if `## 📈 Trends since last retro` exists, skip unless Saje asked for a refresh. A refresh replaces only the part from that heading up to the next `##` or `#` heading.
+- **Read-only prep:** write no checkboxes. Open follow-ups already live in their source notes; link to them.
+- **Style:** short, plain sentences. Refer to Saje as "you"; people are `[[👤First Last]]`. Every bullet and table row links its evidence, with **at most 2 links**. Synthesize rather than re-list. Write real dates, never the `P`/`T`/`PP` labels. Caveats go only in the header's Missing line.
+- **Length caps:** at most 5 headlines of 30 words or fewer each, the 7 table rows below, at most 5 themes, at most 5 wins, and at most 4 topics. The whole section should fit on roughly one screen.
 
 ```markdown
 ## 📈 Trends since last retro
-_[[📣 YYYY-MM-DD - …|MM-DD retro]] → MM-DD (yesterday) · N days, W working days. Compared with MM-DD → MM-DD (W′ working days), per working day. Missing: …_
+_[[📣 YYYY-MM-DD - …|MM-DD retro]] → MM-DD · N days, W working days, F summary files. Compared with MM-DD → MM-DD (W′ working days, F′ files). Missing: …_
 
 ### Headlines
-- 3–5 biggest shifts, each with a number and a direction (e.g. "Fires ↑ 9 vs 4 (0.6 vs 0.2 per day), mostly cloud-inventory CI").
+- 3–5 biggest shifts, each with a number and a direction (e.g. "Fires ↑ 9 vs 4 (0.6 vs 0.2 per summary), mostly cloud-inventory CI").
 
 ### Last retro follow-through
 |Action|Owner|Status|Evidence|
@@ -72,20 +85,20 @@ _[[📣 YYYY-MM-DD - …|MM-DD retro]] → MM-DD (yesterday) · N days, W workin
 |…|[[👤…]]|✅ / 🔄 / ⏸ / ❌|[CLOUDA-…](…) · [thread](…)|
 
 ### By the numbers
-Table cells hold numbers only. Put links in the Evidence column, at most 2 per row.
+Table cells hold numbers only. Links go in the Evidence column, at most 2 per row.
 
-|Signal|This window|Previous window|Per working day|Trend|Evidence|
+|Signal|This window|Previous window|Rate|Trend|Evidence|
 |---|---|---|---|---|---|
-|Fires `[f]`|…|…|… vs …|↑ / ↓ / →|…|
-|Wins `[w]` · Key decisions `[k]` · Ideas `[I]`|…|…|…|…|…|
-|Asks of you `[!]` / `[?]`|…|…|…|…|…|
-|CLOUDA created / resolved / still open|…|…|…|…|…|
-|Support threads (redirect share)|… (x%)|—|…|—|…|
-|Incidents · CAVM alert items|…|…|…|…|…|
-|Weekly outcomes met|x/y|x/y|—|…|…|
+|Fires `[f]`|…|…|… vs … /summary|↑ / ↓ / →|…|
+|Wins `[w]` · Key decisions `[k]` · Ideas `[I]`|…|…|… vs … /summary|…|…|
+|Asks of you `[!]` / `[?]`|…|…|… vs … /summary|…|…|
+|CLOUDA created / resolved · open at end|… / … · …|… / … · …|created/resolved … vs … /day|…|…|
+|Support items (redirect share)|… (x%)|…|… vs … /summary|…|…|
+|Incidents · CAVM alert items|… · …|… · …|… vs … /day|…|…|
+|Closed-week outcomes met (+partly)/total|…|…|—|…|…|
 
 ### Recurring themes
-- **Theme**: N mentions on D days across sources; one line on the pattern — [example](…) · [example](…)
+- **Theme**: D distinct dates across sources; one line on the pattern — [example](…) · [example](…)
 
 ### Wins
 - Top 3–5, linked.
@@ -95,4 +108,4 @@ Table cells hold numbers only. Put links in the Evidence column, at most 2 per r
 ```
 
 ## 4. Report
-Return the target note, the window and its length, sources used or missing, the headline bullets, and any follow-up `- [ ]` items you created.
+Return the target note, the window and its length, sources used or missing, and the headline bullets. Write only to the target note; the caller handles any reminders in the daily note.
