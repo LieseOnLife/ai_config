@@ -2,6 +2,9 @@
   "defaultProvider": "ai-gw-logical",
   "defaultModel": "glm-5-3",
   "defaultThinkingLevel": "high",
+  "skills": [
+    "~/repos/obsidian-vault-template/skills"
+  ],
   "packages": [
     "npm:context-mode",
     "npm:pi-subagents",
