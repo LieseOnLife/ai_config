@@ -18,6 +18,7 @@ skills:
   customDirectories:
     - /Users/saje.liese/.pi/agent/skills
     - /Users/saje.liese/dd/datadog-pi-packages/packages/notifications/skills
+    - /Users/saje.liese/repos/obsidian-vault-template/skills
 task:
   agentModelOverrides:
     reviewer: ai-gw-google/gemini-3.8-flash:high
