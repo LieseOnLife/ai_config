@@ -118,9 +118,9 @@ Use the vault templates.
 ## 5. Check, then review on a different model
 Run `python3 ~/.pi/agent/skills/learn/scripts/check_docs.py <vault> "Topics/📘<T>"` and fix
 everything it reports. It catches undefined or unused footnotes, footnotes without a
-passage link or citing more than one source, links to missing notes, headings, or `^q`
-IDs, `<%` in pages or cited sources, duplicate block IDs, and source filenames Obsidian
-can't sync.
+passage link or citing more than one source, footnotes inside callouts, links to missing
+notes, headings, or `^q` IDs, `<%` in pages or cited sources, duplicate block IDs, and
+source filenames Obsidian can't sync.
 
 Then follow `references/review.md`. The reviewer's model must be from a different family
 than the writer's (omp: the `reviewer` agent's configured model; pass `model` explicitly
@@ -148,15 +148,18 @@ frontmatter counts and pages' `sources:` lists.
 - **Sources → docs:** set `docs: ["[[📘<T>]]"]` on every cited source note (add the key if
   it's missing; touch nothing else in its frontmatter).
 - **Across vaults:** wiki links only work inside one vault. When a source note lives in
-  another vault, copy it (and the PDFs it embeds) into the docs vault's `Sources/` and
-  cite the copy; leave the original where it is. Link notes that exist only in the other
-  vault with `[label](obsidian://open?vault=<vault>&file=<URL-encoded path without .md>)`,
-  and link the docs from that vault's topic note and dashboards the same way. Check that
-  each URI decodes to a file that exists.
+  another vault, copy it into the docs vault's `Sources/` (and the PDFs it embeds into the
+  docs vault's attachments folder) and cite the copy; leave the original where it is.
+  Link notes that exist only in the other vault with
+  `[label](obsidian://open?vault=<vault>&file=<path without .md>)`, encoding the vault and
+  path with `urllib.parse.quote(..., safe="")` so `/`, spaces, `(`, and `)` become `%2F`,
+  `%20`, `%28`, `%29` (an unencoded `)` ends the Markdown link early). Link the docs from
+  that vault's topic note and dashboards the same way. Check that each URI decodes to a
+  file that exists.
 
 ## 7. Report
 - Index link; pages added or extended; sources saved (new / reused, PDFs, paywalled)
-- Claims: checked / supported first time / fixed / ⚠️ flagged (list flagged ones)
+- Claims: checked / not supported in round 1 / fixed / ⚠️ flagged (list flagged ones)
 - Clarity findings: fixed / declined with reason
 - Areas to expand next time
 
@@ -165,9 +168,9 @@ frontmatter counts and pages' `sources:` lists.
 1. Resolve the vault (step 0) and find the topic's `📘 Docs Index` index in `Topics/`. Don't
    run step 1's expansion questions. If there are no docs on the topic, offer to build them.
 2. Find relevant pages through the FAQ, `answers:` frontmatter, and headings, then read
-   the source passages their footnotes cite.
-3. Answer **only** from the docs and the passages their footnotes already cite, reusing
-   those footnotes (same format) so every claim links its passage. Unmarked or uncited
+   the source passages their footnotes and citation chips cite.
+3. Answer **only** from the docs and the passages their footnotes and chips already cite,
+   reusing those citations (same format) so every claim links its passage. Unmarked or uncited
    text in a source note hasn't been reviewed: don't rely on it. Mention ⚠️ flagged
    claims as unverified if you rely on them.
 4. Say plainly what the docs don't cover. Offer to extend: a new page or section goes

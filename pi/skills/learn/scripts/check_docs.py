@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Check a learn-skill docs folder before review.
 
-Usage: check_docs.py <vault> <docs-folder>   (e.g. ~/Obsidian/research "Topics/📘ME-CFS")
+Usage: check_docs.py <vault> <docs-folder>   (e.g. ~/Obsidian/Tech-2 "Topics/📘ME-CFS")
 
 Docs pages fail on: footnotes referenced but not defined (or the reverse), duplicate
 footnote definitions, footnotes without a ^passage link or citing passages from more
-than one source note, links to notes, headings, or ^block IDs that don't exist, and
-Templater syntax (<%). Cited source notes fail on: <%, duplicate block IDs, and
-filename characters Obsidian can't sync. Exit 0 = clean, 1 = problems, 2 = bad usage.
+than one source note, footnotes inside callouts (use citation chips there), links to
+notes, headings, or ^block IDs that don't exist, and Templater syntax (<%). Cited source
+notes fail on: <%, duplicate block IDs, and filename characters Obsidian can't sync.
+Exit 0 = clean, 1 = problems, 2 = bad usage.
 """
 import re
 import sys
@@ -21,6 +22,37 @@ FOOTNOTE_REF = re.compile(r"\[\^([A-Za-z0-9_-]+)\](?!:)")
 BLOCK_ID = re.compile(r"\s\^([A-Za-z0-9-]+)\s*$", re.M)
 HEADING = re.compile(r"^#+ (.+?)(?:\s+\^[A-Za-z0-9-]+)?\s*$", re.M)
 BAD_FILENAME = re.compile(r'[\\/:*?"<>|#^\[\]]')
+QUOTE_PREFIX = re.compile(r"^(?:[ \t]*>[ \t]?)+")
+CALLOUT_START = re.compile(r"^\[![^\]]+\]")
+
+
+def blank_code(m: re.Match) -> str:
+    """Blank out code but keep line count and blockquote prefixes, so line numbers and
+    callout nesting survive."""
+    out = []
+    for ln in m.group(0).split("\n"):
+        q = QUOTE_PREFIX.match(ln)
+        out.append(q.group(0) if q else "")
+    return "\n".join(out)
+
+
+def callout_footnotes(body: str) -> list[int]:
+    """Line numbers of footnote references inside callouts ('> [!type]' blocks, nested
+    ones included). Plain blockquotes render footnotes fine and aren't flagged."""
+    hits, depth = [], None
+    for lineno, line in enumerate(body.split("\n"), 1):
+        q = QUOTE_PREFIX.match(line)
+        if not q:
+            depth = None
+            continue
+        level, rest = q.group(0).count(">"), line[q.end():]
+        if depth is not None and level < depth:
+            depth = None
+        if depth is None and CALLOUT_START.match(rest):
+            depth = level
+        if depth is not None and FOOTNOTE_REF.search(rest):
+            hits.append(lineno)
+    return hits
 
 
 def main() -> int:
@@ -50,7 +82,7 @@ def main() -> int:
     cited: set[Path] = set()
     for page in pages:
         raw = text(page)
-        body = CODE.sub("", raw)
+        body = CODE.sub(blank_code, raw)
         name = page.name
         if "<%" in raw:
             errors.append(f"{name}: contains Templater syntax '<%'")
@@ -63,11 +95,10 @@ def main() -> int:
             errors.append(f"{name}: footnote [^{label}] used but not defined")
         for label in sorted(set(labels) - refs):
             errors.append(f"{name}: footnote [^{label}] defined but never used")
-        for lineno, line in enumerate(body.split("\n"), 1):
-            if line.lstrip().startswith(">") and FOOTNOTE_REF.search(line):
-                errors.append(f"{name}:{lineno}: footnote inside a callout (Obsidian shows it as plain text); use a citation chip [[Source#^qN|Label]]")
+        for lineno in callout_footnotes(body):
+            errors.append(f"{name}:{lineno}: footnote inside a callout (Obsidian shows it as plain text); use a citation chip [[Source#^qN|Label]]")
         for label, rest in defs:
-            sources = {m.group(1).strip() for m in LINK.finditer(rest) if (m.group(2) or "").startswith("#^")}
+            sources = {m.group(1).strip() for m in LINK.finditer(rest) if m.group(1).strip() and (m.group(2) or "").startswith("#^")}
             if len(sources) != 1:
                 errors.append(f"{name}: footnote [^{label}] must link ^passages in exactly one source note (found {len(sources)})")
         for m in LINK.finditer(body):

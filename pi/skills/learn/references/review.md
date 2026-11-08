@@ -2,7 +2,7 @@
 
 The writer can't check its own work: it believes what it wrote. A reviewer on another
 model family reads each page against **only** the saved source passages its footnotes
-link.
+and citation chips link.
 
 ## Spawning
 - omp: `task` with `agent: "reviewer"` (its configured model differs from the default
@@ -23,8 +23,10 @@ is correct until a cited passage shows it.
 
 # Inputs
 Pages: <paths>. Index, FAQ, glossary: <paths>. Cited source notes: <paths>.
-Each claim ends with a footnote like [^keller-cpet]; the footnote text describes one
-source note and links one or more `[[Note#^qN|passage]]`: the paragraph or list item
+Claims in page text end with a footnote like [^keller-cpet]; the footnote text describes
+one source note and links one or more `[[Note#^qN|passage]]`. Claims inside callouts
+(Quick answer, 🔬/📰/🗣️ boxes) end with citation chips instead: `[[Note#^qN|Label]]`
+links straight to the passage. Either way, the passage is the paragraph or list item
 ending in `^qN` in that note. Text in quotation marks must match a passage exactly; for
 forum posts, the note's paraphrase passages are the citable record of what was said.
 Read ONLY these files. Do not use your own knowledge to mark a claim supported.
@@ -35,7 +37,7 @@ of source text; a note's own Summary/Findings/Limitations commentary doesn't cou
 # Facts: every claim (a sentence or clause stated as true), including in boxes,
 # the Quick answer, footnote descriptions, and "About this source" boxes
 Verdict: supported | partial (passage supports only part, or is weaker/narrower) |
-unsupported (no footnote, or the passage doesn't say it) | misrepresented (passage says
+unsupported (no footnote or chip, or the passage doesn't say it) | misrepresented (passage says
 something different or opposite) | missing-caveat (drops a limitation the source states:
 size, preprint, population, date, disagreement).
 Also check:
@@ -52,7 +54,7 @@ link; misleading simplifications; FAQ entries pointing at sections that don't an
 
 # Output (only this)
 ## Facts
-| Page | Claim (quoted, short) | Footnote | Verdict | Why | Suggested fix |
+| Page | Claim (quoted, short) | Footnote / chip | Verdict | Why | Suggested fix |
 List every claim, including supported ones (Why may be "-").
 ## Clarity
 | Page | Severity (high/medium/low) | Finding | Suggested fix |
@@ -72,8 +74,10 @@ claims: N, supported: N, partial: N, unsupported: N, misrepresented: N, missing-
 
 ```markdown
 > [!warning] ⚠️ Not verified
-> <the claim, unchanged, with its footnote>
+> <the claim, unchanged, citing with a chip [[Note#^qN|Label]] (footnotes don't render inside callouts)>
 > *Reviewer (<model>, <date>): <verdict> — <why>.*
 ```
+
+Remove the claim's footnote definition if nothing outside callouts still uses it.
 
 List every flagged claim in the index's review log so they can be revisited.

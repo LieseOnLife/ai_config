@@ -8,8 +8,9 @@ source notes (tag `mecfs`) built by the `mecfs-source-intake`, `mecfs-sweep`, an
 `mecfs-synthesis` skills. The docs themselves go in the learning vault,
 `/Users/saje.liese/Obsidian/Tech-2` (`Topics/📘ME-CFS/`). Find and grade sources in
 research, then copy each cited source note and its PDFs into Tech-2 (see "Across
-vaults" in `SKILL.md`). Passages are marked in the research original first, then copied,
-so both copies carry the same `^q` IDs.
+vaults" in `SKILL.md`). Passages and `type` are added to the research original first,
+then copied, so both copies carry the same `^q` IDs. Copying over an existing Tech-2 copy
+replaces it: re-add `docs: ["[[📘ME-CFS]]"]` to the Tech-2 copy afterwards.
 **Read the rubric first:**
 `/Users/saje.liese/Obsidian/research/Extras/Skills/mecfs-source-intake/references/rubric.md`.
 It defines valid sources, case definitions, evidence tiers, quality flags, note schemas,
@@ -31,10 +32,12 @@ and the medical guardrail.
   rubric's scope (`🔬`, `evidence_tier: expert-opinion` or `guideline`). Patient-charity
   booklets and pages without a credentialed clinician author, and sources outside the
   rubric's scope (e.g. a physiology textbook page), use the generic `📘 Docs Source` template
-  without the `mecfs` tag; footnotes call charity material "patient charity" guidance and
-  charity polls "surveys", not studies.
+  without the `mecfs` tag and live only in `Tech-2/Sources/` (research doesn't take them);
+  footnotes call charity material "patient charity" guidance and charity polls "surveys",
+  not studies.
 - **Every corpus note you create gets `type`**, as a link: `[[🔬Research]]` for research,
-  `[[🗣️First-person]]` for first-person accounts. Add it to cited copies in Tech-2 if missing.
+  `[[🗣️First-person]]` for first-person accounts. Add it to the research original before
+  copying, and to any Tech-2 copy that lacks it.
 - **Corpus notes keep their shape.** They already carry Summary and Limitations sections,
   so don't add an "About this source" box; the footnote description carries the tier,
   case definition, PEM status, and n instead.
