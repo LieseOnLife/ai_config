@@ -17,7 +17,16 @@ Modes:
 Read before starting:
 - `references/sources.md`: which sources count, saving, footnotes
 - `references/review.md`: reviewer brief and acting on findings
-- `assets/`: note formats (`index.md`, `page.md`, `faq.md`, `glossary.md`, `source.md`)
+- The note templates in the learning vault, `~/Obsidian/Tech-2/Extras/Templates/`:
+  `📘 Docs Index`, `📘 Docs Page`, `📘 Docs FAQ`, `📘 Docs Glossary`, `📘 Docs Source`.
+  Obsidian templates live in a vault's `Extras/Templates/`, never in this skill. When you
+  write a note from one, fill every placeholder and replace each Templater tag
+  (`<% tp.file.creation_date(...) %>`) with the literal value: written notes must not
+  contain `<%`. If the docs vault lacks the templates, copy them in from Tech-2.
+- **Every note you create has a `type` property, as a link.** Docs notes link the
+  template of the same name (`type: "[[📘 Docs Page]]"`); source notes link their kind
+  (`[[📜Documentation]]`, `[[🔬Research]]`, `[[📰Article]]`, `[[📖Book]]`, `[[🎥Video]]`,
+  `[[🗣️First-person]]`, `[[🕸️Website]]`). Bases match these with `type == link("…")`.
 - A topic add-on from the table below when the topic matches. Its rules win where they
   conflict with the generic ones.
 
@@ -38,7 +47,7 @@ names another vault. Attachments go to the docs vault's `.obsidian/app.json`
 Layout, with `<T>` the topic's short display name:
 
 ```
-Topics/📘<T>/📘<T>.md                 index (type: docs)
+Topics/📘<T>/📘<T>.md                 index (type: "[[📘 Docs Index]]")
 Topics/📘<T>/📘<T> - <Page title>.md  subject pages
 Topics/📘<T>/📘<T> - FAQ.md
 Topics/📘<T>/📘<T> - Glossary.md
@@ -50,7 +59,7 @@ Page names carry the topic so wikilinks stay unique across topics. Link existing
 notes (topic hubs, `Topics/Topic-Details/` notes) instead of duplicating them.
 
 ## 1. New docs or extension?
-Search `Topics/` for an index with `type: docs` whose `topic` or name matches.
+Search `Topics/` for an index with `type: "[[📘 Docs Index]]"` whose `topic` or name matches.
 - **Exists:** read the index (pages, `## Areas to expand`, review log) and the FAQ.
   Show Saje what's covered and ask which areas to expand: the index's listed areas plus
   2-4 gaps you noticed, multi-select with free text. New areas become new pages or new
@@ -81,7 +90,7 @@ says` for every marked passage. Tell tasks to save notes as they go, and write t
 yourself from the passages' actual text, not from the manifests' summaries.
 
 ## 4. Write the docs
-Use the `assets/` formats.
+Use the vault templates.
 - **Each page stands alone:** a `Quick answer` callout (3-5 cited lines), then sections.
   Define terms on first use or link the glossary. Link related pages where they connect.
 - **Footnotes:** every factual claim ends with a named footnote (`[^iom-pem]`) whose text
@@ -92,7 +101,7 @@ Use the `assets/` formats.
 - Explanations and analogies you write yourself are allowed; start an analogy with
   "Analogy:", and it introduces no uncited facts.
 - Where sources disagree or evidence is weak, say so and cite both sides.
-- Boxes from `assets/page.md`: `🔬 Study spotlight`, `📰 In the news`, `🗣️ Lived
+- Boxes from the `📘 Docs Page` template: `🔬 Study spotlight`, `📰 In the news`, `🗣️ Lived
   experience` (aim for one per page where first-person accounts exist). Boxes illustrate;
   they never carry the page's facts, and a first-person account never supports a general
   claim. Anything in quotation marks must be the exact text of a passage. For forum and
@@ -131,7 +140,7 @@ frontmatter counts and pages' `sources:` lists.
 - **Vault → docs:** add a link to the index from the existing topic note (a short
   "📘 New to <topic>?" callout listing the pages) and from the vault's dashboards or
   how-to notes, if it has them. If a `.base` lists subtopics by `type`, add
-  `type == "docs"` to its filter so the index shows up. Keep edits to others' notes to
+  `type == link("📘 Docs Index")` to its filter so the index shows up. Keep edits to others' notes to
   one link or callout; don't restructure them.
 - **Sources → docs:** set `docs: ["[[📘<T>]]"]` on every cited source note (add the key if
   it's missing; touch nothing else in its frontmatter).
@@ -150,7 +159,7 @@ frontmatter counts and pages' `sources:` lists.
 
 ## Ask mode
 `/learn ask <topic> <question>`
-1. Resolve the vault (step 0) and find the topic's `type: docs` index in `Topics/`. Don't
+1. Resolve the vault (step 0) and find the topic's `📘 Docs Index` index in `Topics/`. Don't
    run step 1's expansion questions. If there are no docs on the topic, offer to build them.
 2. Find relevant pages through the FAQ, `answers:` frontmatter, and headings, then read
    the source passages their footnotes cite.

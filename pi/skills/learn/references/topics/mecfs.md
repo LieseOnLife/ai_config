@@ -25,14 +25,16 @@ and the medical guardrail.
   `Sources/🚫ME-CFS Rejected.md` and the `skipped:` list in `Sources/🔎ME-CFS Sweep Log.md`.
 - **New research or first-person sources go through intake.** Follow the
   `mecfs-source-intake` procedure (dedupe, metadata, retraction check, gate, rubric
-  frontmatter, filename) instead of `assets/source.md`. Rejected items go to
+  frontmatter, filename) instead of the `📘 Docs Source` template. Rejected items go to
   `Sources/🚫ME-CFS Rejected.md` as that skill says. Peer-reviewed clinical statements,
   consensus papers, and commentaries by credentialed clinicians or researchers are in the
   rubric's scope (`🔬`, `evidence_tier: expert-opinion` or `guideline`). Patient-charity
   booklets and pages without a credentialed clinician author, and sources outside the
-  rubric's scope (e.g. a physiology textbook page), use the generic `assets/source.md`
+  rubric's scope (e.g. a physiology textbook page), use the generic `📘 Docs Source` template
   without the `mecfs` tag; footnotes call charity material "patient charity" guidance and
   charity polls "surveys", not studies.
+- **Every corpus note you create gets `type`**, as a link: `[[🔬Research]]` for research,
+  `[[🗣️First-person]]` for first-person accounts. Add it to cited copies in Tech-2 if missing.
 - **Corpus notes keep their shape.** They already carry Summary and Limitations sections,
   so don't add an "About this source" box; the footnote description carries the tier,
   case definition, PEM status, and n instead.
@@ -76,7 +78,7 @@ and the medical guardrail.
   `mecfs-synthesis` maintains them.
 - **Tech-2 links:** its hub `[[🫩Myalgic Encephalomyelitis-Chronic Fatigue Syndrome (ME-CFS)]]`
   gets the "📘 New to ME/CFS?" callout and is the docs' `topics:` target; its
-  `Topics.base` matches `type == "docs"`, so the index shows under SubTopics.
+  `Topics.base` matches `type == link("📘 Docs Index")`, so the index shows under SubTopics.
 - **Research links, via `obsidian://` to the Tech-2 docs:** research's hub (callout +
   nav line), `🏠 Home` (topic table), `📋 How to Use this` ("Where things are" table),
   and `💊 Treatments Overview` (nav line to the research page). The docs index links back

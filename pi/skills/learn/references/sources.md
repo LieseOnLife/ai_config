@@ -101,7 +101,7 @@ A topic add-on can tighten these rules.
 - Other forums and blogs: `read <url>`.
 
 ## Saving a source note
-Format: `assets/source.md`. One note per source, in `Sources/`, named
+Format: the `📘 Docs Source` template. One note per source, in `Sources/`, named
 `<emoji><Title> -by- <Author>.md`. Emojis: 📜 documentation/guideline, 🔬 research,
 📰 article/news, 📖 book, 🎥 video/podcast, 🗣️ first-person, 🕸️ other website.
 In filenames, replace `/` and `:` with ` - ` and drop `\ * ? " < > | # ^ [ ]`: Obsidian
@@ -113,8 +113,8 @@ the poster's username or handle.
 post id in frontmatter and body. Reuse an existing note: add any missing frontmatter
 and passages, don't replace its body.
 
-Every source note opens with an **About this source** callout (format in
-`assets/source.md`): what it is, who made it, kind and strength, size/population when it
+Every source note opens with an **About this source** callout (format in the
+`📘 Docs Source` template): what it is, who made it, kind and strength, size/population when it
 applies, limits, and why the docs use it. Write it from the source itself, not memory;
 the reviewer checks it.
 
