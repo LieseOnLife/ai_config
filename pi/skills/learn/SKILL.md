@@ -119,8 +119,19 @@ Update the index: page map, suggested reading path, `## Areas to expand` (gaps, 
 follow-ups, anything cut for lack of sources, questions the docs can't answer yet), and a
 `## Review log` row (claims checked / not supported in round 1 / fixed / ⚠️ flagged;
 clarity findings fixed, and declined ones with the reason). Update the index's
-frontmatter counts and pages' `sources:` lists. Add `topics:` links to existing topic
-notes for the subject on the index and pages.
+frontmatter counts and pages' `sources:` lists.
+
+**Link it in, both ways.** The docs mustn't be an island:
+- **Docs → vault:** `topics:` on the index and pages pointing at the existing topic note,
+  and a visible link to that note in every page's nav line. Link existing
+  `Topics/Topic-Details/` notes (treatments, concepts) on first mention.
+- **Vault → docs:** add a link to the index from the existing topic note (a short
+  "📘 New to <topic>?" callout listing the pages) and from the vault's dashboards or
+  how-to notes, if it has them. If a `.base` lists subtopics by `type`, add
+  `type == "docs"` to its filter so the index shows up. Keep edits to others' notes to
+  one link or callout; don't restructure them.
+- **Sources → docs:** set `docs: ["[[📘<T>]]"]` on every cited source note (add the key if
+  it's missing; touch nothing else in its frontmatter).
 
 ## 7. Report
 - Index link; pages added or extended; sources saved (new / reused, PDFs, paywalled)

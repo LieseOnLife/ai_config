@@ -65,8 +65,14 @@ and the medical guardrail.
   "a registered trial with no results yet").
 - Treat PACE-lineage CBT/GET work as history of the field: explain it and its critiques
   (cite both), don't present it as current evidence.
-- Link treatments to existing `💊` notes and concepts to the topic hub
-  `[[🫩Myalgic Encephalomyelitis-Chronic Fatigue Syndrome (ME-CFS)]]`.
+- Link treatments to existing `💊` notes on first mention (with their guideline stance
+  and harm signal, read from the note's frontmatter) and to [[💊 Treatments Overview]].
+- Link the docs in at the research vault's entry points: the hub
+  `[[🫩Myalgic Encephalomyelitis-Chronic Fatigue Syndrome (ME-CFS)]]` (callout + nav line),
+  `🏠 Home` (the topic table), `📋 How to Use this` (the "Where things are" table), and
+  `💊 Treatments Overview` (nav line to the research page). `Topics.base` already matches
+  `type == "docs"`. Leave `💊` notes themselves alone: `mecfs-synthesis` maintains them,
+  and the docs show up in their backlinks.
 
 ## Extra reviewer checks (add to the brief)
 - Guardrail: no recommendations, no "you should".
