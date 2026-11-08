@@ -47,7 +47,7 @@ Not backed up: extensions, themes, the prompt library database, and Zed's local 
 - Prompt templates in `omp/agent/prompts/`, subagent definitions (`advisor`, `bzl`, `coder`, `slack-scribe`) in `omp/agent/agents/`, domain rules in `omp/agent/rules/`, and auto-learned skills in `omp/agent/managed-skills/`
 - Plugin and marketplace metadata (`omp/marketplaces.json`, `omp/plugins/*.json`), but not plugin contents
 
-Skills from `~/.pi/agent/skills` are loaded by omp through `config.yml` and are backed up under `pi/`.
+Skills from `~/.pi/agent/skills` are loaded by omp through `config.yml` and are backed up under `pi/`. omp and pi also load skills from `~/repos/obsidian-vault-template/skills` (private repo `LieseOnLife/obsidian-vault-template`; clone it there). That repo owns the `new-obsidian-vault` skill, so it isn't copied here.
 
 Not backed up: credentials and OAuth state, `*.db` files (agent, history, models, skill descriptions), blobs, cache, logs, sessions, and runtime `*.lock` files.
 
