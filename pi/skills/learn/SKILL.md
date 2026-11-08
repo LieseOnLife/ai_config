@@ -72,7 +72,8 @@ never fill from memory.
 
 For more than a handful of sources, split the research into parallel subagent tasks by
 source group (guidelines, research papers, carer or practical guides, first-person
-accounts). Each task owns a disjoint set of source notes (no two tasks edit the same
+accounts). Use a writing agent (omp: `agent: "task"`; `scout` is read-only and can't
+save notes). Each task owns a disjoint set of source notes (no two tasks edit the same
 note) and reports a passage manifest: note filename, access, PDF, and `^qN | what it
 says` for every marked passage. Tell tasks to save notes as they go, and write the pages
 yourself from the passages' actual text, not from the manifests' summaries.
@@ -92,16 +93,20 @@ Use the `assets/` formats.
 - Boxes from `assets/page.md`: `🔬 Study spotlight`, `📰 In the news`, `🗣️ Lived
   experience` (aim for one per page where first-person accounts exist). Boxes illustrate;
   they never carry the page's facts, and a first-person account never supports a general
-  claim. In lived-experience boxes, quote the account's verbatim passages (exact
-  characters) rather than paraphrase.
+  claim. Anything in quotation marks must be the exact text of a passage. For forum and
+  Reddit posts, the note's paraphrase section is the privacy-preserving record of the
+  post and can be cited for what the person describes; quote only from its verbatim
+  quote passages.
 - Frontmatter `answers:` lists the questions the page answers, in plain words. The FAQ
   links each question to the page section that answers it.
 - Glossary: every term a page defines, with a footnoted definition.
 
 ## 5. Check, then review on a different model
-Run `scripts/check_docs.py <vault> "Topics/📘<T>"` and fix everything it reports. It
-catches undefined or unused footnotes, footnotes citing more than one source, links to
-missing notes, headings, or `^q` IDs, and leftover `<%`.
+Run `python3 ~/.pi/agent/skills/learn/scripts/check_docs.py <vault> "Topics/📘<T>"` and fix
+everything it reports. It catches undefined or unused footnotes, footnotes without a
+passage link or citing more than one source, links to missing notes, headings, or `^q`
+IDs, `<%` in pages or cited sources, duplicate block IDs, and source filenames Obsidian
+can't sync.
 
 Then follow `references/review.md`. The reviewer's model must be from a different family
 than the writer's (omp: the `reviewer` agent's configured model; pass `model` explicitly
@@ -112,8 +117,10 @@ claim still not supported after round 2 **stays**, wrapped in the ⚠️ callout
 ## 6. Finish
 Update the index: page map, suggested reading path, `## Areas to expand` (gaps, deeper
 follow-ups, anything cut for lack of sources, questions the docs can't answer yet), and a
-`## Review log` row. Update frontmatter counts. Add `topics:` links to existing topic
-notes for the subject.
+`## Review log` row (claims checked / not supported in round 1 / fixed / ⚠️ flagged;
+clarity findings fixed, and declined ones with the reason). Update the index's
+frontmatter counts and pages' `sources:` lists. Add `topics:` links to existing topic
+notes for the subject on the index and pages.
 
 ## 7. Report
 - Index link; pages added or extended; sources saved (new / reused, PDFs, paywalled)
@@ -123,12 +130,14 @@ notes for the subject.
 
 ## Ask mode
 `/learn ask <topic> <question>`
-1. Find the index (step 1). If there are no docs on the topic, offer to build them.
+1. Resolve the vault (step 0) and find the topic's `type: docs` index in `Topics/`. Don't
+   run step 1's expansion questions. If there are no docs on the topic, offer to build them.
 2. Find relevant pages through the FAQ, `answers:` frontmatter, and headings, then read
-   the cited source passages.
-3. Answer **only** from the docs and their saved sources. Reuse the pages' footnotes
-   (same format) so every claim links its passage. Mention ⚠️ flagged claims as
-   unverified if you rely on them.
+   the source passages their footnotes cite.
+3. Answer **only** from the docs and the passages their footnotes already cite, reusing
+   those footnotes (same format) so every claim links its passage. Unmarked or uncited
+   text in a source note hasn't been reviewed: don't rely on it. Mention ⚠️ flagged
+   claims as unverified if you rely on them.
 4. Say plainly what the docs don't cover. Offer to extend: a new page or section goes
-   through steps 3-6, including review. Add the question to the FAQ once it's answered
-   in a page.
+   through steps 3-6, including the check and review. Adding a question to the FAQ is an
+   edit too: run the check and review the changed FAQ entries.

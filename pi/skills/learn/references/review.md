@@ -23,8 +23,10 @@ is correct until a cited passage shows it.
 
 # Inputs
 Pages: <paths>. Index, FAQ, glossary: <paths>. Cited source notes: <paths>.
-Each claim ends with a footnote like [^keller-cpet]; the footnote text describes the
-source and links `[[Note#^qN|passage]]`, the paragraph ending in `^qN` in that note.
+Each claim ends with a footnote like [^keller-cpet]; the footnote text describes one
+source note and links one or more `[[Note#^qN|passage]]`: the paragraph or list item
+ending in `^qN` in that note. Text in quotation marks must match a passage exactly; for
+forum posts, the note's paraphrase passages are the citable record of what was said.
 Read ONLY these files. Do not use your own knowledge to mark a claim supported.
 Footnote descriptions (kind, n, case definition, flags, year) may be checked against the
 source note's frontmatter and About box. Claims in the page text need a marked passage

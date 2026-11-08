@@ -41,8 +41,8 @@ tags: [docs]
   the docs can't answer yet
 
 ## 🔍 Review log
-| Date | Reviewer model | Rounds | Claims checked / supported / fixed / ⚠️ flagged | Clarity fixed |
-|---|---|---|---|---|
+| Date | Pages | Reviewer model | Rounds | Claims checked / not supported in round 1 / fixed / ⚠️ flagged | Clarity fixed (declined: reason) |
+|---|---|---|---|---|---|
 
 ### ⚠️ Flagged claims
 - [[📘<T> - <Page title>#<heading>]]: claim, and the reviewer's reason

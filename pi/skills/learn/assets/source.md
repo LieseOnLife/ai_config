@@ -1,7 +1,7 @@
 ---
 title: ""
 status: saved                 # saved; the 🤔 Sources template uses new/read
-author: "[[👤<Author or org>]]"
+author: "[[👤<Author or org>]]"   # Reddit/forums: "[[👤r-<sub> member]]", never a username
 type: "[[<📜Documentation | 🔬Research | 📰Article | 📖Book | 🎥Video | 🗣️First-person | 🕸️Website>]]"
 link: ""
 doi: ""                       # papers
@@ -36,5 +36,8 @@ created: YYYY-MM-DD HH:mm:ss
 Full text (or saved sections, or the abstract when paywalled), cleaned of navigation and
 ads. Each cited paragraph ends with its block ID. ^q1
 
-For first-person sources: the post as written and only the comments used, with
-usernames replaced by OP / Commenter A / Commenter B. ^q2
+For first-person forum or Reddit sources: a paraphrase of what the person describes ^q2
+
+> **OP:** "a short verbatim quote you'll cite" ^q3
+
+Usernames become OP / Commenter A / Commenter B; inline u/ or @ handles are redacted.

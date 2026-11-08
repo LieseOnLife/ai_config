@@ -6,6 +6,7 @@ summary: ""                   # one line, same as the Quick answer's first sente
 answers:                      # plain-language questions this page answers
   - ""
 related: []                   # "[[📘<T> - <Page>]]"
+topics: []                    # existing topic notes for the subject, e.g. "[[🫩…]]"
 sources: []                   # "[[<Source note>]]" for every source cited
 claims_flagged: 0
 created: YYYY-MM-DD
@@ -32,7 +33,7 @@ Analogy: a comparison you wrote yourself, with no new facts in it.
 > Context or framing from a secondary source.[^outlet-key]
 
 > [!quote] 🗣️ Lived experience: r/<sub>, <year>
-> What this person describes, paraphrased or briefly quoted. One account, not a finding.[^reddit-id]
+> What this person describes (from the note's paraphrase), with any "quotes" copied exactly. One account, not a finding.[^reddit-id]
 
 ## Related
 - [[📘<T> - <Page>]]: how it connects

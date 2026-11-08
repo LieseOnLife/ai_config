@@ -41,8 +41,13 @@ A topic add-on can tighten these rules.
       await tab.waitForSelector(sel, { timeout: 15000 });
       hits = await tab.evaluate(`[...document.querySelectorAll(${JSON.stringify(sel)})].slice(0, ${n})
         .map(a => ({ title: (a.innerText.split("\\n")[0] || "").trim(), href: a.href }))`);
-      for (const h of hits) if (h.href.includes("google.com/goto")) {   // Google wraps links
-        await tab.goto(h.href); await new Promise(r => setTimeout(r, 2500)); h.href = await tab.url();
+      for (const h of hits) {   // Google wraps result links; unwrap from the query string
+        const u = new URL(h.href);
+        if (u.hostname.endsWith("google.com") && (u.pathname === "/url" || u.pathname.startsWith("/goto"))) {
+          const target = u.searchParams.get("q") || u.searchParams.get("url");
+          if (target?.startsWith("http")) { h.href = target; continue; }
+          try { await tab.goto(h.href, { timeout: 10000 }); h.href = await tab.url(); } catch {}
+        }
       }
     } finally { await tab.close().catch(() => {}); }   // close can throw harmlessly
     return hits;
@@ -73,19 +78,23 @@ A topic add-on can tighten these rules.
   Reddit blocks `curl`, `read`, `.json` endpoints, and headless browsers; open the
   thread in a **visible** managed browser and read the DOM (eval, JavaScript):
   ```js
-  const tab = await browser.open({ name: "reddit", url: THREAD_URL, headed: true,
+  const url = THREAD_URL.replace(/^https?:\/\/(old|np)\.reddit\.com/, "https://www.reddit.com");
+  const tab = await browser.open({ name: "reddit", url, headed: true,
     app: { tern: false, relay: false }, timeout: 60 });
-  await tab.waitForSelector("shreddit-post", { timeout: 20000 });
-  const thread = await tab.evaluate(() => {
-    const p = document.querySelector("shreddit-post");
-    return { title: p.getAttribute("post-title"), sub: p.getAttribute("subreddit-prefixed-name"),
-      created: p.getAttribute("created-timestamp"), url: location.href,
-      body: p.querySelector('[slot="text-body"]')?.innerText ?? "",
-      comments: [...document.querySelectorAll("shreddit-comment")].map(c => ({
-        depth: c.getAttribute("depth"), score: c.getAttribute("score"),
-        text: c.querySelector('[slot="comment"]')?.innerText ?? "" })) };
-  });
-  await tab.close();
+  let thread;
+  try {
+    await tab.waitForSelector("shreddit-post", { timeout: 20000 });
+    await tab.waitForSelector("shreddit-comment", { timeout: 5000 }).catch(() => {});  // loads late
+    thread = await tab.evaluate(() => {
+      const p = document.querySelector("shreddit-post");
+      return { title: p.getAttribute("post-title"), sub: p.getAttribute("subreddit-prefixed-name"),
+        created: p.getAttribute("created-timestamp"), url: location.href,
+        body: p.querySelector('[slot="text-body"]')?.innerText ?? "",
+        comments: [...document.querySelectorAll("shreddit-comment")].map(c => ({
+          depth: c.getAttribute("depth"), score: c.getAttribute("score"),
+          text: c.querySelector('[slot="comment"]')?.innerText ?? "" })) };
+    });
+  } finally { await tab.close().catch(() => {}); }
   ```
   Never use the relay (Saje's own logged-in Chrome) for this. Prefer detailed posts
   about a specific experience over one-liners.
@@ -95,7 +104,10 @@ A topic add-on can tighten these rules.
 Format: `assets/source.md`. One note per source, in `Sources/`, named
 `<emoji><Title> -by- <Author>.md`. Emojis: 📜 documentation/guideline, 🔬 research,
 📰 article/news, 📖 book, 🎥 video/podcast, 🗣️ first-person, 🕸️ other website.
-Characters `/ \ : * ? " < > |` and `#^[]` are replaced in filenames.
+In filenames, replace `/` and `:` with ` - ` and drop `\ * ? " < > | # ^ [ ]`: Obsidian
+can't sync names containing them. For Reddit and forum posts, `<Author>` (in the filename
+and in `author:`) is a group label such as `r-<sub> member` or `<forum> member`, never
+the poster's username or handle.
 
 **Dedupe first:** search the vault for the URL (without `utm_*`), DOI, PMID, or Reddit
 post id in frontmatter and body. Reuse an existing note: add any missing frontmatter
@@ -110,16 +122,20 @@ What goes in the note:
 - **Web pages and open-access papers:** the full text (Defuddle markdown), with
   navigation, ads, and comment sections removed. Very long pages: save the full sections
   you use and set `excerpt: true` with the sections listed.
-- **PDFs:** download to the attachments folder
-  (`curl -fL --proto '=https' -o "<attachments>/<slug>.pdf" <url>`), embed it with
-  `![[<slug>.pdf]]`, and also save its extracted text (`read <file>.pdf`) in the note.
+- **PDFs:** download to the attachments folder with
+  `curl -fL --proto '=https' -A 'Mozilla/5.0' -o "<attachments>/<slug>.pdf" '<https-url>'`,
+  then check the file is really a PDF (`head -c 5` prints `%PDF-`; hosts sometimes return
+  an HTML page instead). Embed it with `![[<slug>.pdf]]`, and also save its extracted text
+  (`read <file>.pdf`) in the note.
 - **Paywalled:** metadata, abstract, and link; `access: paywalled`. Cite it only for
   what the abstract says.
 - **Video/podcast:** the transcript when one is available; otherwise metadata only and
   cite nothing from it.
-- **First-person (Reddit/forums):** the post text and only the comments you use, as
-  short quotes. Replace usernames with `OP`, `Commenter A`, `Commenter B`; keep public
-  writers' bylines (bloggers, journalists, named interviewees). Never save whole threads.
+- **First-person (Reddit/forums):** a paraphrase of what the person describes, plus only
+  the short verbatim quotes you'll cite (from the post or the comments you use). Replace
+  usernames with `OP`, `Commenter A`, `Commenter B`, and redact inline `u/...` or
+  `@...` handles. Keep public writers' bylines (bloggers, journalists, named
+  interviewees). Never save whole threads or whole posts.
 
 **Mark passages:** every passage a page cites gets an Obsidian block ID at the end of
 its paragraph: ` ^q1`, ` ^q2`, ... (unique within the note; continue numbering when
@@ -136,8 +152,9 @@ and `%` in every occurrence (in Python: `text.replace("<%", "<\u200b%")`) and se
 Every factual claim ends with a **named** footnote. Names are stable labels
 (`[^<source-key>]` or `[^<source-key>-<point>]`, lowercase, hyphens); Obsidian displays
 them as numbers. Define each footnote once per page, at the bottom, and reuse the name
-when the same passage supports another claim. A footnote cites one source; put two
-footnotes on a claim backed by two sources.
+when the same passage supports another claim. A footnote cites one source note, and can
+link one or more `^q` passages within it; put two footnotes on a claim backed by two
+sources.
 
 Footnote text explains the source in one or two lines, then links the passage:
 
@@ -157,7 +174,7 @@ Claim sentence.[^keller-cpet]
 - First-person box:
   ```markdown
   > [!quote] 🗣️ Lived experience: r/<sub>, <year>
-  > What this person describes, paraphrased or briefly quoted.[^reddit-<id>]
+  > What this person describes (citing the note's paraphrase), with "short quotes" copied exactly.[^reddit-<id>]
   ```
   Introduce it with what it illustrates. One account is an anecdote: never generalize
   from it ("many people" needs a source that counts).
