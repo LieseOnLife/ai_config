@@ -96,6 +96,9 @@ Use the vault templates.
 - **Footnotes:** every factual claim ends with a named footnote (`[^iom-pem]`) whose text
   explains the source (who, kind, strength, size/population, caveat) and links the exact
   passage. Format in `references/sources.md`. Cite only what the passage says.
+  **Inside callouts** (Quick answer, 🔬/📰/🗣️ boxes) footnotes don't render in Live
+  Preview: cite with citation chips `[[Source#^qN|Label]]` instead (see
+  `references/sources.md`), and make sure the docs vault has the `learn-citations` snippet.
 - Years, counts, and other numbers in prose need a passage like any other fact. A year
   that only appears in a source's frontmatter belongs in the footnote label, not the prose.
 - Explanations and analogies you write yourself are allowed; start an analogy with

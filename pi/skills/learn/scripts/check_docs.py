@@ -63,6 +63,9 @@ def main() -> int:
             errors.append(f"{name}: footnote [^{label}] used but not defined")
         for label in sorted(set(labels) - refs):
             errors.append(f"{name}: footnote [^{label}] defined but never used")
+        for lineno, line in enumerate(body.split("\n"), 1):
+            if line.lstrip().startswith(">") and FOOTNOTE_REF.search(line):
+                errors.append(f"{name}:{lineno}: footnote inside a callout (Obsidian shows it as plain text); use a citation chip [[Source#^qN|Label]]")
         for label, rest in defs:
             sources = {m.group(1).strip() for m in LINK.finditer(rest) if (m.group(2) or "").startswith("#^")}
             if len(sources) != 1:

@@ -171,10 +171,19 @@ Claim sentence.[^keller-cpet]
   research the design, n, and population, plus the caveat that matters for this claim.
 - Then the passage link `[[<Source note>#^qN|passage]]`. Continuation lines are indented
   four spaces.
+- **Inside callouts, use citation chips, not footnotes.** Obsidian renders each callout
+  on its own in Live Preview, so a footnote there shows as its bare label run into the
+  text. Cite with a link to the passage, labelled like the footnote would be:
+  `[[<Source note>#^qN|IOM 2015]]`. For more passages from the same source, add one chip
+  each labelled with the ID: `[[<Source note>#^q3|q3]]`. The vault's `learn-citations`
+  CSS snippet styles links to `^q` passages as small superscript chips; if the docs vault
+  lacks it, copy `.obsidian/snippets/learn-citations.css` from Tech-2 and enable it in
+  `appearance.json` (`enabledCssSnippets`). Chips carry no description, so keep callout
+  claims to ones the box's own text explains, or that the page body footnotes too.
 - First-person box:
   ```markdown
   > [!quote] 🗣️ Lived experience: r/<sub>, <year>
-  > What this person describes (citing the note's paraphrase), with "short quotes" copied exactly.[^reddit-<id>]
+  > What this person describes (citing the note's paraphrase), with "short quotes" copied exactly.[[<Source note>#^q2|r/<sub> <year>]]
   ```
   Introduce it with what it illustrates. One account is an anecdote: never generalize
   from it ("many people" needs a source that counts).
