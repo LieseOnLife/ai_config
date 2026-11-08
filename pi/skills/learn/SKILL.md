@@ -29,9 +29,11 @@ To add one: create `references/topics/<slug>.md` with only the rules that differ
 add a row here.
 
 ## 0. Resolve the vault
-Use the vault containing the working directory (walk up to the folder holding
-`.obsidian/`); if none, ask which vault under `~/Obsidian/`. Attachments go to
-`.obsidian/app.json` `attachmentFolderPath` (default `Extras/Attachments`).
+Docs go in Saje's **learning vault, `~/Obsidian/Tech-2`**, wherever the session started.
+Her other vaults hold advanced knowledge (e.g. `~/Obsidian/research`, the graded ME/CFS
+corpus): use them as sources, not as the place for docs. Build elsewhere only if she
+names another vault. Attachments go to the docs vault's `.obsidian/app.json`
+`attachmentFolderPath` (default `Extras/Attachments`).
 
 Layout, with `<T>` the topic's short display name:
 
@@ -123,7 +125,8 @@ frontmatter counts and pages' `sources:` lists.
 
 **Link it in, both ways.** The docs mustn't be an island:
 - **Docs → vault:** `topics:` on the index and pages pointing at the existing topic note,
-  and a visible link to that note in every page's nav line. Link existing
+  and a visible link to that note in every page's nav line. Search the whole docs vault
+  by name and `aliases` for that topic note before deciding none exists. Link existing
   `Topics/Topic-Details/` notes (treatments, concepts) on first mention.
 - **Vault → docs:** add a link to the index from the existing topic note (a short
   "📘 New to <topic>?" callout listing the pages) and from the vault's dashboards or
@@ -132,6 +135,12 @@ frontmatter counts and pages' `sources:` lists.
   one link or callout; don't restructure them.
 - **Sources → docs:** set `docs: ["[[📘<T>]]"]` on every cited source note (add the key if
   it's missing; touch nothing else in its frontmatter).
+- **Across vaults:** wiki links only work inside one vault. When a source note lives in
+  another vault, copy it (and the PDFs it embeds) into the docs vault's `Sources/` and
+  cite the copy; leave the original where it is. Link notes that exist only in the other
+  vault with `[label](obsidian://open?vault=<vault>&file=<URL-encoded path without .md>)`,
+  and link the docs from that vault's topic note and dashboards the same way. Check that
+  each URI decodes to a file that exists.
 
 ## 7. Report
 - Index link; pages added or extended; sources saved (new / reused, PDFs, paywalled)

@@ -2,9 +2,14 @@
 
 Use with the generic rules; these win where they conflict.
 
-## The research vault already has a corpus
-Vault: `/Users/saje.liese/Obsidian/research`. It holds graded source notes (tag `mecfs`)
-built by the `mecfs-source-intake`, `mecfs-sweep`, and `mecfs-synthesis` skills.
+## The research vault holds the corpus; the docs go in Tech-2
+Corpus vault: `/Users/saje.liese/Obsidian/research` (advanced knowledge). It holds graded
+source notes (tag `mecfs`) built by the `mecfs-source-intake`, `mecfs-sweep`, and
+`mecfs-synthesis` skills. The docs themselves go in the learning vault,
+`/Users/saje.liese/Obsidian/Tech-2` (`Topics/📘ME-CFS/`). Find and grade sources in
+research, then copy each cited source note and its PDFs into Tech-2 (see "Across
+vaults" in `SKILL.md`). Passages are marked in the research original first, then copied,
+so both copies carry the same `^q` IDs.
 **Read the rubric first:**
 `/Users/saje.liese/Obsidian/research/Extras/Skills/mecfs-source-intake/references/rubric.md`.
 It defines valid sources, case definitions, evidence tiers, quality flags, note schemas,
@@ -65,14 +70,17 @@ and the medical guardrail.
   "a registered trial with no results yet").
 - Treat PACE-lineage CBT/GET work as history of the field: explain it and its critiques
   (cite both), don't present it as current evidence.
-- Link treatments to existing `💊` notes on first mention (with their guideline stance
-  and harm signal, read from the note's frontmatter) and to [[💊 Treatments Overview]].
-- Link the docs in at the research vault's entry points: the hub
-  `[[🫩Myalgic Encephalomyelitis-Chronic Fatigue Syndrome (ME-CFS)]]` (callout + nav line),
-  `🏠 Home` (the topic table), `📋 How to Use this` (the "Where things are" table), and
-  `💊 Treatments Overview` (nav line to the research page). `Topics.base` already matches
-  `type == "docs"`. Leave `💊` notes themselves alone: `mecfs-synthesis` maintains them,
-  and the docs show up in their backlinks.
+- Link treatments to the research vault's `💊` notes on first mention, with their
+  guideline stance and harm signal read from the note's frontmatter, using `obsidian://`
+  links, and to `💊 Treatments Overview` the same way. Leave `💊` notes themselves alone:
+  `mecfs-synthesis` maintains them.
+- **Tech-2 links:** its hub `[[🫩Myalgic Encephalomyelitis-Chronic Fatigue Syndrome (ME-CFS)]]`
+  gets the "📘 New to ME/CFS?" callout and is the docs' `topics:` target; its
+  `Topics.base` matches `type == "docs"`, so the index shows under SubTopics.
+- **Research links, via `obsidian://` to the Tech-2 docs:** research's hub (callout +
+  nav line), `🏠 Home` (topic table), `📋 How to Use this` ("Where things are" table),
+  and `💊 Treatments Overview` (nav line to the research page). The docs index links back
+  to research's hub as "the graded research corpus".
 
 ## Extra reviewer checks (add to the brief)
 - Guardrail: no recommendations, no "you should".
