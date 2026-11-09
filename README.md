@@ -13,7 +13,7 @@ Backup and restore personal configuration for Claude Code, Codex, pi, omp, Grinc
 
 - Global guidance in `codex/AGENTS.md`
 - Model, sandbox, approval, MCP, and agent defaults in `codex/config.toml`
-- Codex-native user skills converted from both Claude commands and Claude skills
+- Codex-native user skills converted from both Claude commands and Claude skills, except the ones in `codex/skills-from-pi.txt`, which install as symlinks to the pi skills
 - Custom agents, lifecycle hooks, command rules, and helper scripts
 
 The detailed Claude-to-Codex mapping and deliberate omissions are documented in `codex/README.md`.
@@ -91,7 +91,8 @@ ai_config/
 │   ├── skills/
 │   ├── AGENTS.md
 │   ├── config.toml
-│   └── hooks.json
+│   ├── hooks.json
+│   └── skills-from-pi.txt
 ├── pi/
 │   ├── agents/
 │   ├── extensions/
@@ -181,7 +182,7 @@ Afterwards, sign in: `claude`, `codex`, `opencode auth login`, and `acli jira au
 ./scripts/install-grinch.sh
 ```
 
-All installers support `--dry-run`. The Codex installer writes configuration to `~/.codex/` and global user skills to `~/.agents/skills/`. The pi installer writes to `~/.pi/agent/` (resource dirs only — credentials, cache, sessions, and the model registry are left untouched). The omp installer writes to `~/.omp/agent/` plus plugin/marketplace metadata under `~/.omp/` (databases, blobs, cache, logs, and sessions are left untouched). Restart Codex afterward and use `/hooks` to review and trust the installed hooks. Restart pi (or run `/reload` in an interactive session) to load the new extensions, skills, and prompts. Restart omp to pick up its config and extensions.
+All installers support `--dry-run`. The Codex installer writes configuration to `~/.codex/` and global user skills to `~/.agents/skills/`, symlinking the skills in `codex/skills-from-pi.txt` to `~/.pi/agent/skills/`. The pi installer writes to `~/.pi/agent/` (resource dirs only — credentials, cache, sessions, and the model registry are left untouched). The omp installer writes to `~/.omp/agent/` plus plugin/marketplace metadata under `~/.omp/` (databases, blobs, cache, logs, and sessions are left untouched). Restart Codex afterward and use `/hooks` to review and trust the installed hooks. Restart pi (or run `/reload` in an interactive session) to load the new extensions, skills, and prompts. Restart omp to pick up its config and extensions.
 
 ### Enable Grinch on macOS
 
