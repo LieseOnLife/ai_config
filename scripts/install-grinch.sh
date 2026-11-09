@@ -19,7 +19,7 @@ if [[ -L "$HELPER" || -d "$HELPER" ]]; then
 fi
 if $DRY_RUN; then
     echo "Would install grinch.js into $CONFIG_DIR and open-gov into $HOME/.local/bin."
-    echo "Would mark the Grinch configuration as managed; no settings changed."
+    echo "Would mark the Grinch configuration as managed and reload a running Grinch; no settings changed."
     exit 0
 fi
 read -r -p "Install Grinch config and open-gov (overwrites existing files)? [y/N] " REPLY
@@ -28,6 +28,11 @@ mkdir -p "$CONFIG_DIR" "$HOME/.local/bin"
 install -m 644 "$BACKUP_DIR/grinch.js" "$CONFIG_DIR/grinch.js"
 install -m 755 "$BACKUP_DIR/open-gov" "$HELPER"
 touch "$CONFIG_DIR/.ai-config-managed"
-echo "If Grinch is already running, choose Reload Config (⌘R) in its menu before testing links."
+# Grinch never watches its config; SIGHUP is its Reload Config.
+if pkill -HUP -x Grinch; then
+    echo "Reloaded the running Grinch config."
+else
+    echo "Grinch is not running; launch it to load the config."
+fi
 echo "Installed. Select Grinch in System Settings → Desktop & Dock → Default web browser."
 echo "Keep ~/.local/bin on PATH to use: open-gov 'https://example.com'"
