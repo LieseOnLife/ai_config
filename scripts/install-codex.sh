@@ -27,7 +27,13 @@ fi
 
 LINKED_SKILLS=()
 while IFS= read -r name || [[ -n "$name" ]]; do
+    name="${name%$'\r'}"
     [[ -z "$name" || "$name" == \#* ]] && continue
+    # Each name is later passed to rm -rf, so it must be a bare directory name.
+    if [[ "$name" == */* || "$name" == "." || "$name" == ".." ]]; then
+        echo "Error: invalid skill name in skills-from-pi.txt: $name" >&2
+        exit 1
+    fi
     LINKED_SKILLS+=("$name")
 done < "$BACKUP_DIR/skills-from-pi.txt"
 
