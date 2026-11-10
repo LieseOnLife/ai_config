@@ -43,7 +43,7 @@ Glob `/Users/saje.liese/Obsidian/Tech-2/Datadog/Ops/` for `🌧️* - Cloud Acco
    - `gcDate` / `date_start` → Monday's date
    - `date_end` → Monday + 5 days (Saturday)
    - Place the handoff link under `# Last Week`
-4. Write the file. Proceed with Steps 3–5.
+4. Write the file. Proceed with Steps 3–6.
 
 ### Update mode
 
@@ -77,7 +77,7 @@ Format each ticket as:
 
 When the requester is an individual person, link as `[[👤First Last]]`. When it's a team or org unit, use the team name as plain text.
 
-**Skip** any ticket whose ID already appears in the doc.
+**Skip** any ticket that already has its own `[CLOUDA-XXXX](…)` task line in the doc. A key that only appears inside a Slack thread description doesn't count.
 
 ### 3b: CAPA quota requests
 
@@ -88,12 +88,14 @@ project = CAPA AND labels = quota-management AND assignee is EMPTY AND statusCat
 
 Without the label, the query returns the whole CAPA engineering backlog (sub-tasks, `tech-debt`, `interrupt-handler` improvement tickets). Those aren't requests, so leave them out. Assigned `quota-management` tickets are already being worked; skip them too.
 
-The summary carries the provider: `AWS quota: …`, `GCP quota: …`, `Azure quota: …`. Most tickets are filed by `Robot Slack SRE` on behalf of Cloud Quota Manager (CQM), so name the quota and account instead of the reporter. Format:
+The summary carries the provider (`AWS quota: …`, `GCP quota: …`, `Azure quota: …`). Take `quota name`, `account name`, and `location` from the description bullets, because Azure summaries leave out the location. Request `description` in the query's `fields`. Most tickets are filed by `Robot Slack SRE` on behalf of Cloud Quota Manager (CQM), so name the quota and account instead of the reporter. Format:
 ```
 - [ ] [CAPA-XXXX](https://datadoghq.atlassian.net/browse/CAPA-XXXX) - `{quota}` on `{account}` ({location}) - {status}
 ```
 
-If a human filed it, add ` - [[👤First Last]]` after the account. **Skip** any ticket whose ID already appears in the doc.
+If a human filed it, add ` - [[👤First Last]]` after `({location})`. If a human-filed ticket has no provider prefix or quota bullets, use Step 3a's provider logic and `{summary} - [[👤First Last]] - {status}`.
+
+**Skip** any ticket that already has its own `[CAPA-XXXX](…)` task line in the doc. A key that only appears inside a Slack thread description doesn't count.
 
 ---
 
@@ -107,12 +109,12 @@ Include only threads where **Saje was @mentioned, `@cloud-accounts-oncall` was @
 
 How to find them:
 1. **Saje mentions**: `keywords: ["<@U01D2L9K04T>"]`, `filters: in:<#C08MPTABY23> after:{date}`. **Saje replies**: `filters: in:<#C08MPTABY23> from:<@U01D2L9K04T> after:{date}`.
-2. **`@cloud-accounts-oncall` mentions**: keyword search does NOT match user-group mentions. Page through every channel message in the window (`filters: in:<#C08MPTABY23> after:{date}`, `sort: timestamp`, `include_bots: true`), collect distinct `thread_ts` values, `slack_read_thread` each, and keep threads whose raw text contains `S08BU18JQ0J` (renders as `<!subteam^S08BU18JQ0J>`). The ping may predate the window, e.g. a weeks-old thread with new replies; include it if the thread had activity in the window. `Cloud Accounts Support Forwarder` crossposts from #cloudops carry the group mention, so bots must be included.
+2. **`@cloud-accounts-oncall` mentions**: keyword search does NOT match user-group mentions. Page through every channel message in the window (`filters: in:<#C08MPTABY23> after:{date}`, `sort: timestamp`, `include_bots: true`) and collect distinct thread roots: `thread_ts` from the permalink, or `Message_ts` for a top-level message with no replies. `slack_read_thread` each root, and keep threads whose raw text contains `S08BU18JQ0J` (renders as `<!subteam^S08BU18JQ0J>`). The ping may predate the window, e.g. a weeks-old thread with new replies; include it if the thread had activity in the window. `Cloud Accounts Support Forwarder` crossposts from #cloudops carry the group mention, so bots must be included.
 3. Skip `set the channel topic` bot posts — they mention the IH but aren't requests.
 
 ### 4b: cloud-quota
 
-The channel exists for quota requests and the IH owns it, so include **every request thread with activity in the window**; nobody has to tag us. It's low-volume, so page through all of it: `filters: in:<#C0A0P6WBZBP> after:{date}`, `sort: timestamp`, `include_bots: true`. Collect distinct `thread_ts` values and `slack_read_thread` each.
+The channel exists for quota requests and the IH owns it, so include **every request thread with activity in the window**; nobody has to tag us. It's low-volume, so page through all of it: `filters: in:<#C0A0P6WBZBP> after:{date}`, `sort: timestamp`, `include_bots: true`. Collect distinct thread roots (as in 4a, including unanswered top-level requests) and `slack_read_thread` each.
 
 - Skip `set the channel topic` posts and deleted messages.
 - Off-topic asks (e.g. an unrelated PR review posted in the wrong channel): include them only if Saje replied; otherwise list them under "needs attention" in the report.
@@ -124,9 +126,9 @@ The channel exists for quota requests and the IH owns it, so include **every req
 
 **Completed** (`[x]`):
 - Thread resolved (✅ / :done: / :white_check_mark: reaction, "thanks, that worked!", or otherwise clearly closed)
-- Saje answered and the requester acknowledged
+- Saje or a teammate answered and the requester acknowledged
 - Redirected to another channel/team — note where it went
-- Saje reviewed/approved a PR
+- Saje or a teammate reviewed/approved a PR
 
 **Open** (`[ ]`):
 - Question unanswered or awaiting follow-up
@@ -140,6 +142,8 @@ Format open items:
 - [ ] [Slack thread]({thread_url}) - [[👤First Last]] - {brief description}
 ```
 
+`{thread_url}` is the parent permalink: `https://dd.enterprise.slack.com/archives/{channel_id}/p{thread_ts without the dot}`, with no `?thread_ts=` query. Search results link to the matching reply, so convert it.
+
 Format completed items:
 ```
 - [x] [Slack thread]({thread_url}) - [[👤First Last]] - {brief description} ✅ {YYYY-MM-DD}
@@ -147,19 +151,19 @@ Format completed items:
 
 Always link the person's name as `[[👤First Last]]`.
 
-**Skip** any thread URL already in the doc.
+**Skip** any thread whose parent ID (`p{thread_ts without the dot}`) already appears in the doc.
 
 ---
 
 ## Step 5: Write to the Document
 
-Insert items under `# Account Requests Tasks`:
+Insert items under `# Account Requests Tasks`. Each provider section (`## AWS`, `## GCP`, `## Azure`) keeps this order:
 
-- CLOUDA tickets go directly under the matching provider heading: `## AWS`, `## GCP`, `## Azure`
-- For Slack threads from `cloud-accounts-support`, add a `### Slack Mentions` sub-heading under the provider if one doesn't already exist
-- CAPA tickets and `cloud-quota` threads go under a `### Quotas` sub-heading under the provider; create it if it doesn't already exist
-- Only append — never modify existing lines
-- Leave `# Handoff`, `## Feedback`, and `# Last Week` (after initial create) untouched for manual entry
+1. **CLOUDA tickets**, directly under `## {Provider}` and above any `###` sub-heading. Insert new ones after the last existing CLOUDA line, not at the end of the section.
+2. **`### Slack Mentions`**: `cloud-accounts-support` threads. Create it after the CLOUDA list if it doesn't exist; append at the end of this sub-section, above `### Quotas`.
+3. **`### Quotas`**: CAPA tickets and `cloud-quota` threads. Create it last in the provider section if it doesn't exist; append at its end, above the next `##`/`#` heading.
+
+Only append within the target sub-section. Never modify or remove existing lines. Leave `# Handoff`, `## Feedback`, and `# Last Week` (after initial create) untouched for manual entry.
 
 ---
 
