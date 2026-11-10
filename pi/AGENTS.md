@@ -31,6 +31,14 @@ This overrides any "bias toward acting" default — for non-trivial work, confir
 
 In Zed's terminal (`ZED_TERM=true` or `TERM_PROGRAM=zed`), after implementation is complete, run the `zed-review` skill. Outside Zed, never launch Zed automatically.
 
+# Vocabulary & Explanations
+
+Saje's glossary: `~/Obsidian/Tech-2/Topics/💡Glossary.md`. Read it before explaining CAVM, COVM, MAZE, or pool work, or whenever a term might not be shared. Use its **My words** as they are; for its **Agent words**, say the plain phrase.
+- Open with the outcome in one sentence (what changed, or what you need from Saje), then the detail.
+- The first time you use a codename, acronym, or coined term, define it in one plain sentence, with a concrete example if it's abstract.
+- Describe a PR label, ticket ID, or finding number before you use it ("the worker change that must deploy before the backfill (pr5b)").
+- Answer the question Saje asked first, then give status or CI.
+
 # Git
 
 ## Datadog Commit Signing (HARD)
