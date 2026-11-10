@@ -21,6 +21,14 @@ Read the document and identify:
 - Broken markdown formatting
 - Unnecessary links (internal site navigation, edit buttons, etc.)
 
+**Re-fetch with Defuddle when the note came from a web page.** If the frontmatter has a source URL (`link:`, `source:`, or `url:`), fetch a clean copy instead of hand-stripping HTML (see the `defuddle` skill):
+
+```bash
+defuddle parse '<url>' --md   # not installed? npx -y defuddle parse '<url>' --md
+```
+
+Use that output as the core content and continue with the steps below; frontmatter, the Notes section, and anything the user added still come from the original note. Clean the note in place instead when there is no URL, the fetch fails or returns little (login wall, paywall, dead page), or the live page has drifted from what was clipped.
+
 ### Step 2: Preserve Important Elements
 Always keep:
 - **Frontmatter** (YAML between `---`)
