@@ -30,18 +30,18 @@ If a path isn't in the map, check the matching `scripts/sync-*.sh` / `install-*.
 
 ## Procedure
 
-1. **Name one purpose per PR.** A PR changes one skill or one behavior. If you changed two unrelated things, open two PRs.
+1. **Add to an open PR before opening a new one.** Saje wants as few PRs as possible. Run `gh pr list -R LieseOnLife/ai_config --state open`. If an open PR covers the same skill, tool, or feature, commit there: check out its existing worktree, or `git worktree add ../ai_config-worktrees/<topic> <branch>`. Update its title and description so they cover the whole diff. Open a new PR only when nothing open is related. Just before you commit, re-check that the target PR is still `OPEN` (`gh pr view <n> -R LieseOnLife/ai_config --json state -q .state`). Saje merges often, and commits pushed to a merged branch are lost. If it's merged, use a new PR.
 
 2. **Switch `gh` to `LieseOnLife`** (it owns the repo): note the active account from `gh auth status`, then `gh auth switch --user LieseOnLife`. Switch back at the very end (step 9). Pass `-R LieseOnLife/ai_config` to every `gh` command, because you may be running from another repo.
 
-3. **Create a worktree from fresh `main`** (never commit on `main`):
+3. **New PR only: create a worktree from fresh `main`** (never commit on `main`):
    ```bash
    git -C ~/repos/ai_config fetch -q origin
    git -C ~/repos/ai_config worktree add ../ai_config-worktrees/<topic> -b saje/<topic> origin/main
    ```
    If the branch or worktree already exists, don't delete it; use `<topic>-v2`, `-v3`, and so on.
 
-4. **Check for collisions.** `gh pr list -R LieseOnLife/ai_config --state open`, then `gh pr diff <n> -R LieseOnLife/ai_config --name-only` for any PR that looks related. If an open PR touches the same file, say so in your PR, or ask Saje whether to stack on it.
+4. **Check for collisions.** For any open PR that looks related, run `gh pr diff <n> -R LieseOnLife/ai_config --name-only`. If an unrelated open PR touches the same file, say so in your PR, or ask Saje whether to stack on it.
 
 5. **Bring in the change, file by file.** **Don't run `sync-*.sh` or `install-*.sh`.** They rsync whole directories with `--delete`, so they would sweep unrelated drift into the PR (or wipe live edits). For each file you touched:
    1. Before editing anything, `diff -u <worktree file> <live file>`. The worktree side is `origin/main`.
