@@ -13,7 +13,7 @@ Backup and restore personal configuration for Claude Code, Codex, pi, omp, Grinc
 
 - Global guidance in `codex/AGENTS.md`
 - Model, sandbox, approval, MCP, and agent defaults in `codex/config.toml`
-- Codex-native user skills converted from both Claude commands and Claude skills
+- Codex-native user skills converted from both Claude commands and Claude skills, except the ones in `codex/skills-from-pi.txt`, which install as symlinks to the pi skills
 - Custom agents, lifecycle hooks, command rules, and helper scripts
 
 The detailed Claude-to-Codex mapping and deliberate omissions are documented in `codex/README.md`.
@@ -93,7 +93,8 @@ ai_config/
 │   ├── skills/
 │   ├── AGENTS.md
 │   ├── config.toml
-│   └── hooks.json
+│   ├── hooks.json
+│   └── skills-from-pi.txt
 ├── pi/
 │   ├── agents/
 │   ├── extensions/
@@ -183,7 +184,7 @@ Afterwards, sign in: `claude`, `codex`, `opencode auth login`, and `acli jira au
 ./scripts/install-grinch.sh
 ```
 
-All installers support `--dry-run`. The Codex installer writes configuration to `~/.codex/` and global user skills to `~/.agents/skills/`. The pi installer writes to `~/.pi/agent/` (resource dirs only — credentials, cache, sessions, and the model registry are left untouched). The omp installer writes to `~/.omp/agent/` plus plugin/marketplace metadata under `~/.omp/` (databases, blobs, cache, logs, and sessions are left untouched). Restart Codex afterward and use `/hooks` to review and trust the installed hooks. Restart pi (or run `/reload` in an interactive session) to load the new extensions, skills, and prompts. Restart omp to pick up its config and extensions.
+All installers support `--dry-run`. The Codex installer writes configuration to `~/.codex/` and global user skills to `~/.agents/skills/`, symlinking the skills in `codex/skills-from-pi.txt` to `~/.pi/agent/skills/`. The pi installer writes to `~/.pi/agent/` (resource dirs only — credentials, cache, sessions, and the model registry are left untouched). The omp installer writes to `~/.omp/agent/` plus plugin/marketplace metadata under `~/.omp/` (databases, blobs, cache, logs, and sessions are left untouched). Restart Codex afterward and use `/hooks` to review and trust the installed hooks. Restart pi (or run `/reload` in an interactive session) to load the new extensions, skills, and prompts. Restart omp to pick up its config and extensions.
 
 ### Enable Grinch on macOS
 
@@ -193,12 +194,13 @@ Install Grinch first, then run `./scripts/install-grinch.sh --dry-run` and
 must be migrated explicitly. Chrome profiles, credentials, and AppGate settings
 are never copied or changed.
 
-Launch Grinch. **If it was already running, choose Reload Config (⌘R) from its
-menu after installation**—launching the app again does not reload its config.
-An instance started before a config existed can otherwise keep ignoring links.
+Launch Grinch. Grinch never re-reads its config on its own; the installer sends
+a running Grinch `SIGHUP` (its Reload Config), so rerun `./scripts/install-grinch.sh`
+after rule edits, or choose Reload Config (⌘R) from its menu. An instance started
+before a config existed can otherwise keep ignoring links.
 Then select **Grinch** in **System Settings → Desktop & Dock → Default web
 browser**. The installer does not change that system preference or other URL-scheme
-handlers. Use **Reload Config** after subsequent rule edits too.
+handlers.
 
 ```bash
 open-gov 'https://identity.example/login' # explicitly bypass the Commercial default

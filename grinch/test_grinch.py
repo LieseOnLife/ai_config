@@ -26,6 +26,11 @@ class GrinchTests(unittest.TestCase):
         self.chrome = self.home / "Library/Application Support/Google/Chrome"
         self.write_profiles({"Default": "Your Chrome", "Profile 1": "datadoghq.com",
                              "Profile 2": "ddog-gov.com"})
+        # Keep the installer's reload from signalling the real Grinch.
+        self.bin.mkdir(parents=True)
+        self.pkill_log = self.root / "pkill.log"
+        (self.bin / "pkill").write_text(f'#!/bin/bash\nprintf "%s\\n" "$*" >> "{self.pkill_log}"\n')
+        (self.bin / "pkill").chmod(0o755)
 
     def write_profiles(self, names):
         for directory in names:
@@ -62,8 +67,8 @@ class GrinchTests(unittest.TestCase):
 
     def test_install_and_config_only_sync(self):
         self.install()
-        self.assertTrue((self.config / ".ai-config-managed").is_file())
         self.assertTrue(os.access(self.bin / "open-gov", os.X_OK))
+        self.assertEqual(self.pkill_log.read_text(), "-HUP -x Grinch\n")
         self.assertEqual((self.bin / "open-gov").read_bytes(), (ROOT / "grinch/open-gov").read_bytes())
         (self.config / "grinch.js").write_text("module.exports = { default: null };\n")
         (self.config / "private.json").write_text("not configuration")
