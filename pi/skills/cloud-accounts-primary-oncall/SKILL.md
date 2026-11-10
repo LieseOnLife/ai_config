@@ -47,7 +47,7 @@ Glob `/Users/saje.liese/Obsidian/Tech-2/Datadog/Ops/` for `🌧️* - Cloud Acco
 
 ### Update mode
 
-Read the file into memory. Append-only in Steps 3–5 — never modify or remove existing entries.
+Read the file into memory. Add new items (Steps 3–5), and refresh the status of existing open items (Step 4c). Never remove existing lines.
 
 ---
 
@@ -127,13 +127,18 @@ The channel exists for quota requests and the IH owns it, so include **every req
 **Completed** (`[x]`):
 - Thread resolved (✅ / :done: / :white_check_mark: reaction, "thanks, that worked!", or otherwise clearly closed)
 - Saje or a teammate answered and the requester acknowledged
-- Redirected to another channel/team — note where it went
 - Saje or a teammate reviewed/approved a PR
+
+**Cancelled / moved** (`[-]`):
+- Saje or a teammate moved it somewhere else: another channel (e.g. the forwarder crossposted it to #cloudops), another team, or Corp IT / a Freshservice ticket
+- Add a sub-bullet comment saying where it went, with a link when there is one
 
 **Open** (`[ ]`):
 - Question unanswered or awaiting follow-up
 - PR submitted, needs review
 - Acknowledged but not yet acted on
+
+If Saje creates a Jira ticket from a thread (e.g. via the Jira bot), the work is still ours: keep the item open and add a `📋` sub-bullet naming the ticket.
 
 Determine the cloud provider from context (same keyword logic as Step 3a). If unclear, ask the user.
 
@@ -149,9 +154,30 @@ Format completed items:
 - [x] [Slack thread]({thread_url}) - [[👤First Last]] - {brief description} ✅ {YYYY-MM-DD}
 ```
 
+Format cancelled / moved items:
+```
+- [-] [Slack thread]({thread_url}) - [[👤First Last]] - {brief description} ❌ {YYYY-MM-DD}
+	- ➡️ Moved to {where, linked}
+```
+
+Sub-bullet comments are tab-indented and start with an emoji: `➡️` moved, `📋` tracked in a ticket.
+
 Always link the person's name as `[[👤First Last]]`.
 
 **Skip** any thread whose parent ID (`p{thread_ts without the dot}`) already appears in the doc.
+
+### 4c: Refresh existing open items
+
+Existing lines with status `[ ]`, `[?]`, `[/]` or `[*]` are open. Check each one and update it in place:
+
+- **CLOUDA/CAPA ticket lines:** query the key (`key = CLOUDA-XXXX`, fields `status`, `assignee`, `resolutiondate`, `updated`). If it's Done, change the line to `- [x] … - Done ({assignee first name}) ✅ {resolution date, else updated date}`.
+- **Slack thread lines:** re-read every thread whose root had activity in the window (the roots collected in 4a/4b). Use the Classify rules above:
+  - Completed → change the status to `[x]`, rewrite any "waiting on…" / "needs our review" tail to say what happened (e.g. "we approved and it merged 11/10"), and end the line with `✅ {date it was resolved}`.
+  - Moved → change the status to `[-]`, drop the "waiting on…" tail, end the line with `❌ {date}`, and add a `➡️ Moved to …` sub-bullet.
+  - Still open but with new facts (a ticket was created, part of it moved) → keep the status and add a sub-bullet comment.
+- For PR threads, check the PR state (`gh pr view N -R ddoghq/cloud-inventory --json state,reviewDecision,mergedAt`) before marking done.
+- Use the date of the resolving event (approval, merge, acknowledgement, crosspost), not today's date.
+- Keep the existing sub-bullets and any status Saje set by hand (e.g. `[*]` "Reviewing now") unless the thread shows it finished.
 
 ---
 
@@ -163,7 +189,7 @@ Insert items under `# Account Requests Tasks`. Each provider section (`## AWS`, 
 2. **`### Slack Mentions`**: `cloud-accounts-support` threads. Create it after the CLOUDA list if it doesn't exist; append at the end of this sub-section, above `### Quotas`.
 3. **`### Quotas`**: CAPA tickets and `cloud-quota` threads. Create it last in the provider section if it doesn't exist; append at its end, above the next `##`/`#` heading.
 
-Only append within the target sub-section. Never modify or remove existing lines. Leave `# Handoff`, `## Feedback`, and `# Last Week` (after initial create) untouched for manual entry.
+Append new items only within the target sub-section. Change existing lines only as Step 4c describes, and never remove them. Leave `# Handoff`, `## Feedback`, and `# Last Week` (after initial create) untouched for manual entry.
 
 ---
 
@@ -172,4 +198,5 @@ Only append within the target sub-section. Never modify or remove existing lines
 Print a brief summary:
 - New JIRA tickets added (CLOUDA and CAPA, by provider)
 - New Slack threads added (`cloud-accounts-support` mentions and `cloud-quota` requests)
+- Existing items checked off (`[x]`) or cancelled as moved (`[-]`), with where they went
 - Anything needing attention (unanswered questions, ambiguous provider, missing info)
