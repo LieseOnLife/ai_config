@@ -129,7 +129,6 @@
   },
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
-    "obsidian@obsidian-skills": true,
     "atlassian@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
     "dd@datadog-claude-plugins": true,
@@ -167,12 +166,6 @@
       "source": {
         "source": "github",
         "repo": "anthropics/claude-plugins-official"
-      }
-    },
-    "obsidian-skills": {
-      "source": {
-        "source": "github",
-        "repo": "kepano/obsidian-skills"
       }
     },
     "datadog-dd-source-claude-plugins": {

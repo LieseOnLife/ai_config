@@ -159,16 +159,6 @@
         "lastUpdated": "2026-10-28T15:30:23.503Z",
         "gitCommitSha": "bb92a77741419a4ab5f06e711a283343f1ada0c3"
       }
-    ],
-    "obsidian@obsidian-skills": [
-      {
-        "scope": "user",
-        "installPath": "/Users/saje.liese/.claude/plugins/cache/obsidian-skills/obsidian/1.0.1",
-        "version": "1.0.1",
-        "installedAt": "2026-10-28T15:30:24.036Z",
-        "lastUpdated": "2026-10-28T15:30:24.036Z",
-        "gitCommitSha": "3ccff5338ea700537839b21900aa5358a0402c98"
-      }
     ]
   }
 }
