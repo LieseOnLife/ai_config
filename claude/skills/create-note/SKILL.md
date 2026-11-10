@@ -7,6 +7,19 @@ description: Create notes in the Obsidian vault using appropriate templates and 
 
 Create notes in the Obsidian vault using appropriate templates and locations.
 
+## Companion Skills
+
+This skill is the style guide. Where it differs from a general Obsidian skill, follow this one: callouts are `>[!type]` with no space (not `> [!type]`), links and file names keep their emoji prefixes. Load these for what it doesn't cover:
+
+| Need | Skill |
+|------|-------|
+| Syntax not covered here (embeds, block refs, highlights, comments, math, Mermaid, property types) | `obsidian-markdown` |
+| Creating or editing a `.base` file or a Base embed | `obsidian-bases` |
+| Creating or editing a `.canvas` file | `json-canvas` |
+| Searching the vault, checking for an existing note or backlinks before creating, reading or setting properties (needs Obsidian running) | `obsidian-cli` |
+| Note built from a web page: fetch clean Markdown first | `defuddle` |
+| Batch-generating notes from JSON or CSV data | `knap` |
+
 ## Vault Location
 
 ```
