@@ -49,7 +49,14 @@ done
 if [[ -d "$SKILLS_DIR" ]]; then
     echo "Syncing user skills/"
     mkdir -p "$BACKUP_DIR/skills"
-    rsync -av --delete $DRY_RUN "$SKILLS_DIR/" "$BACKUP_DIR/skills/"
+    EXCLUDES=()
+    while IFS= read -r name || [[ -n "$name" ]]; do
+        name="${name%$'\r'}"
+        [[ -z "$name" || "$name" == \#* ]] && continue
+        EXCLUDES+=(--exclude "/$name")
+    done < "$BACKUP_DIR/skills-from-pi.txt"
+    # --delete-excluded drops leftover copies of newly linked skills from the backup.
+    rsync -av --delete --delete-excluded ${EXCLUDES[@]+"${EXCLUDES[@]}"} $DRY_RUN "$SKILLS_DIR/" "$BACKUP_DIR/skills/"
 fi
 
 echo

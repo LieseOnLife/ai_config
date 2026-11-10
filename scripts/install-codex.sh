@@ -9,6 +9,7 @@ REPO_DIR="$(dirname "$SCRIPT_DIR")"
 BACKUP_DIR="$REPO_DIR/codex"
 CODEX_DIR="$HOME/.codex"
 SKILLS_DIR="$HOME/.agents/skills"
+PI_SKILLS_DIR="$HOME/.pi/agent/skills"
 
 DRY_RUN=""
 if [[ "${1:-}" == "--dry-run" ]]; then
@@ -23,6 +24,18 @@ if [[ ! -d "$BACKUP_DIR" ]]; then
     echo "Error: Codex backup directory not found: $BACKUP_DIR" >&2
     exit 1
 fi
+
+LINKED_SKILLS=()
+while IFS= read -r name || [[ -n "$name" ]]; do
+    name="${name%$'\r'}"
+    [[ -z "$name" || "$name" == \#* ]] && continue
+    # Each name is later passed to rm -rf, so it must be a bare directory name.
+    if [[ "$name" == */* || "$name" == "." || "$name" == ".." ]]; then
+        echo "Error: invalid skill name in skills-from-pi.txt: $name" >&2
+        exit 1
+    fi
+    LINKED_SKILLS+=("$name")
+done < "$BACKUP_DIR/skills-from-pi.txt"
 
 if [[ -z "$DRY_RUN" ]]; then
     echo "This will install Codex config from: $BACKUP_DIR"
@@ -68,6 +81,20 @@ else
     # Merge personal skills so skills managed by other repositories are preserved.
     rsync -av $DRY_RUN "$BACKUP_DIR/skills/" "$SKILLS_DIR/"
 fi
+
+echo "Linking pi skills/"
+for name in ${LINKED_SKILLS[@]+"${LINKED_SKILLS[@]}"}; do
+    link="$SKILLS_DIR/$name"
+    target="$PI_SKILLS_DIR/$name"
+    if [[ -L "$link" && "$(readlink "$link")" == "$target" ]]; then
+        continue
+    fi
+    echo "$link -> $target"
+    if [[ -z "$DRY_RUN" ]]; then
+        rm -rf "$link"
+        ln -s "$target" "$link"
+    fi
+done
 
 if [[ -z "$DRY_RUN" ]]; then
     touch "$CODEX_DIR/.ai-config-managed"

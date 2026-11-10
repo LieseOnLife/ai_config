@@ -1,0 +1,15 @@
+# Codex skills that are symlinks to the pi skill of the same name:
+#   ~/.agents/skills/<name> -> ~/.pi/agent/skills/<name>
+# install-codex.sh creates the links; sync-codex.sh skips them, so pi/skills/ is their only backup.
+cloud-accounts-primary-oncall
+cloud-admin
+cloud-admin-process
+cloud-inventory
+create-decision-log
+create-documentation
+create-migration-plan
+create-note
+create-pr
+iterative-pr-review
+people-interactions
+snippet
