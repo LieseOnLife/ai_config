@@ -82,6 +82,10 @@ When scoping or planning any project/feature, break the work into small stacked 
 - **Audit the file list, not just the number.** An unexpected file from another team (e.g. `domains/apm/...` in a `domains/compute` PR) is the tell-tale sign of a tangled base.
 - **Exception: rebase-only repos.** In `cloud-inventory`, never merge `master` into any branch; restack with `git rebase` / `git rebase --onto` instead (see `cloud-inventory.md`).
 
+# AI Config Backup (AUTOMATIC)
+
+Any change to AI config (a `manage_skill` write, or an edit under `~/.pi/agent`, `~/.omp`, `~/.claude`, `~/.codex`, `~/.agents/skills`, `~/.config/zed`, or `~/.config/grinch`) gets a PR in `LieseOnLife/ai_config` in the same task, without being asked. Load the `ai-config-pr` skill for the procedure.
+
 # Advisor Checkpoints
 
 Call an advisor subagent (fresh-context read-only reviewer) in these circumstances — add new entries as patterns emerge:

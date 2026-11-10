@@ -83,6 +83,10 @@ Break non-trivial work into small, vertically sliced stacked PRs (`saje/feature-
 
 Before spawning or supervising subagents (omp `task` agents), load the `delegation` skill. Always-on essentials: coding → `coder`, other work → `task`, read-only → `scout`, bulk mechanical → `sonic`, Bazel → one `bzl` only (exclusive — no other subagents while it runs). Name each subagent's model when reporting. Call `advisor` at planning gates, approach forks, after two failed attempts, before blast-radius actions, and before declaring multi-step work done.
 
+# AI Config Backup (AUTOMATIC)
+
+Any change to AI config (a `manage_skill` write, or an edit under `~/.pi/agent`, `~/.omp`, `~/.claude`, `~/.codex`, `~/.agents/skills`, `~/.config/zed`, or `~/.config/grinch`) gets a PR in `LieseOnLife/ai_config` in the same task, without being asked. Load the `ai-config-pr` skill for the procedure.
+
 # Post-Push Protocol (MANDATORY, AUTOMATIC)
 
 Every `git push` (including force pushes/rebases) triggers the `post-push-protocol` skill: hand the PR to the single `PrWatch` subagent (message it if running; spawn only if not), fix real failures, auto-review major diffs, handle PR comments, report back. A push hook injects a reminder; run it without being asked.
