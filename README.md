@@ -49,6 +49,8 @@ Not backed up: extensions, themes, the prompt library database, and Zed's local 
 
 Skills from `~/.pi/agent/skills` are loaded by omp through `config.yml` and are backed up under `pi/`. omp and pi also load skills from `~/repos/obsidian-vault-template/skills` (private repo `LieseOnLife/obsidian-vault-template`; clone it there). That repo owns the `new-obsidian-vault` skill, so it isn't copied here.
 
+The Obsidian skills from [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (`defuddle`, `json-canvas`, `knap`, `obsidian-bases`, `obsidian-cli`, `obsidian-markdown`) come from a clone at `~/repos/obsidian-skills`; clone it there with `git clone https://github.com/kepano/obsidian-skills.git ~/repos/obsidian-skills`. `codex/skills/<name>` and `claude/skills/<name>` are symlinks into that clone, so omp, pi, and Codex (through `~/.agents/skills`) and Claude Code (through `~/.claude/skills`) all load the same copy. Use the clone rather than the Claude marketplace plugin: kepano rarely bumps the plugin version, so version-based plugin updaters miss new skills. `omp/agent/extensions/obsidian-skills-pull.ts` runs `git pull --ff-only` in the background at session start, at most once a day, and warns if the pull fails.
+
 Not backed up: credentials and OAuth state, `*.db` files (agent, history, models, skill descriptions), blobs, cache, logs, sessions, and runtime `*.lock` files.
 
 ### Grinch browser routing
