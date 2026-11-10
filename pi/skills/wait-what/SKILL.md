@@ -21,11 +21,11 @@ Glossary: `~/Obsidian/Tech-2/Topics/💡Glossary.md` (sections **My words** and 
 
 3. **Find the word that tripped me.** Name the term, acronym, label, or coinage that caused the miss. If several caused it, name up to three.
 
-4. **Propose glossary entries.** For each term that isn't already in the glossary, draft one:
-   - My domain term (a system, team, or process) goes under the right **My words** subheading.
+4. **Propose glossary entries.** Draft one for each reusable term that isn't in the glossary yet. Skip one-off PR labels, ticket IDs, and finding numbers: the step 2 rule covers those.
+   - My domain terms (a system, pool concept, team or process, workflow shorthand, or tool or repo) go under the matching **My words** subheading.
    - Agent jargon goes under **Agent words**, with `*Say:*` giving the plain phrase to use instead.
    - Format: `### Term`, then one or two sentences on what it **is**, then an optional `*Avoid:*` or `*Say:*` line. Ground it in the code, docs, or this session. Mark anything you couldn't check `[UNVERIFIED]`.
 
    If the term is already there but your message used it differently, quote the entry and ask which meaning is right.
 
-5. **Ask, then write.** Show the drafts and ask whether to add them. Once I say yes, edit the glossary in place: insert under the right heading and set the frontmatter `updated:` to today.
+5. **Ask, then write.** Show the drafts and ask whether to add them. Once I say yes, edit `💡Glossary.md` in place: insert under the right heading and set the frontmatter `updated:` to today.
