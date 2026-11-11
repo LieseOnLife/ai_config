@@ -72,7 +72,7 @@ Based on note type, read the appropriate template.
 | project | `/Projects/<title>.md` |
 
 ### Step 3: Prepare Frontmatter
-Match the template's YAML frontmatter structure.
+Match the template's YAML frontmatter structure, and add `authorship` (see below).
 
 ### Step 4: Create Note
 Write the file with proper content.
@@ -107,6 +107,18 @@ template:
 tags:
 ---
 ```
+
+### Authorship (every note)
+Add `authorship` to the frontmatter of every note you create. It records who wrote the words, so the `writing-style-setup` skill learns only from Saje's own writing.
+
+| Value | When |
+|-------|------|
+| `ai` | You wrote the content. |
+| `mixed` | Saje's words plus yours, e.g. her dictated notes with your summary. |
+| `external` | Someone else's writing, e.g. a clipped article or pasted doc. |
+| `human` | Only when Saje says she wrote it herself. Never guess it. |
+
+When you add AI text to an existing note: if it has no `authorship`, set `mixed`. If it has `human`, change it to `mixed`. Leave `ai`, `mixed` and `external` alone.
 
 ## Callouts
 

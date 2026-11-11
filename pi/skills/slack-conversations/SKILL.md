@@ -95,6 +95,7 @@ Frontmatter (from the template):
 - `slack_channel:` (channel or DM ID) and `slack_thread:` (permalink to the first message)
 - `people:`, `project:`, `topics:`, and `meeting:` (recurring only)
 - `created:` (now)
+- `authorship: mixed` (an AI summary plus a verbatim transcript)
 
 Body:
 - `>[!quote] Slack conversation · [thread](<permalink>)` goes directly under `# Overview`, as in the template.
