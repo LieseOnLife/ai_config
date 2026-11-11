@@ -27,6 +27,10 @@ Saje's glossary: `~/Obsidian/Tech-2/Topics/💡Glossary.md`. Read it before expl
 - Describe a PR label, ticket ID, or finding number before you use it ("the worker change that must deploy before the backfill (pr5b)").
 - Answer the question Saje asked first, then give status or CI.
 
+# Obsidian Authorship
+
+When you create a note in an Obsidian vault (e.g. `~/Obsidian/Tech-2`), add `authorship` to its frontmatter: `ai` if you wrote it, `mixed` for Saje's words plus yours, or `external` for someone else's writing (clippings, pasted docs). Use `human` only when Saje says she wrote it herself. When you add AI text to an existing note, set a missing `authorship` to `mixed` and change `human` to `mixed`. The `vault-audit` skill explains the property.
+
 # Git
 
 ## Branching with Worktrees

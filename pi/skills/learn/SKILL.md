@@ -27,6 +27,9 @@ Read before starting:
   template of the same name (`type: "[[📘 Docs Page]]"`); source notes link their kind
   (`[[📜Documentation]]`, `[[🔬Research]]`, `[[📰Article]]`, `[[📖Book]]`, `[[🎥Video]]`,
   `[[🗣️First-person]]`, `[[🕸️Website]]`). Bases match these with `type == link("…")`.
+- **Every note you create also has `authorship`.** Docs notes (index, pages, FAQ,
+  glossary) are `authorship: ai`. Source notes are `authorship: mixed` (quoted passages
+  plus your summary). Never change an `authorship` that's already set.
 - A topic add-on from the table below when the topic matches. Its rules win where they
   conflict with the generic ones.
 
