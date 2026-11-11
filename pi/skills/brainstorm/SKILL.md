@@ -36,13 +36,12 @@ Once the goal is clear, lay out *her* thinking as one of these:
 - **Mulling:** the decision or insight in a sentence, the trade-off she's accepting, and the smallest next step.
 - **Producing:** an outline of the finished thing, with the open questions listed.
 
-Then ask: "Want me to draft from this?" Draft only after a yes.
-
-Hand off when the topic points to one of these:
+Then end with one question that fits where it landed:
 - **A code change in a repo:** offer `openspec-explore` to keep exploring, or `openspec-propose` to write the change up.
-- **A Confluence page:** `create-documentation`.
-- **A decision log:** `create-decision-log`.
-- **A doc others will read closely:** draft it section by section as `doc-coauthoring` does: list options, she curates, you draft, she edits.
+- **A Confluence page or a decision log:** "Want me to draft it?" On a yes, use `create-documentation` or `create-decision-log`.
+- **A doc others will read closely:** "Want to draft it section by section?" There's no separate skill for this: for each section, list options, she curates, you draft, she edits.
+- **Anything else she's producing:** "Want me to draft from this?" Draft only after a yes.
+- **Mulling:** "Anything you want to do with this next?" Don't offer to save it; she'll say so if she wants that.
 
 ## Saving
 Save only when she says to, and only where she says: today's daily note, a `Topics/` note, a project note, or anywhere else she names. If she says "save it" without a place, ask where. Write the plan or outline, not the whole conversation. Frontmatter gets `authorship: mixed`, and the note follows `create-note`'s conventions.
