@@ -10,17 +10,23 @@ import collections
 import os
 import re
 import sys
+import urllib.parse
+
+from vaultlib import drop_keys, fm_has_value, fm_value, split_frontmatter
 
 SKIP_DIRS = {".obsidian", ".trash", ".git", "node_modules"}
 DATED_RE = re.compile(r"^\d{4}-\d{2}-\d{2}( - Slack Summary)?$")  # nav links to days with no note
 ATTACH_EXT = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".pdf", ".heic", ".mp4", ".mov"}
 IMPORTS = ("Sources/Readwise/", "Sources/Omnivore/")
 # Notes where "nothing links here" is normal: dated logs, imports, templates, hubs.
-ORPHAN_EXEMPT = ("Calendar/", "Extras/", "Sources/Readwise/", "Sources/Omnivore/", "01 Maps of Content/")
-LINK_RE = re.compile(r"!?\[\[([^\]\n]+?)\]\]")
-FENCE_RE = re.compile(r"^(```|~~~).*?^\1", re.M | re.S)
+ORPHAN_EXEMPT = ("Calendar/", "Extras/", *IMPORTS, "01 Maps of Content/")
+# Fences may be indented or inside a callout (`> ````).
+FENCE_RE = re.compile(r"^[ \t>]*(`{3,}|~{3,})([^\n]*)\n.*?^[ \t>]*\1[ \t]*$", re.M | re.S)
+QUERY_LANGS = ("tasks", "dataview", "dataviewjs", "base")  # live queries, not documentation
+# Inline code and wikilinks in one pass, so backticks inside [[...]] survive.
+TOKEN_RE = re.compile(r"`[^`\n]*`|!?\[\[([^\]\n]+?)\]\]")
 INLINE_CODE_RE = re.compile(r"`[^`\n]*`")
-FM_RE = re.compile(r"\A---\n(.*?)\n---[ \t]*(?:\n|\Z)", re.S)
+MD_LINK_RE = re.compile(r"\]\(([^)\s]+?\.md)\)")
 AUTHORSHIP = ("human", "ai", "mixed", "external")
 
 
@@ -28,15 +34,8 @@ def walk(vault):
     for root, dirs, files in os.walk(vault):
         dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
         for f in files:
-            if f.startswith("."):
-                continue
-            yield os.path.relpath(os.path.join(root, f), vault)
-
-
-def link_target(raw):
-    t = raw.split("|", 1)[0].rstrip("\\")
-    t = re.split(r"#|\^", t, 1)[0].strip()
-    return t
+            if not f.startswith("."):
+                yield os.path.relpath(os.path.join(root, f), vault)
 
 
 def main():
@@ -48,25 +47,30 @@ def main():
 
     files = sorted(walk(vault))
     notes = [f for f in files if f.endswith(".md")]
-    by_name = collections.defaultdict(list)  # lowercased basename (no .md) -> paths
+    by_name = collections.defaultdict(list)  # lowercased basename without .md -> paths
     by_file = collections.defaultdict(list)  # lowercased file name with extension -> paths
     for f in files:
-        base = os.path.basename(f)
-        by_file[base.lower()].append(f)
-        if f.endswith(".md"):
-            by_name[base[:-3].lower()].append(f)
+        base = os.path.basename(f).lower()
+        by_file[base].append(f)
+        if base.endswith(".md"):
+            by_name[base[:-3]].append(f)
     lower_paths = {f.lower(): f for f in files}
 
     def resolve(t):
+        """Paths a [[target]] points at; empty when it doesn't resolve."""
         tl = t.lower()
-        if "/" in tl:
-            for cand in (tl, tl + ".md"):
-                if cand in lower_paths:
-                    return True
-                if any(p.endswith("/" + cand) for p in lower_paths):
-                    return True
-            return False
-        return tl in by_name or tl in by_file
+        if "/" not in tl:
+            return by_name.get(tl) or by_file.get(tl) or []
+        for cand in (tl, tl + ".md"):
+            if cand in lower_paths:
+                return [lower_paths[cand]]
+        return [orig for p, orig in lower_paths.items() if p.endswith("/" + tl) or p.endswith("/" + tl + ".md")]
+
+    def link_target(raw):
+        t = raw.split("|", 1)[0].rstrip("\\").strip()
+        if resolve(t):  # file names can contain '#', e.g. "#cloud-foundations-donut"
+            return t
+        return t.split("#", 1)[0].strip()
 
     broken = collections.defaultdict(set)  # missing target -> notes linking to it
     missing_people = collections.defaultdict(set)  # 👤 links with no person note yet
@@ -82,51 +86,59 @@ def main():
             text = open(os.path.join(vault, n), encoding="utf-8").read()
         except (UnicodeDecodeError, OSError):
             continue
-        is_template = n.startswith("Extras/Templates/")
-        m = FM_RE.match(text)
-        fm = m.group(1) if m else ""
-        body = text[m.end():] if m else text
         if os.path.basename(n).lower().startswith("untitled"):
             untitled.append(n)
-        if is_template:
+        if n.startswith("Extras/Templates/"):
             continue
+        m, fm, body = split_frontmatter(text)
         if not m:
             no_fm.append(n)
-        elif not re.search(r"^type:\s*\S", fm, re.M):
+        elif not fm_has_value(fm, "type"):
             no_type.append(n)
         if not body.strip():
             empty.append(n)
-        if "<%" in text:
+        prose = FENCE_RE.sub("", body)
+        no_docs = FENCE_RE.sub(lambda f: f.group(0) if f.group(2).strip().lower() in QUERY_LANGS else "", body)
+        if "<%" in INLINE_CODE_RE.sub("", no_docs):
             templater.append(n)
-        am = re.search(r"^authorship:\s*['\"]?(\w+)", fm, re.M)
-        value = am.group(1).lower() if am else None
+        value = (fm_value(fm, "authorship") or "").strip("'\"").lower() or None
         if value in AUTHORSHIP:
             authorship[value] += 1
         else:
             authorship["unmarked" if value is None else f"invalid ({value})"] += 1
             if value is None:
-                unmarked_by_folder[os.path.dirname(n).split("/")[0] or "<root>"] += 1
-        for t in re.findall(r"(?:^|\s)#([^\s#,\]\)]+)", INLINE_CODE_RE.sub("", FENCE_RE.sub("", body))):
+                unmarked_by_folder[n.split("/")[0] if "/" in n else "<root>"] += 1
+        for t in re.findall(r"(?:^|\s)#([^\s#,\]\)]+)", INLINE_CODE_RE.sub("", prose)):
             if not t[0].isdigit():
                 tags[t.lower()].add(t)
-        # `type: "[[article]]"` links name a category on purpose; they aren't meant to resolve.
-        type_line = re.search(r"^type:.*$", fm, re.M)
-        scan = text.replace(type_line.group(0), "", 1) if type_line else text
-        for raw in LINK_RE.findall(INLINE_CODE_RE.sub("", FENCE_RE.sub("", scan))):
+
+        # `type:` links name a category on purpose, and `template:` links every note to its
+        # template; neither is a real link between notes.
+        scan = drop_keys(fm, ("type", "template")) + "\n" + prose
+        for tok in TOKEN_RE.finditer(scan):
+            raw = tok.group(1)
+            if not raw:
+                continue
             t = link_target(raw)
             if not t or "{{" in t or "<%" in t or t.startswith(("http:", "https:", "obsidian:")):
                 continue
             outgoing[n] += 1
-            if resolve(t):
-                hits = by_name.get(t.lower()) or by_file.get(t.lower()) or []
-                for h in hits:
-                    incoming[h] += 1
-            elif n.startswith(IMPORTS):
-                continue  # imported text: its [[1]]-style links aren't yours to fix
-            elif t.startswith("👤"):
+            hits = resolve(t)
+            for h in hits:
+                incoming[h] += 1
+            if hits or n.startswith(IMPORTS):  # imported text's [[1]]-style links aren't yours
+                continue
+            if t.startswith("👤"):
                 missing_people[t].add(n)
             elif not DATED_RE.match(t):
                 broken[t].add(n)
+        for href in MD_LINK_RE.findall(scan):
+            if "://" in href:
+                continue
+            target = os.path.normpath(os.path.join(os.path.dirname(n), urllib.parse.unquote(href)))
+            if target in files:
+                outgoing[n] += 1
+                incoming[target] += 1
 
     islands = [
         n for n in notes
@@ -188,7 +200,7 @@ def main():
     print(section("Empty notes", empty, "Nothing after the frontmatter."))
     print(section("No frontmatter", no_fm, "Add frontmatter from the matching template."))
     print(section("Frontmatter without type", no_type, "Bases and skills key on `type`."))
-    print(section("Unrendered Templater tags", templater, "`<%` left in a note outside Extras/Templates."))
+    print(section("Unrendered Templater tags", templater, "`<%` left in a note outside Extras/Templates (code blocks ignored)."))
     print(section("Duplicate note names", sorted(dupes.items()), "`[[name]]` can resolve to the wrong one.",
                   lambda kv: f"`{kv[0]}`: " + ", ".join(f"`{p}`" for p in kv[1])))
     print(section("Tags with case variants", sorted(tag_variants.items()), "Pick one spelling.",

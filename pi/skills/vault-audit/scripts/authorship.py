@@ -16,22 +16,22 @@ import re
 import shutil
 import sys
 
-FM_RE = re.compile(r"\A---\n(.*?)\n---[ \t]*(?:\n|\Z)", re.S)
+from vaultlib import fm_has_value, fm_value, split_frontmatter
+
 SKIP_DIRS = {".obsidian", ".trash", ".git"}
 
 
 def classify(rel, fm, body):
     """Return (value, rule) for the first rule that matches, or (None, None)."""
     name = os.path.basename(rel)
-    ty = re.search(r"^type:\s*(.*)$", fm, re.M)
-    ty = ty.group(1).strip() if ty else ""
+    ty = fm_value(fm, "type") or ""
     if rel.startswith("Extras/Templates/"):
         return None, None
     if ty == "slack_summary":
         return "ai", "Slack Summary (/morning)"
     if "📘 Docs" in ty:
         return "ai", "/learn docs page"
-    if rel.startswith("Datadog/Career/brag-sheet"):
+    if rel.startswith("Datadog/Career/") and re.search(r"brag[ -]sheet", rel, re.I):
         return "ai", "brag-sheet output"
     if rel.startswith(("Sources/Readwise/", "Sources/Omnivore/")):
         return "external", "Readwise/Omnivore import"
@@ -43,11 +43,22 @@ def classify(rel, fm, body):
         return "mixed", "Cloud Admin / on-call note"
     if ty == '"[[🎞️ Task]]"':
         return "mixed", "Jira task note (/weekly)"
-    if re.search(r"^docs:\s*\S", fm, re.M) or re.search(r"^docs:\s*\n\s+-", fm, re.M):
+    if fm_has_value(fm, "docs"):
         return "mixed", "/learn source note"
     if re.search(r"^## (🤖AI notes|📈 Trends since last retro)", body, re.M):
         return "mixed", "meeting note with 🤖AI notes or retro trends"
     return None, None
+
+
+def with_authorship(text, m, value):
+    """Return text with `authorship: value` as the last frontmatter key."""
+    if m is None:
+        return f"---\nauthorship: {value}\n---\n" + text
+    nl = "\r\n" if "\r\n" in text[: m.end()] else "\n"
+    if m.group(1) is None:  # empty frontmatter: put the key right after the opening `---` line
+        after_open = text.index("\n", m.start()) + 1
+        return text[:after_open] + f"authorship: {value}{nl}" + text[after_open:]
+    return text[: m.end(1)] + f"{nl}authorship: {value}" + text[m.end(1):]
 
 
 def main():
@@ -64,6 +75,7 @@ def main():
     by_rule = collections.Counter()
     by_value = collections.Counter()
     already = 0
+    unparsable = []
     changed = []
     for root, dirs, files in os.walk(vault):
         dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
@@ -73,29 +85,30 @@ def main():
             path = os.path.join(root, f)
             rel = os.path.relpath(path, vault)
             try:
-                text = open(path, encoding="utf-8").read()
+                with open(path, encoding="utf-8", newline="") as fh:
+                    text = fh.read()
             except (UnicodeDecodeError, OSError):
                 continue
-            m = FM_RE.match(text)
-            fm = m.group(1) if m else ""
+            m, fm, body = split_frontmatter(text)
+            if m is None and text.lstrip("\ufeff").startswith("---"):
+                unparsable.append(rel)  # starts like frontmatter but doesn't parse: don't guess
+                continue
             if re.search(r"^authorship:", fm, re.M):
                 already += 1
                 continue
-            value, rule = classify(rel, fm, text[m.end():] if m else text)
+            value, rule = classify(rel, fm, body)
             if not value:
                 continue
             by_rule[(value, rule)] += 1
             by_value[value] += 1
-            if m:
-                new = text[: m.start(1)] + fm + f"\nauthorship: {value}" + text[m.end(1):]
-            else:
-                new = f"---\nauthorship: {value}\n---\n" + text
-            changed.append((path, rel, new))
+            changed.append((path, rel, with_authorship(text, m, value)))
 
     for (value, rule), n in sorted(by_rule.items(), key=lambda kv: -kv[1]):
         print(f"{n:5}  {value:8}  {rule}")
     print(f"\nWould mark {len(changed)} notes: " + ", ".join(f"{k} {v}" for k, v in by_value.most_common()))
     print(f"Already marked (left alone): {already}")
+    if unparsable:
+        print(f"Skipped {len(unparsable)} notes whose frontmatter doesn't parse: " + ", ".join(unparsable[:10]))
     if not a.apply:
         print("Dry run. Re-run with --apply to write.")
         return 0
@@ -105,7 +118,7 @@ def main():
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         shutil.copy2(path, dest)
         st = os.stat(path)
-        with open(path, "w", encoding="utf-8") as fh:
+        with open(path, "w", encoding="utf-8", newline="") as fh:
             fh.write(new)
         os.utime(path, (st.st_atime, st.st_mtime))
     print(f"Wrote {len(changed)} notes. Originals backed up to {backup}")

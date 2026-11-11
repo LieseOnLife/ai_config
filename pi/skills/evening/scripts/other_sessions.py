@@ -11,8 +11,10 @@ import glob
 import json
 import os
 import sys
+from zoneinfo import ZoneInfo
 
 CLIP = 600
+TZ = ZoneInfo("America/New_York")
 
 
 def text_of(content):
@@ -21,6 +23,14 @@ def text_of(content):
     if isinstance(content, list):
         return "\n".join(c.get("text", "") for c in content if isinstance(c, dict) and c.get("type") in ("text", "input_text", "output_text"))
     return ""
+
+
+def local_day(ts):
+    """Transcript timestamps are UTC (`...Z`); the day that counts is Saje's local one."""
+    try:
+        return datetime.datetime.fromisoformat(ts.replace("Z", "+00:00")).astimezone(TZ).date()
+    except (ValueError, AttributeError):
+        return None
 
 
 def active_on(path, day):
@@ -39,14 +49,13 @@ def claude(day):
                 r = json.loads(line)
             except ValueError:
                 continue
-            ts = r.get("timestamp", "")
-            if ts[:10] == day.isoformat():
+            if local_day(r.get("timestamp")) == day:
                 touched = True
             cwd = r.get("cwd") or cwd
             branch = r.get("gitBranch") or branch
             msg = r.get("message") or {}
-            if r.get("type") == "user" and isinstance(msg.get("content"), str) and not first:
-                first = msg["content"]
+            if r.get("type") == "user" and not r.get("isMeta") and not first:
+                first = text_of(msg.get("content")).strip() or None
             if r.get("type") == "assistant":
                 t = text_of(msg.get("content")).strip()
                 if t:
@@ -67,7 +76,7 @@ def codex(day):
                 r = json.loads(line)
             except ValueError:
                 continue
-            if r.get("timestamp", "")[:10] == day.isoformat():
+            if local_day(r.get("timestamp")) == day:
                 touched = True
             p = r.get("payload") or {}
             cwd = p.get("cwd") or cwd

@@ -20,7 +20,7 @@ Ask: "Any writing rules you already know you have? For example 'no em dashes', '
 ## 2. Collect samples she wrote herself
 Most notes in the vault are AI-written or mixed, so only these count:
 1. **Slack (main source):** `slack_search_public_and_private` with `from:<@U01D2L9K04T>` over the last 3 months, paging until you have 150 to 200 substantive messages across DMs, threads and channels. Skip one-word acks, emoji-only replies, and pasted links. Skip any message with a `🤖` header or an AI blockquote (the `ai-authored-pr-replies` format).
-2. **Vault notes marked `authorship: human`.** Find them with `grep -rl '^authorship: human' <vault> --include=*.md`. Also use the text under `# <Weekday> Notes` in daily notes since `/evening` started logging (`/evening` saves her words there as she wrote them).
+2. **Vault notes marked `authorship: human`.** Find them with `grep -rl '^authorship: human' <vault> --include=*.md`. Also use the prose and bullets under `# <Weekday> Notes` in daily notes since `/evening` started (`/evening` saves her words there as she wrote them). Skip lines agents add there: bare wikilink lines such as `[[🌧️… - Cloud Admin]]`, `- [!]` reminder tasks from `/morning`, and pasted commands or code blocks.
 3. **Folders she vouches for.** Ask whether any folders are entirely her own writing (e.g. `Life/Fleeting Thoughts/`, `Life/Slip Box/`). Use only the folders she names. Offer to mark their notes `authorship: human`.
 4. **Docs she vouches for:** Google Docs she owns (`search_files` with `'me' in owners`) and Confluence pages she authored. Show her the list and use only the ones she confirms she wrote without AI help.
 

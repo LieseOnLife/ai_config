@@ -16,6 +16,9 @@ Check what day today is and when the last Slack Summary was written:
 
 Use the full date range for both the standup and all channel reads.
 
+### Step 0.5: Catch Up AI Sessions
+For each weekday in the Step 0 range, open `Calendar/Daily Notes/YYYY-MM-DD.md`. If the note exists and has no `### 🤖 AI sessions` section, `/evening` didn't run that day. Run step 2 (AI sessions) of the `evening` skill for that date. Skip its questions, the summary and the stuck-task check. List the days you caught up in the final reply.
+
 ### Step 1: Today's Meetings
 
 Fetch today's calendar events and create / link meeting notes before generating the standup.
@@ -89,7 +92,7 @@ For every day in the Step 0 date range, fill in that day's meeting notes from th
 
 **2. Find the note.** Glob `Calendar/Meetings/📣 YYYY-MM-DD - *` for the meeting's date. Match on title words, recurring parent and attendees, not the exact filename Step 1 created, because Saje often renames notes (e.g. drops ` with <Person>`). For generic titles, confirm by attendees, as in Step 1. If the meeting has no note (accepted late, or not created that morning), create it under Step 1's rules **using the meeting's date, not today's**. For a recurring parent, insert its `# [[YYYY-MM-DD]]` section in reverse-date order, below any newer dates. Add it to that day's `>[!meetings]` callout if that daily note exists. Use the daily-note fallback only when a summary can't be matched to a calendar event, or matches more than one: append it to that day's daily note under `## 🤖AI notes - <meeting title>`.
 
-**3. Write `## 🤖AI notes`** at the end of the `# Overview` section: after anything already there and before the next `#` heading (e.g. the full template's `# Notes`), so the parent's `#Overview` embed shows it. **Never change Saje's own notes.** Skip a meeting whose note already has `## 🤖AI notes` (or whose daily-note fallback already has `## 🤖AI notes - <that title>`), so re-runs never duplicate. Layout:
+**3. Write `## 🤖AI notes`** at the end of the `# Overview` section: after anything already there and before the next `#` heading (e.g. the full template's `# Notes`), so the parent's `#Overview` embed shows it. **Never change Saje's own notes.** Skip a meeting whose note already has `## 🤖AI notes` (or whose daily-note fallback already has `## 🤖AI notes - <that title>`), so re-runs never duplicate. If the note's frontmatter has no `authorship`, or has `authorship: human`, set `authorship: mixed`. Layout:
 
 ```markdown
 ## 🤖AI notes
@@ -246,7 +249,7 @@ The digest goes in a **separate file** that is embedded in the daily note via th
 **File location:** `Calendar/Daily Notes/YYYY-MM-DD - Slack Summary.md`
 
 **Use the Slack Summary template** from `Extras/Templates/Slack Summary.md`. The file should have:
-- Frontmatter: `weekday`, `date`, `type: slack_summary`, `template: ["[[Slack Summary]]"]`, `tags: [🐶]`
+- Frontmatter: `weekday`, `date`, `type: slack_summary`, `template: ["[[Slack Summary]]"]`, `tags: [🐶]`, `authorship: ai`
 - A tasks block at the top (no status filter — shows all statuses)
 - Then all the formatted callouts
 
