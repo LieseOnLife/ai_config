@@ -131,11 +131,12 @@ The channel exists for quota requests and the IH owns it, so include **every req
 
 **Cancelled / moved** (`[-]`):
 - Saje or a teammate moved it somewhere else: another channel (e.g. the forwarder crossposted it to #cloudops), another team, or Corp IT / a Freshservice ticket
+- A PR review request outside the review scope (below)
 - Add a sub-bullet comment saying where it went, with a link when there is one
 
 **Open** (`[ ]`):
 - Question unanswered or awaiting follow-up
-- PR submitted, needs review
+- PR in the review scope, needs review
 - Acknowledged but not yet acted on
 
 If Saje creates a Jira ticket from a thread (e.g. via the Jira bot), the work is still ours: keep the item open and add a `📋` sub-bullet naming the ticket.
@@ -160,11 +161,23 @@ Format cancelled / moved items:
 	- ➡️ Moved to {where, linked}
 ```
 
-Sub-bullet comments are tab-indented and start with an emoji: `➡️` moved, `📋` tracked in a ticket.
+Sub-bullet comments are tab-indented and start with an emoji: `➡️` moved or not ours, `📋` tracked in a ticket.
 
 Always link the person's name as `[[👤First Last]]`.
 
 **Skip** any thread whose parent ID (`p{thread_ts without the dot}`) already appears in the doc.
+
+#### PR review scope
+
+On-call reviews only cloud-inventory changes under `organizations/` and the Terraform modules those configs source. Before classifying any PR thread, list its files (`gh pr view N -R ddoghq/cloud-inventory --json files -q '.files[].path'`). It's **in scope** when any file is:
+- under `organizations/`, or
+- under `terraform-modules/{name}/` for a module sourced from `organizations/`. As of 2026-11: `aws-chaos-cloud`, `aws-cloud-perimeter-fed`, `aws-gov-service-allowlist`, `aws-gov-valid-instance-types`, `aws-iam-common`, `aws-iam-human`, `aws-saml`, `aws-sso-account-assignments`, `aws-tfstate`, `azure-automated-log-forwarding`, `azure-emissary-ad-group`, `azure-iam-human`, `gcp-iam-human`, `gcp-log-forwarding`, `gcp-log-pubsub-export`, `gcp-organization`, `gcp-organization-iam`, `gcp-project`, `gcp-restricted-policies`, `nebius-*`, `oci-iam-human-sso`, `oci-tfstate`. For any other module, run `gh search code "terraform-modules/{name}" --repo ddoghq/cloud-inventory --json path`; it counts only if a hit sits under `organizations/`.
+
+Everything else belongs to another team: `managed-iam/`, `domains/`, `datacenters/`, and other repos (dd-source, corpit-lambdas). Find the owner in cloud-inventory's `.github/CODEOWNERS` (the last matching pattern wins). CODEOWNERS names `@ddoghq/compute-cloud-accounts` on a few paths outside `organizations/` (e.g. `terraform_deployment_permission_sets.tf`, `logging-bucket`); those are still out of scope, so name the other owner listed.
+
+- **Mixed PR**: review only the in-scope files, and name them in the description.
+- **Out of scope**: `[-]` ending `❌ {date of the request or crosspost}`, with the sub-bullet `➡️ Not ours: only touches {paths}; {owning team} reviews it`.
+- The scope covers PR reviews only. Access questions, account creation and deletion, and other asks in the thread stay ours.
 
 ### 4c: Refresh existing open items
 
@@ -175,7 +188,7 @@ Existing lines with status `[ ]`, `[?]`, `[/]` or `[*]` are open. Check each one
   - Completed → change the status to `[x]`, rewrite any "waiting on…" / "needs our review" tail to say what happened (e.g. "we approved and it merged 11/10"), and end the line with `✅ {date it was resolved}`.
   - Moved → change the status to `[-]`, drop the "waiting on…" tail, end the line with `❌ {date}`, and add a `➡️ Moved to …` sub-bullet.
   - Still open but with new facts (a ticket was created, part of it moved) → keep the status and add a sub-bullet comment.
-- For PR threads, check the PR state (`gh pr view N -R ddoghq/cloud-inventory --json state,reviewDecision,mergedAt`) before marking done.
+- For PR threads, check the PR state (`gh pr view N -R ddoghq/cloud-inventory --json state,reviewDecision,mergedAt,files`) before marking done, and re-apply the PR review scope: an open PR line that's out of scope becomes `[-]` with a `➡️ Not ours` sub-bullet, and any "needs our review" text in its existing sub-bullets is dropped.
 - Use the date of the resolving event (approval, merge, acknowledgement, crosspost), not today's date.
 - Keep the existing sub-bullets and any status Saje set by hand (e.g. `[*]` "Reviewing now") unless the thread shows it finished.
 
@@ -199,4 +212,5 @@ Print a brief summary:
 - New JIRA tickets added (CLOUDA and CAPA, by provider)
 - New Slack threads added (`cloud-accounts-support` mentions and `cloud-quota` requests)
 - Existing items checked off (`[x]`) or cancelled as moved (`[-]`), with where they went
+- PR reviews marked not ours, with the owning team, so Saje can redirect the requester
 - Anything needing attention (unanswered questions, ambiguous provider, missing info)
