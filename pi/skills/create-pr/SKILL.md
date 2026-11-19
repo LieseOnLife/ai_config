@@ -1,6 +1,6 @@
 ---
 name: create-pr
-description: Create pull requests with Saje's signature style - fun emojis, succinct content, varied formatting. Use when creating PRs, making pull requests, or submitting code for review.
+description: Create pull requests with Saje's signature style - fun emojis, succinct content, varied formatting. Use when creating PRs, making pull requests, submitting code for review, or addressing Agentic Review (ARP) findings.
 ---
 
 # Skill: Create Pull Request 🚀
@@ -219,6 +219,19 @@ gh pr create --title "<title>" --body "$(cat <<'EOF'
 EOF
 )"
 ```
+
+### Step 6: Run Agentic Review (ARP)
+For `ddoghq`/`DataDog` repos when the `agentic-review` MCP tools (`agentic_review_*`) are connected. Skip for `LieseOnLife` repos.
+
+1. `agentic_review_get_status` (`owner`, `repo`, `pull_number`). Drafts aren't reviewed automatically: when `allowed_action` is `REVIEW_ACTION_REVIEW_ANYWAY` (draft) or `REVIEW_ACTION_RETRY` (failed), call `agentic_review_request_review`.
+2. Re-check status until the review finishes. An empty findings list while `QUEUED`/`RUNNING` means not done, not clean.
+3. `agentic_review_get_findings` with `pull_number`. Fix each `open` finding; lines are relative to `reviewed_sha`, so re-anchor with `git diff <reviewed_sha>..HEAD`.
+4. After the fix is pushed, record each outcome with `agentic_review_resolve_finding`:
+   - `addressed` + `fix_commit_sha` + `fix_change_summary`.
+   - `invalid` / `out_of_scope` + a one-sentence `reason`, only when certain; otherwise bring the finding to Saje first. Outcomes are permanent and write production review state.
+5. ARP resolution leaves the GitHub thread open: reply to or resolve it per the post-push protocol (`github_thread_id` is the GraphQL thread ID).
+
+Done when the status is finished and no finding is `open`.
 
 ## Emoji Reference by Category
 
