@@ -135,13 +135,13 @@ Search for DMs received during the date range using `slack_search_public_and_pri
 Use the connected Slack app or MCP tools to resolve and read the channels below for the date range. Generate digests in three tiers:
 
 **Core** (full digest — summarize threads, decisions, action items):
-`cloud-accounts-team`, `cloud-accounts-resources`, `cavm-dev`, `transcendent`, `basement`, `compute-cloud-team`, `infra-all`, `infra-lifecycle-automation`, `cloud-account-sales-systems-collab`, `account-microchipping`, `dd-group-mentors`
+`cloud-accounts-team`, `cloud-platform`, `cavm-dev`, `transcendent`, `basement`, `infra-all`, `dc-automation`, `engineering-sales-tackle-collab`, `account-microchipping`
 
 **Ops** (flag anything needing attention):
 `cavm-ops`, `cloud-accounts-conductor`, `cloud-accounts-ops`, `cloud-accounts-support`, `cloudops`
 
 **Secondary** (headlines only — brief 1-liner per notable message):
-`cloud-accounts-finops-connect`, `trex-stacks`, `compute-cloud-security-collab`, `homelab`, `rainbowdogs`, `rainbowdogs-committees`, `snippets`, `unifi`, `aws-org-modernization`, `computers`, `eng-backroom`, `obsidian-md`, `eng-announcements`, `claude`, `uk1-dc-deployment`
+`cloud-accounts-finops-connect`, `trex-stacks`, `cloud-foundations-security-collab`, `homelab`, `rainbowdogs`, `rainbowdogs-committees`, `snippets`, `unifi`, `aws-org-modernization`, `computers`, `eng-backroom`, `obsidian-md`, `eng-announcements`, `claude`, `uk1-dc-deployment`
 
 For secondary channels, only include channels that had notable activity. Use separate bullet points when relevant.
 
@@ -175,7 +175,7 @@ Combine all output into this format.
   - **Homelab / computers / claude / unifi / obsidian-md / rainbowdogs / snippets / eng-backroom** — never `[!]` or `[?]`. Use plain bullets, or `[i]` / `[b]` / `[I]` if genuinely interesting.
   - **Status updates and FYI threads in group DMs** (Eyal/Tanya/Samra/Andy ownership-migration channel, etc.) — plain bullets unless there's a direct ask of Saje. "Eyal flagged X is blocked" is `[i]`, not `[!]`.
   - **`[?]` only when Saje is the most likely answerer** — not for open team-wide questions or oncall-routable questions. If anyone else on the team would answer it first, it's a plain bullet.
-  - **Cross-team PR review pings** → `[!]` only if Saje is named on the PR or it lands in a channel where she's a default reviewer (cloud-accounts-team, cavm-dev, cloud-accounts-resources). Drive-by LFRs in cloudops/support → plain.
+  - **Cross-team PR review pings** → `[!]` only if Saje is named on the PR or it lands in a channel where she's a default reviewer (cloud-accounts-team, cavm-dev, cloud-platform). Drive-by LFRs in cloudops/support → plain.
   - **Rule of thumb:** before marking `[!]` or `[?]`, ask "would Saje cancel this with `[-]`?" If yes, downgrade to plain.
 
 The file starts with `# Slack Summary` (from the template), then a tasks block (all statuses, no filter), then the content below. Use `## Section` headers to separate standup and each tier. Each channel is a `### heading` inside its callout.
