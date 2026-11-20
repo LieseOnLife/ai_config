@@ -79,6 +79,7 @@ When scoping or planning any project/feature, break the work into small stacked 
 **Execution-time gate:** when you finish a PR group, **STOP** — open the PR (use the `create-pr` skill) and don't start the next group until Saje says go.
 
 **Scope-drift flag:** if you need to touch files outside the agreed slice, STOP and flag it ("needs files X/Y outside the slice — expand scope, or follow-up PR?") instead of silently growing the PR.
+- **OpenSpec ticks ride with the work.** When the project has an OpenSpec `tasks.md`, the PR that does a task also checks it off in the same diff, with evidence (dates, counts, IDs) for ops or E2E steps. Ops results, E2E evidence, and ticks a merged PR missed go into the next open PR that edits that `tasks.md`; a checklist-only PR is never the answer. If no task describes the PR's work, add one and check it.
 
 # Advisor Checkpoints
 
@@ -108,7 +109,6 @@ Pause for an advisor checkpoint in these circumstances. Use an available advisor
 4. **Address PR comments** (run the `$review-pr-comments` process unprompted):
    - *Bots* (codex, sonarcloud, codecov, github-actions, `*[bot]`): respond **definitively** — fix + reply, or reply why it's not applicable. Never leave an open question in a PR comment.
    - *Humans*: do NOT auto-reply. Surface to Saje with the link, summary, recommendation, and a draft reply for approval.
-   - *Reply format*: reply body in a `>` blockquote, then one attribution line saying who wrote it: 🤖 agent-written and not reviewed, 🤖✅ agent-drafted and approved by Saje, 👩‍💻 Saje's own words. Templates are in `$review-pr-comments`.
 
 5. **Report back** in-session: what CI did (incl. re-runs), auto-review findings (fixed vs. needs-decision), comments handled, and anything needing Saje's attention. Bring issues proactively — she shouldn't have to ask "what's the status."
 
