@@ -23,13 +23,15 @@ A topic add-on can tighten these rules.
 - Start with the primary layer: official docs, guidelines, standards, review papers.
   Then fill specific claims, then secondary context, then first-person.
 - **Search more than one engine.** Each engine surfaces different sources, so for every
-  research area run the built-in `web_search` *and* DuckDuckGo *and* Google, then merge
-  and dedupe. DuckDuckGo honors `site:` (use it for Reddit); Google tends to surface
-  organizations, patient groups, and PDFs. Both need a **visible** managed browser
+  research area run the built-in `web_search` *and* Startpage *and* Google, then merge
+  and dedupe. Startpage serves Google-sourced results and tolerates automated browsers
+  (DuckDuckGo, Brave, and Mojeek block them with CAPTCHAs); it honors `site:`, so use it
+  for Reddit and site-scoped queries. Google tends to surface organizations, patient
+  groups, and PDFs, but CAPTCHAs it more often. Both need a **visible** managed browser
   (never the relay):
   ```js
   const ENGINES = {
-    ddg: [q => "https://duckduckgo.com/?q=" + encodeURIComponent(q), 'a[data-testid="result-title-a"]'],
+    startpage: [q => "https://www.startpage.com/do/search?q=" + encodeURIComponent(q), "a.result-title"],
     google: [q => "https://www.google.com/search?hl=en&q=" + encodeURIComponent(q), "#search a:has(h3)"],
   };
   async function search(engine, q, n = 8) {
@@ -39,8 +41,10 @@ A topic add-on can tighten these rules.
     let hits = [];
     try {
       await tab.waitForSelector(sel, { timeout: 15000 });
-      hits = await tab.evaluate(`[...document.querySelectorAll(${JSON.stringify(sel)})].slice(0, ${n})
-        .map(a => ({ title: (a.innerText.split("\\n")[0] || "").trim(), href: a.href }))`);
+      hits = await tab.evaluate(`[...document.querySelectorAll(${JSON.stringify(sel)})]
+        .map(a => ({ title: (a.innerText.split("\\n")[0] || "").trim(), href: a.href }))
+        .filter(h => !new URL(h.href).hostname.endsWith("startpage.com"))   // sponsored/tracking
+        .slice(0, ${n})`);
       for (const h of hits) {   // Google wraps result links; unwrap from the query string
         const u = new URL(h.href);
         if (u.hostname.endsWith("google.com") && (u.pathname === "/url" || u.pathname.startsWith("/goto"))) {
