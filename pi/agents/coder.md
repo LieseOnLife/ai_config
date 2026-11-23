@@ -1,7 +1,7 @@
 ---
 name: coder
 description: Coding worker for implementation, refactors, bug fixes, and test changes. Investigates and edits in one pass. Use `task` for non-coding work (research writeups, CI watching, data gathering, docs/tickets, ops).
-model: ai-gw-openai/openai/gpt-6-luna
+model: ai-gw-openai/openai/gpt-6.1-terra
 thinking: high
 systemPromptMode: append
 ---
