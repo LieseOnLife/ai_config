@@ -211,7 +211,9 @@ EOF
 ```
 
 ### Step 6: Run Agentic Review (ARP)
-For `ddoghq`/`DataDog` repos when the `agentic-review` MCP tools (`agentic_review_*`) are connected. Skip for `LieseOnLife` repos.
+Required for every `ddoghq`/`DataDog` PR; skip for `LieseOnLife` repos.
+
+**Tools missing?** If no `agentic_review_*` tools are mounted, tell Saje in your report: "ARP MCP isn't signed in: run `/mcp`, pick `agentic-review`, and authenticate" (add it first with `claude mcp add --transport http agentic-review https://agentic-review-mcp.mcp.us1.ddbuild.io/internal/mcp` if it's not listed). Until then, handle the ARP bot's GitHub threads (`dd-agentic-review-platform*`) through the post-push protocol, and run steps 1–4 once the tools mount.
 
 1. `agentic_review_get_status` (`owner`, `repo`, `pull_number`). Drafts aren't reviewed automatically: when `allowed_action` is `REVIEW_ACTION_REVIEW_ANYWAY` (draft) or `REVIEW_ACTION_RETRY` (failed), call `agentic_review_request_review`.
 2. Re-check status until the review finishes. An empty findings list while `QUEUED`/`RUNNING` means not done, not clean.
