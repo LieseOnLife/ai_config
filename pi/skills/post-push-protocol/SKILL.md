@@ -11,7 +11,7 @@ A `git push` is not "done". Run every step automatically, every time. Don't decl
    - **Reuse before spawning.** Check whether a `PrWatch` agent is still running (`read agent://` / `agent://PrWatch`). Running → `write agent://PrWatch` with the PR URL + pushed SHA (it adds the PR or restarts the watch on the new SHA). Not running → spawn one `task` agent named `PrWatch`. Never spawn a second PR watcher, and never spawn one per PR or per push — stacked PRs and re-pushes all go to the same agent.
    - **`PrWatch`'s job (read-only on code):** resolve each PR (`gh pr view --json url -q .url`), run `gh pr checks <url> --watch` until every check completes, re-run flaky/infra failures once (step 2), and fetch new PR comments via `get-pr-feedback`. It reports per PR: final check states, re-runs and their outcome, real failures with log excerpts, and new comments (bot vs. human). It never edits code, pushes, or replies to comments — the main session owns fixes and replies (one writer per worktree).
    - If subagent spawning is broken, say so and get approval before watching inline.
-   - **`devflow/mergegate` on dd-source PRs requires a human approval** — it sits `pending`/`in_progress` indefinitely (observed 5.5+ hrs). If it's the *only* non-passing check, report "awaiting approval," not "stuck"; don't recommend a retrigger/empty-commit push.
+   - **`devflow/mergegate` on dd-source PRs waits for an approval** (human, or auto-approval from step 5) — it sits `pending`/`in_progress` indefinitely (observed 5.5+ hrs). If it's the *only* non-passing check, report "awaiting approval," not "stuck"; don't recommend a retrigger/empty-commit push.
 
 2. **Triage failures before escalating:**
    - *Flaky/infra* (timeout, network, dead runner, known-flaky test): `PrWatch` re-runs the failed job **once** (`gh run rerun <run-id> --failed`). Passes → note it, continue. Fails the same way → treat as real.
@@ -31,9 +31,9 @@ A `git push` is not "done". Run every step automatically, every time. Don't decl
    - *Humans*: do NOT auto-reply. Surface to Saje with the link, summary, recommendation, and a draft reply for approval.
    - *Reply format*: reply body in a `>` blockquote, then one attribution line saying who wrote it: 🤖 agent-written and not reviewed, 🤖✅ agent-drafted and approved by Saje, 👩‍💻 Saje's own words. Templates are in `/review-pr-comments`.
 
-5. **Auto-approval check** (`ddoghq/dd-source`, `dd-go`, `ddtool` PRs, once CI is green and step 4's comments are resolved): run `~/.pi/agent/scripts/autoapprove-check.sh <PR URL>`. It asks Change Policy (the auto-approval pilot's decision service) for a verdict and labels each failing check.
+5. **Auto-approval check** (`ddoghq/dd-source`, `dd-go`, `ddtool` PRs, once every check except `devflow/mergegate` passes and step 4's comments are resolved): run `~/.pi/agent/scripts/autoapprove-check.sh <PR URL>`. It asks Change Policy (the auto-approval pilot's decision service) for a verdict and labels each failing check.
    - *Exit 0*: eligible; the approval arrives through the PR's auto-approval widget. Saje merges.
-   - *Exit 2*: signals still computing (risk score, BewAIre). Re-run after the next `PrWatch` report.
+   - *Exit 2*: signals still computing (risk score, BewAIre). Re-run once after ~3 minutes; still 2 → report the pending signals in step 6.
    - *Exit 1*: fix every `FIXABLE` line (unresolved Agentic Review comments, CI) in **one** push, because each push drops the approval and re-runs the checks. `SCOPE` lines: propose the split per `stacked-prs` (Auto-approval lane) and wait for Saje's go. `BLOCKED` lines: report "needs human review" with the reason.
    - *Exit 3*: token, network, or service error (repos outside the pilot can return 503). Report it and move on.
 
