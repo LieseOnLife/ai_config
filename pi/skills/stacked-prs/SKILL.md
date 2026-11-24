@@ -1,6 +1,6 @@
 ---
 name: stacked-prs
-description: Plan, execute, and restack stacked PRs — PR-stack table format, vertical slicing, per-PR stop gates, scope-drift flags, and the bottom-up restack procedure when main moves. Use when scoping any non-trivial feature, finishing a PR group, or updating a stack after main changes.
+description: Plan, execute, and restack stacked PRs — PR-stack table format, vertical slicing, auto-approval lane, per-PR stop gates, scope-drift flags, and the bottom-up restack procedure when main moves. Use when scoping any non-trivial feature, finishing a PR group, or updating a stack after main changes.
 ---
 
 # Stacked PRs
@@ -11,12 +11,20 @@ description: Plan, execute, and restack stacked PRs — PR-stack table format, v
 - ~200-550 lines of diff per PR is a reviewability target, not a blocker. Prefer one cohesive vertical behavior over splitting to hit a number. Larger PRs are fine for generated code, tests, file moves, review-requested refactors, when splitting would create unsafe/incoherent intermediate states, or with explicit owner approval. PRs build in sequence; each merges once its parent lands.
 - Branches: `saje/feature-name-pr1`, `-pr2`, etc.
 
+## Auto-approval lane
+In `ddoghq/dd-source`, `dd-go`, and `ddtool`, a PR on pilot services gets approved by Change Policy (the auto-approval pilot) when every check passes, so Saje merges without waiting on a second reviewer. CAVM services (`cavm-api`, `cavm-aws-worker`, `covm`, …) are in the pilot. Slice so as many PRs as possible land in the **auto** lane:
+- **Service scope.** A file counts toward a service when it sits in that service's app dir (`domains/compute/apps/cavm-aws/` → `cavm-aws-worker`). The PR touches at least one pilot service and no non-pilot service. Lib files (`domains/compute/libs/go/cavm/…`) and OpenSpec `tasks.md` ticks ride along in a service PR. A PR touching only libs, cavmctl, or shared code matches no service and always needs a human.
+- **Ownership.** Saje's teams own every file (`author:CodeOwnerTeamMembership=all`). Non-owned paths such as `domains/compute/shared/libs/` go in their own PR.
+- **Low risk.** Change Risk Scoring must say `RISK_LEVEL_LOW`: one focused behavior, small diff, risky parts split out.
+
+Add a **Lane** column to the PR-stack table: `auto`, or `human: <reason>` (lib-only, cavmctl-only, non-owned files). Shape slices for the lane; leave the code design alone. After push, `post-push-protocol` runs the live check.
+
 ## Plan-time gate (HARD — no code without it)
 Every implementation plan opens with a PR-stack table. Group tasks by PR boundary; end each group with an explicit "Open PR" step. Explain rows above the target, but don't force a split on line count alone. A `pr-size-guard` warning is advisory.
 
-| PR | Purpose (one behavior) | Est. diff | Depends on |
-|----|------------------------|-----------|------------|
-| pr1 | ... | ~250 lines | — |
+| PR | Purpose (one behavior) | Est. diff | Depends on | Lane |
+|----|------------------------|-----------|------------|------|
+| pr1 | ... | ~250 lines | — | auto |
 
 ## Execution-time gate
 When a PR group is finished, **STOP** — open the PR (`create-pr` skill) and don't start the next group until Saje says go.
