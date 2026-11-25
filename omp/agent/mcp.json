@@ -15,17 +15,7 @@
     "datadog-google-calendar": {
       "type": "http",
       "url": "https://google-calendar-mcp-server-834963730936.us-central1.run.app/mcp",
-      "oauth": {
-        "clientId": "7821121c-0a83-4e38-978f-8c2968f14857"
-      },
-      "headers": {},
-      "auth": {
-        "type": "oauth",
-        "credentialId": "mcp_oauth:profile:default:https://google-calendar-mcp-server-834963730936.us-central1.run.app/mcp",
-        "tokenUrl": "https://google-calendar-mcp-server-834963730936.us-central1.run.app/token",
-        "clientId": "7821121c-0a83-4e38-978f-8c2968f14857",
-        "resource": "https://google-calendar-mcp-server-834963730936.us-central1.run.app/mcp"
-      }
+      "headers": {}
     },
     "datadog-google-workspace": {
       "args": [
@@ -38,17 +28,7 @@
     "datadog-gmail": {
       "type": "http",
       "url": "https://gmail-mcp-server-834963730936.us-central1.run.app/mcp",
-      "oauth": {
-        "clientId": "d913a127-cf6e-458a-aa99-cfe6283a1028"
-      },
-      "headers": {},
-      "auth": {
-        "type": "oauth",
-        "credentialId": "mcp_oauth:profile:default:https://gmail-mcp-server-834963730936.us-central1.run.app/mcp",
-        "tokenUrl": "https://gmail-mcp-server-834963730936.us-central1.run.app/token",
-        "clientId": "d913a127-cf6e-458a-aa99-cfe6283a1028",
-        "resource": "https://gmail-mcp-server-834963730936.us-central1.run.app/mcp"
-      }
+      "headers": {}
     },
     "slack": {
       "type": "http",
