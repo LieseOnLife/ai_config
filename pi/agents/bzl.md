@@ -2,7 +2,7 @@
 name: bzl
 description: THE ONLY agent permitted to run Bazel in dd-source. Owns bzl gazelle/snapshot/build/test/query/run. Bazel holds a single-command lock per output base, so all Bazel work is serialized through this one agent. Never spawn more than one at a time. See the repository's .claude/rules/bazel*.md guidance.
 tools: read, grep, find, ls, bash
-model: ai-gw-openai/openai/gpt-6-luna
+model: ai-gw-openai/openai/gpt-6.1-terra
 thinking: low
 systemPromptMode: replace
 extensions:
